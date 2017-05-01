@@ -70,7 +70,7 @@ namespace juggle
                     }
                     catch (Exception e)
                     {
-                        Console.WriteLine("channel pop, {0}", e);
+                        throw new juggle.Exception(string.Format("channel pop, System.Exception:{0}", e));
                     }
 
                     try
@@ -82,8 +82,7 @@ namespace juggle
 
                         if (_event.Count < 2)
                         {
-                            Console.WriteLine("error msg");
-                            break;
+                            throw new juggle.Exception(string.Format("error msg, {0}", _event[0]));
                         }
 
                         String module_name = (String)_event[0];
@@ -95,12 +94,12 @@ namespace juggle
                         }
                         else
                         {
-                            Console.WriteLine("do not have a module named:" + module_name + " " + (String)_event[1]);
+                            throw new juggle.Exception(string.Format("do not have a module name:{0}, function name:{1}", module_name, (String)_event[1]));
                         }
                     }
                     catch (Exception e)
                     {
-                        Console.WriteLine("process event, {0}", e);
+                        throw new juggle.Exception(string.Format("process event, System.Exception:{0}", e));
                     }
                 }
             }

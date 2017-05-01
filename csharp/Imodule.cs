@@ -30,12 +30,12 @@ namespace juggle
 				}
 				catch(Exception e)
 				{
-					Console.WriteLine("function name:" + func_name + " " + e.ToString());
+                    throw new juggle.Exception(string.Format("function name:{0} System.Exception:{1}", func_name, e));
 				} 
 			}
 			else
 			{
-				Console.WriteLine("do not have a function named:" + func_name);
+                throw new juggle.Exception(string.Format("do not have a function named::{0}", func_name));
 			}
 		}
 

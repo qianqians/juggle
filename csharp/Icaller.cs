@@ -19,16 +19,23 @@ namespace juggle
             _event.Add(methodname);
             _event.Add(argvs);
 
-			var _tmp = System.Text.Json.Jsonparser.pack(_event);
+            try
+            {
+                var _tmp = Json.Jsonparser.pack(_event);
 
-			byte[] buf = new byte[4 + _tmp.Length];
-			buf[0] = (byte)(_tmp.Length & 0xff);
-			buf[1] = (byte)((_tmp.Length >> 8) & 0xff);
-			buf[2] = (byte)((_tmp.Length >> 16) & 0xff);
-			buf[3] = (byte)((_tmp.Length >> 24) & 0xff);
-			System.Text.Encoding.Default.GetBytes(_tmp).CopyTo(buf, 4);
+                byte[] buf = new byte[4 + _tmp.Length];
+                buf[0] = (byte)(_tmp.Length & 0xff);
+                buf[1] = (byte)((_tmp.Length >> 8) & 0xff);
+                buf[2] = (byte)((_tmp.Length >> 16) & 0xff);
+                buf[3] = (byte)((_tmp.Length >> 24) & 0xff);
+                System.Text.Encoding.Default.GetBytes(_tmp).CopyTo(buf, 4);
 
-			ch.senddata(buf);
+                ch.senddata(buf);
+            }
+            catch (Json.Exception)
+            {
+                throw new juggle.Exception("error argvs");
+            }
         }
 
         protected String module_name;
