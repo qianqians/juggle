@@ -28,7 +28,10 @@ namespace juggle
                 buf[1] = (byte)((_tmp.Length >> 8) & 0xff);
                 buf[2] = (byte)((_tmp.Length >> 16) & 0xff);
                 buf[3] = (byte)((_tmp.Length >> 24) & 0xff);
-                System.Text.Encoding.Default.GetBytes(_tmp).CopyTo(buf, 4);
+                for(int i = 0; i < _tmp.Length; i++)
+                {
+                    buf[i+4] = (byte)_tmp[i];
+                }
 
                 ch.senddata(buf);
             }
