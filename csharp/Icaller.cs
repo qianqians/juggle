@@ -29,10 +29,7 @@ namespace juggle
                 buf[1] = (byte)((_tmpdata.Length >> 8) & 0xff);
                 buf[2] = (byte)((_tmpdata.Length >> 16) & 0xff);
                 buf[3] = (byte)((_tmpdata.Length >> 24) & 0xff);
-                for(int i = 0; i < _tmpdata.Length; i++)
-                {
-                    buf[i+4] = (byte)_tmpdata[i];
-                }
+                _tmpdata.CopyTo(buf, 4);
 
                 ch.senddata(buf);
             }
