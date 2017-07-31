@@ -19,13 +19,13 @@ extern std::shared_ptr<Ichannel> current_ch;
 
 class Imodule {
 public:
-	void process_event(std::shared_ptr<Ichannel> _ch, std::shared_ptr<std::vector<boost::any> > _event) {
+	void process_event(std::shared_ptr<Ichannel> _ch, std::shared_ptr<std::vector<std::any> > _event) {
 		current_ch = _ch;
 
-		auto func_name = boost::any_cast<std::string>((*_event)[1]);
+		auto func_name = std::any_cast<std::string>((*_event)[1]);
 		auto func = protcolcall_set.find(func_name);
 		if (func != protcolcall_set.end()) {
-			func->second(boost::any_cast<std::shared_ptr<std::vector<boost::any> > >((*_event)[2]));
+			func->second(std::any_cast<std::shared_ptr<std::vector<std::any> > >((*_event)[2]));
 		}
 		else {
 			std::cout << "can not find function named:" << func_name << std::endl;
@@ -38,7 +38,7 @@ public:
 	std::string module_name;
 
 protected:
-	std::unordered_map<std::string, std::function<void(std::shared_ptr<std::vector<boost::any> > )> > protcolcall_set;
+	std::unordered_map<std::string, std::function<void(std::shared_ptr<std::vector<std::any> > )> > protcolcall_set;
 
 };
 

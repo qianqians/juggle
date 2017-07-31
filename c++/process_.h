@@ -43,10 +43,10 @@ public:
 	void poll(){
 		for (auto ch : event_set) {
 			while (true) {
-				std::shared_ptr<std::vector<boost::any> > buff;
+				std::shared_ptr<std::vector<std::any> > buff;
 				if (ch->pop(buff)) {
 
-					auto module_name = boost::any_cast<std::string>((*buff)[0]);
+					auto module_name = std::any_cast<std::string>((*buff)[0]);
 
 					auto module = module_set.find(module_name);
 					if (module != module_set.end()) {

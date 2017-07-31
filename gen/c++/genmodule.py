@@ -35,11 +35,11 @@ def genmodule(module_name, funcs):
                         if count < len(i[2]):
                                 code += ", "
                 code += ") > sig" + i[1] + "handle;\n"
-                code += "    void " + i[1] + "(std::shared_ptr<std::vector<boost::any> > _event){\n"
+                code += "    void " + i[1] + "(std::shared_ptr<std::vector<std::any> > _event){\n"
                 code += "        sig" + i[1] + "handle(\n"
                 count = 0
                 for item in i[2]:
-                        code += "            boost::any_cast<" + tools.gentypetocpp(item) + ">((*_event)[" + str(count) + "])"
+                        code += "            std::any_cast<" + tools.gentypetocpp(item) + ">((*_event)[" + str(count) + "])"
                         count += 1
                         if count < len(i[2]):
                                 code += ", \n"
