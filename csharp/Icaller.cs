@@ -23,12 +23,13 @@ namespace juggle
             {
                 var _tmp = Json.Jsonparser.pack(_event);
                 var _tmpdata = System.Text.Encoding.UTF8.GetBytes(_tmp);
+                var _tmplenght = _tmpdata.Length + 4;
 
-                byte[] buf = new byte[4 + _tmpdata.Length];
-                buf[0] = (byte)(_tmpdata.Length & 0xff);
-                buf[1] = (byte)((_tmpdata.Length >> 8) & 0xff);
-                buf[2] = (byte)((_tmpdata.Length >> 16) & 0xff);
-                buf[3] = (byte)((_tmpdata.Length >> 24) & 0xff);
+                byte[] buf = new byte[4 + _tmplenght];
+                buf[0] = (byte)(_tmplenght & 0xff);
+                buf[1] = (byte)((_tmplenght >> 8) & 0xff);
+                buf[2] = (byte)((_tmplenght >> 16) & 0xff);
+                buf[3] = (byte)((_tmplenght >> 24) & 0xff);
                 _tmpdata.CopyTo(buf, 4);
 
                 ch.senddata(buf);
