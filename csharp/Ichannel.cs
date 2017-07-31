@@ -6,7 +6,6 @@ namespace juggle
     {
         void disconnect();
         ArrayList pop();
-        void senddata(byte[] data);
-
+        void push(ArrayList ev);
     }
 }
