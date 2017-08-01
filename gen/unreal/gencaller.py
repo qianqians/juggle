@@ -9,8 +9,8 @@ def gencaller(module_name, funcs):
         code += "#ifndef _" + module_name + "_caller_h\n"
         code += "#define _" + module_name + "_caller_h\n\n"
 		
-        code += "#include "Icaller.h"\n"
-        code += "#include "Ichannel.h"\n\n"
+        code += "#include \"Icaller.h\"\n"
+        code += "#include \"Ichannel.h\"\n\n"
 
         code += "namespace caller\n"
         code += "{\n"
@@ -37,7 +37,7 @@ def gencaller(module_name, funcs):
                 code += "        v.Push(TSharedPtr<FJsonValue>(new FJsonValueString(\"" + i[1] + "\")));\n"
                 code += "        v.Push(TSharedPtr<FJsonValue>(new FJsonValueArray(TArray< TSharedPtr<FJsonValue> >()));\n"
                 for count in range(len(i[2])):
-                        code += "        (v[2]))->AsArray().Push(TSharedPtr<FJsonValue>(new " + tools.genjsonvaluetypefromunreal(i[2][count]) + "(argv" + str(count) + ")));\n"
+                        code += "        (v[2])->AsArray().Push(TSharedPtr<FJsonValue>(new " + tools.genjsonvaluetypefromunreal(i[2][count]) + "(argv" + str(count) + ")));\n"
                 code += "        ch->push(v);\n"
                 code += "    }\n\n"
 

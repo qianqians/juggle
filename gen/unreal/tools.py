@@ -17,7 +17,7 @@ def gentypetocpp(typestr):
         return 'TSharedPtr<FJsonObject>*'
 
 def gengetargvfromunreal(typestr):
-	if typestr == 'int':
+    if typestr == 'int':
         return 'TryGetNumber'
     elif typestr == 'string':
         return 'TryGetString'
@@ -31,7 +31,7 @@ def gengetargvfromunreal(typestr):
         return 'TryGetObject'
 
 def genjsonvaluetypefromunreal(typestr):
-	if typestr == 'int':
+    if typestr == 'int':
         return 'FJsonValueNumber'
     elif typestr == 'string':
         return 'FJsonValueString'

@@ -24,7 +24,7 @@ def genmodule(module_name, funcs):
         code += "    }\n\n"
 
         for i in funcs:
-                code += "    virtual void" + i[1] + "("
+                code += "    virtual void " + i[1] + "("
                 count = 0
                 for item in i[2]:
                         code += tools.gentypetocpp(item) + " argv" + str(count)
@@ -33,16 +33,16 @@ def genmodule(module_name, funcs):
                                 code += ", "
                 code += ");\n"
                 code += "    void " + i[1] + "_handle(const TArray< TSharedPtr<FJsonValue> >& _event){\n"
-				count = 0
-				for item in i[2]:
-						code += "		" + tools.gentypetocpp(item) + " argv" + str(count) + " = nullptr;\n"
-						code += "		if ( !(_event[" + str(count) + "])->" + tools.gengetargvfromunreal(item) + "(argv" + str(count) + ") ){\n"
-						code += "			return;\n		}\n"
-						count = count + 1
-                code += "       " + i[1] + "(\n"
                 count = 0
                 for item in i[2]:
-                        code += "            argv" + str(count)
+                        code += "		" + tools.gentypetocpp(item) + " argv" + str(count) + " = nullptr;\n"
+                        code += "		if ( !(_event[" + str(count) + "])->" + tools.gengetargvfromunreal(item) + "(argv" + str(count) + ") ){\n"
+                        code += "			return;\n		}\n"
+                        count = count + 1
+                code += "        " + i[1] + "("
+                count = 0
+                for item in i[2]:
+                        code += "argv" + str(count)
                         count += 1
                         if count < len(i[2]):
                                 code += ", "
