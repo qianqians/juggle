@@ -8,7 +8,7 @@ def genmodule(module_name, funcs):
         code = "/*this module file is codegen by juggle for c++*/\n"
         code += "#ifndef _" + module_name + "_module_h\n"
         code += "#define _" + module_name + "_module_h\n"
-        code += "#include <Imodule.h>\n"
+        code += "#include \"Imodule.h\"\n"
         code += "#include <memory>\n"
         code += "#include <boost/signals2.hpp>\n"
         code += "#include <string>\n\n"
@@ -34,15 +34,15 @@ def genmodule(module_name, funcs):
                         count = count + 1
                         if count < len(i[2]):
                                 code += ", "
-                code += ") > sig" + i[1] + "handle;\n"
-                code += "    void " + i[1] + "(std::shared_ptr<std::vector<std::any> > _event){\n"
-                code += "        sig" + i[1] + "handle(\n"
+                code += ") > sig_" + i[1] + ";\n"
+                code += "    void " + i[1] + "(std::shared_ptr<std::vector<boost::any> > _event){\n"
+                code += "        sig_" + i[1] + "("
                 count = 0
                 for item in i[2]:
-                        code += "            std::any_cast<" + tools.gentypetocpp(item) + ">((*_event)[" + str(count) + "])"
+                        code += "\n            boost::any_cast<" + tools.gentypetocpp(item) + ">((*_event)[" + str(count) + "])"
                         count += 1
                         if count < len(i[2]):
-                                code += ", \n"
+                                code += ", "
                 code += ");\n"
                 code += "    }\n\n"
 

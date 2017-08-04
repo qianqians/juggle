@@ -9,14 +9,14 @@
 #include <vector>
 #include <memory>
 
-#include <any>
+#include <boost/any.hpp>
 
 namespace juggle {
 
 class Ichannel {
 public:
-	virtual bool pop(std::shared_ptr<std::vector<std::any> >  &) = 0;
-	virtual void push(std::shared_ptr<std::vector<std::any> >) = 0;
+	virtual bool pop(std::shared_ptr<std::vector<boost::any> >  &) = 0;
+	virtual void push(std::shared_ptr<std::vector<boost::any> >) = 0;
 	
 };
 
