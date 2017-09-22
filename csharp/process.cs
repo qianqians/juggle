@@ -18,16 +18,18 @@ namespace juggle
 
         public void reg_channel(Ichannel ch)
         {
-            Monitor.Enter(add_event);
-            add_event.Add(ch);
-            Monitor.Exit(add_event);
+            lock (add_event)
+            {
+                add_event.Add(ch);
+            }
         }
 
         public void unreg_channel(Ichannel ch)
         {
-            Monitor.Enter(remove_event);
-            remove_event.Add(ch);
-            Monitor.Exit(remove_event);
+            lock (remove_event)
+            {
+                remove_event.Add(ch);
+            }
         }
 
 		public void reg_module(Imodule module)
@@ -42,21 +44,23 @@ namespace juggle
 
         public void poll()
         {
-            Monitor.Enter(add_event);
-            foreach(var ch in add_event)
+            lock (add_event)
             {
-                event_set.Add(ch);
+                foreach (var ch in add_event)
+                {
+                    event_set.Add(ch);
+                }
+                add_event.Clear();
             }
-            add_event.Clear();
-            Monitor.Exit(add_event);
 
-            Monitor.Enter(remove_event);
-            foreach (var ch in remove_event)
+            lock (remove_event)
             {
-                event_set.Remove(ch);
+                foreach (var ch in remove_event)
+                {
+                    event_set.Remove(ch);
+                }
+                remove_event.Clear();
             }
-            remove_event.Clear();
-            Monitor.Exit(remove_event);
 
             foreach (Ichannel ch in event_set)
             {
