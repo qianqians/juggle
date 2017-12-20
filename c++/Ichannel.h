@@ -15,6 +15,7 @@ namespace juggle {
 
 class Ichannel {
 public:
+	virtual void disconnect() = 0;
 	virtual bool pop(std::shared_ptr<std::vector<boost::any> >  &) = 0;
 	virtual void push(std::shared_ptr<std::vector<boost::any> >) = 0;
 	
