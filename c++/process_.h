@@ -8,7 +8,7 @@
 
 #include <tuple>
 #include <unordered_map>
-#include <list>
+#include <set>
 
 #include "Imodule.h"
 #include "Ichannel.h"
@@ -21,12 +21,14 @@ public:
 	}
 
 	void reg_channel(std::shared_ptr<Ichannel> ch){
-		event_set.push_back(ch);
+		event_set.insert(ch);
 	}
 
 	void unreg_channel(std::shared_ptr<Ichannel> ch)
 	{
-		event_set.remove(ch);
+		if (event_set.find(ch) != event_set.end()) {
+			event_set.erase(ch);
+		}
 	}
 
 	void reg_module(std::shared_ptr<Imodule> module)
@@ -64,7 +66,7 @@ public:
 	}
 
 private:
-	std::list<std::shared_ptr<Ichannel> > event_set;
+	std::set<std::shared_ptr<Ichannel> > event_set;
 	std::unordered_map<std::string, std::shared_ptr<Imodule> > module_set;
 
 };
