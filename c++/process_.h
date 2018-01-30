@@ -27,7 +27,7 @@ public:
 	void unreg_channel(std::shared_ptr<Ichannel> ch)
 	{
 		if (event_set.find(ch) != event_set.end()) {
-			event_set.erase(ch);
+			remove_set.push_back(ch);
 		}
 	}
 
@@ -63,10 +63,17 @@ public:
 				}
 			}
 		}
+
+		for (auto ch : remove_set) {
+			event_set.erase(ch);
+		}
+		remove_set.clear();
 	}
 
 private:
 	std::set<std::shared_ptr<Ichannel> > event_set;
+	std::vector<std::shared_ptr<Ichannel> > remove_set;
+
 	std::unordered_map<std::string, std::shared_ptr<Imodule> > module_set;
 
 };
