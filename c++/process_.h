@@ -9,6 +9,7 @@
 #include <tuple>
 #include <unordered_map>
 #include <set>
+#include <mutex>
 
 #include "Imodule.h"
 #include "Ichannel.h"
@@ -21,11 +22,13 @@ public:
 	}
 
 	void reg_channel(std::shared_ptr<Ichannel> ch){
+		std::lock_guard<std::mutex> l(_event_set_mu);
 		event_set.insert(ch);
 	}
 
 	void unreg_channel(std::shared_ptr<Ichannel> ch)
 	{
+		std::lock_guard<std::mutex> l(_remove_set_mu);
 		if (event_set.find(ch) != event_set.end()) {
 			remove_set.push_back(ch);
 		}
@@ -43,6 +46,7 @@ public:
 
 
 	void poll(){
+		_event_set_mu.lock();
 		for (auto ch : event_set) {
 			while (true) {
 				std::shared_ptr<std::vector<boost::any> > buff;
@@ -63,15 +67,21 @@ public:
 				}
 			}
 		}
+		_event_set_mu.unlock();
 
+		_remove_set_mu.lock();
 		for (auto ch : remove_set) {
 			event_set.erase(ch);
 		}
 		remove_set.clear();
+		_remove_set_mu.unlock();
 	}
 
 private:
+	std::mutex _event_set_mu;
 	std::set<std::shared_ptr<Ichannel> > event_set;
+	
+	std::mutex _remove_set_mu;
 	std::vector<std::shared_ptr<Ichannel> > remove_set;
 
 	std::unordered_map<std::string, std::shared_ptr<Imodule> > module_set;
