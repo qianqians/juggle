@@ -17,12 +17,12 @@ def gencaller(module_name, funcs):
                         if count < len(i[2]):
                                 code += ","
                 code += "){\n"
-                code += "        var _argv = new ArrayList("
+                code += "        var _argv = ["
                 for n in range(len(i[2])):
                         code += "argv" + str(n)
                         if n < len(i[2]):
                                 code += ","
-                code += ");"
+                code += "];\n"
                 code += "        this.call_module_method(\"" + i[1] + "\", _argv);\n"
                 code += "    }\n\n"
 
