@@ -9,7 +9,7 @@ def genmodule(module_name, funcs):
         code += "    Imodule.call(this, \"" + module_name + "\");\n\n"
 
         for i in funcs:
-                code += "    this.handle_" + i[1] + " = null;\n
+                code += "    this.handle_" + i[1] + " = null;\n"
                 code += "    this." + i[1] + " = function("
                 count = 0
                 for item in i[2]:
@@ -33,8 +33,8 @@ def genmodule(module_name, funcs):
         code += "(function(){\n"
         code += "var Super = function(){};\n"
         code += "Super.prototype = Imodule.prototype;\n"
-        code += module_name += "_module.prototype = new Super();\n"
+        code += module_name + "_module.prototype = new Super();\n"
         code += "})();"
-        code += module_name += "_module.prototype.constructor = " + module_name + "_module;\n\n";
+        code += module_name + "_module.prototype.constructor = " + module_name + "_module;\n\n";
 
         return code

@@ -30,8 +30,8 @@ def gencaller(module_name, funcs):
         code += "(function(){\n"
         code += "var Super = function(){};\n"
         code += "Super.prototype = Icaller.prototype;\n"
-        code += module_name += "_caller.prototype = new Super();\n"
+        code += module_name + "_caller.prototype = new Super();\n"
         code += "})();"
-        code += module_name += "_caller.prototype.constructor = " + module_name + "_caller;\n\n";
+        code += module_name + "_caller.prototype.constructor = " + module_name + "_caller;\n\n";
 
         return code
