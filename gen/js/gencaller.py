@@ -20,10 +20,10 @@ def gencaller(module_name, funcs):
                 code += "        var _argv = ["
                 for n in range(len(i[2])):
                         code += "argv" + str(n)
-                        if n < len(i[2]):
+                        if (n+1) < len(i[2]):
                                 code += ","
                 code += "];\n"
-                code += "        this.call_module_method(\"" + i[1] + "\", _argv);\n"
+                code += "        this.call_module_method.call(this, \"" + i[1] + "\", _argv);\n"
                 code += "    }\n\n"
 
         code += "}\n"
