@@ -26,7 +26,6 @@ def genmodule(module_name, funcs):
                         if count < len(i[2]):
                                 code += ", "
                 code += "]);\n"
-                code += "        }\n"
                 code += "    }\n\n"
         
         code += "}\n"
