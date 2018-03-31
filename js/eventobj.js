@@ -6,7 +6,7 @@ function eventobj(){
     }
 
     this.call_event = function(event, argvs){
-        if (this.events[event]){
+        if (this.events[event] && this.events[event]["mothed"]){
             this.events[event]["mothed"].apply(this.events[event]["this_argv"], argvs);
         }
     }
