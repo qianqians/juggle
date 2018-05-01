@@ -1,6 +1,6 @@
-function process(){
+function juggle_process(){
     this.module_set = {};
-    
+
     this.event_set = new Array();
     this.add_event = new Array();
     this.remove_event = new Array();
@@ -16,7 +16,7 @@ function process(){
     this.reg_module = function(_module){
 		this.module_set[_module.module_name] = _module;
     }
-    
+
     this.poll = function(){
         for(ch in this.add_event)
         {
