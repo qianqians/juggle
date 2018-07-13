@@ -55,8 +55,16 @@ function juggle_process(){
                 _new_event_set.push(ch);
                 continue;
             }
-
             this.module_set[_event[0]].process_event(ch, _event);
+
+            _event = ch.pop();
+            if (_event === null)
+            {
+                _new_event_set.push(ch);
+                continue;
+            }
+            this.module_set[_event[0]].process_event(ch, _event);
+
             this.event_set.push(ch);
         }
         this.event_set = _new_event_set;
