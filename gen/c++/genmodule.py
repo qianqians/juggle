@@ -11,6 +11,7 @@ def genmodule(module_name, funcs):
         code += "#include \"Imodule.h\"\n"
         code += "#include <memory>\n"
         code += "#include <boost/signals2.hpp>\n"
+        code += "#include <JsonParse.h>\n"
         code += "#include <string>\n\n"
 
         code += "namespace module\n{\n"
@@ -35,11 +36,11 @@ def genmodule(module_name, funcs):
                         if count < len(i[2]):
                                 code += ", "
                 code += ") > sig_" + i[1] + ";\n"
-                code += "    void " + i[1] + "(std::shared_ptr<std::vector<boost::any> > _event){\n"
+                code += "    void " + i[1] + "(Fossilizid::JsonParse::JsonArray _event){\n"
                 code += "        sig_" + i[1] + "("
                 count = 0
                 for item in i[2]:
-                        code += "\n            boost::any_cast<" + tools.gentypetocpp(item) + ">((*_event)[" + str(count) + "])"
+                        code += "\n            std::any_cast<" + tools.gentypetocpp(item) + ">((*_event)[" + str(count) + "])"
                         count += 1
                         if count < len(i[2]):
                                 code += ", "

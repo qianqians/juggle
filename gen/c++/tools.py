@@ -8,12 +8,12 @@ def gentypetocpp(typestr):
     elif typestr == 'string':
         return 'std::string'
     elif typestr == 'array':
-        return 'std::shared_ptr<std::vector<boost::any> >'
+        return 'Fossilizid::JsonParse::JsonArray'
     elif typestr == 'float':
         return 'double'
     elif typestr == 'bool':
         return 'bool'
     elif typestr == 'table':
-        return 'std::shared_ptr<std::unordered_map<std::string, boost::any> >'
+        return 'Fossilizid::JsonParse::JsonTable'
 
 	
