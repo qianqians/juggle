@@ -9,15 +9,15 @@
 #include <vector>
 #include <memory>
 
-#include <boost/any.hpp>
+#include <JsonParse.h>
 
 namespace juggle {
 
 class Ichannel {
 public:
 	virtual void disconnect() = 0;
-	virtual bool pop(std::shared_ptr<std::vector<boost::any> >  &) = 0;
-	virtual void push(std::shared_ptr<std::vector<boost::any> >) = 0;
+	virtual bool pop(Fossilizid::JsonParse::JsonArray  &) = 0;
+	virtual void push(Fossilizid::JsonParse::JsonArray ) = 0;
 	
 };
 

@@ -11,6 +11,8 @@
 #include <set>
 #include <mutex>
 
+#include <JsonParse.h>
+
 #include "Imodule.h"
 #include "Ichannel.h"
 
@@ -49,10 +51,10 @@ public:
 		_event_set_mu.lock();
 		for (auto ch : event_set) {
 			while (true) {
-				std::shared_ptr<std::vector<boost::any> > buff;
+				Fossilizid::JsonParse::JsonArray buff;
 				if (ch->pop(buff)) {
 
-					auto module_name = boost::any_cast<std::string>((*buff)[0]);
+					auto module_name = std::any_cast<std::string>((*buff)[0]);
 
 					auto module = module_set.find(module_name);
 					if (module != module_set.end()) {
