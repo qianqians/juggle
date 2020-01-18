@@ -49,7 +49,7 @@ function juggle_process(){
 			while (true)
 			{
                 var _event = this.event_set[ch].pop();
-                if (_event === null)
+                if (!_event)
                 {
                     break;
                 }
