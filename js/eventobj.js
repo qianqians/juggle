@@ -18,7 +18,7 @@ function eventobj(){
                 continue;
             }
             
-            _event["mothed"].apply(_event["mothed"]["this_argv"], argvs);
+            _event["mothed"].apply(_event["this_argv"], argvs);
         }
     }
 }
