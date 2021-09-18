@@ -1,0 +1,6 @@
+[submodule "cpp/3rdparty/msgpack11"]
+	path = cpp/3rdparty/msgpack11
+	url = https://github.com/ar90n/msgpack11.git
+[submodule "cpp/concurrent"]
+	path = cpp/concurrent
+	url = git@github.com:qianqians/concurrent.git
