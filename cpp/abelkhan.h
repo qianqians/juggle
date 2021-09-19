@@ -94,14 +94,12 @@ private:
 class TinyTimer{
 private:
     static int64_t tick;
-    static concurrent::ringque<std::function<void()> > add_timer_list;
+    static concurrent::ringque<std::pair<uint64_t, std::function<void()> > > add_timer_list;
     static std::map<int64_t, std::function<void()> > timer;
 
 public:
     static void add_timer(int64_t tick, std::function<void()> cb);
     static void poll();
-
-
 };
 
 }

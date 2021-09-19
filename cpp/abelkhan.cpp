@@ -25,12 +25,12 @@ Exception::Exception(std::string _err) : std::exception() {
     err = _err;
 }
 
-Icaller::Icaller(std::string& _module_name, std::shared_ptr<Ichannel> _ch) {
+Icaller::Icaller(std::string _module_name, std::shared_ptr<Ichannel> _ch) {
     module_name = _module_name;
     ch = _ch;
 } 
 
-void Icaller::call_module_method(std::string& _method_name, msgpack11::MsgPack::array& _argv){
+void Icaller::call_module_method(std::string _method_name, msgpack11::MsgPack::array& _argv){
     msgpack11::MsgPack::array event_;
     event_.push_back(module_name);
     event_.push_back(_method_name);
@@ -110,5 +110,42 @@ void modulemng::process_event(std::shared_ptr<Ichannel> _ch, const msgpack11::Ms
         throw Exception(concurrent::format("System.Exception:%s", e.what()));
     }
 }
+
+
+void TinyTimer::add_timer(int64_t _tick, std::function<void()> cb){
+    auto tick_ = _tick + tick;
+    add_timer_list.push(std::make_pair(tick_, cb));
+}
+
+void TinyTimer::poll(){
+    std::pair<uint64_t, std::function<void()> > timer_em;
+    while(add_timer_list.pop(timer_em)){
+        while(timer.find(timer_em.first) != timer.end()){
+            timer_em.first++;
+        }
+        timer.insert(timer_em);
+    }
+
+    tick = msec_time();
+
+    std::vector<int64_t> remove;
+	for (auto it = timer.begin(); it != timer.end(); it++)
+	{
+		if (it->first <= tick)
+		{
+			it->second();
+			remove.push_back(it->first);
+		}
+		else {
+			break;
+		}
+	}
+
+	for (auto key : remove)
+	{
+		timer.erase(key);
+	}
+}
+
 
 }
