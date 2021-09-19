@@ -41,9 +41,9 @@ public:
 
 class Icaller {
 public:
-    Icaller(std::string& _module_name, std::shared_ptr<Ichannel> _ch);
+    Icaller(std::string _module_name, std::shared_ptr<Ichannel> _ch);
         
-    void call_module_method(std::string& _method_name, msgpack11::MsgPack::array& _argv);
+    void call_module_method(std::string _method_name, msgpack11::MsgPack::array& _argv);
 
 protected:
     std::string module_name;
@@ -94,7 +94,7 @@ private:
 class TinyTimer{
 private:
     static int64_t tick;
-    static concurrent::ringque<std::function<void()> > add_timer;
+    static concurrent::ringque<std::function<void()> > add_timer_list;
     static std::map<int64_t, std::function<void()> > timer;
 
 public:

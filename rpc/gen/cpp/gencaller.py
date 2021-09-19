@@ -127,8 +127,8 @@ def gen_module_caller(module_name, funcs, dependent_struct, dependent_enum):
             cb_func += "        }\n\n"
 
             cb_func += "        void timeout(uint64_t tick, std::function<void()> timeout_cb)\n        {\n"
-            cb_func += "            TinyTimer.add_timer(tick, [cb_uuid, module_rsp_cb](){"
-            cb_func += "                module_rsp_cb->" + func_name + "_timeout(cb_uuid);"
+            cb_func += "            TinyTimer::add_timer(tick, [this](){\n"
+            cb_func += "                module_rsp_cb->" + func_name + "_timeout(cb_uuid);\n"
             cb_func += "            });\n"
             cb_func += "            sig_" + func_name + "_timeout.connect(timeout_cb);\n"
             cb_func += "        }\n\n"
@@ -172,7 +172,7 @@ def gen_module_caller(module_name, funcs, dependent_struct, dependent_enum):
                 elif type_ == tools.TypeType.Bin:
                     cb_code_section += "            auto _" + _name + " = inArray[" + str(count) + "].binary_items();\n"
                 elif type_ == tools.TypeType.Custom:
-                    cb_code_section += "            auto _" + _name + " = " + _type + "::protcol_to_" + _type + "(inArray[" + str(count) + "]);\n"
+                    cb_code_section += "            auto _" + _name + " = " + _type + "::protcol_to_" + _type + "(inArray[" + str(count) + "].array_items());\n"
                 elif type_ == tools.TypeType.Array:
                     array_type = _type[:-2]
                     array_type_ = tools.check_type(array_type, dependent_struct, dependent_enum)
@@ -208,7 +208,7 @@ def gen_module_caller(module_name, funcs, dependent_struct, dependent_enum):
                     elif array_type_ == tools.TypeType.String:
                         cb_code_section += "                _" + _name + ".push_back(it_" + _v_uuid + "->binary_items());\n"
                     elif array_type_ == tools.TypeType.Custom:
-                        cb_code_section += "                _" + _name + ".push_back(" + array_type + "::protcol_to_" + array_type + "(it_" + _v_uuid + "));\n"
+                        cb_code_section += "                _" + _name + ".push_back(" + array_type + "::protcol_to_" + array_type + "(it_" + _v_uuid + ".array_items()));\n"
                     elif array_type_ == tools.TypeType.Array:
                         raise Exception("not support nested array:%s in func:%s" % (_type, func_name))
                     cb_code_section += "            }\n"
@@ -314,14 +314,14 @@ def gen_module_caller(module_name, funcs, dependent_struct, dependent_enum):
             cb_code_section += "        }\n\n"
 
             cb_code_section += "        void " + func_name + "_timeout(uint64_t cb_uuid){\n"
-            cb_code_section += "            auto rsp = try_get_and_del_" + func_name + "_cb(uuid);\n"
+            cb_code_section += "            auto rsp = try_get_and_del_" + func_name + "_cb(cb_uuid);\n"
             cb_code_section += "            if (rsp != nullptr){\n"
             cb_code_section += "                rsp->sig_" + func_name + "_timeout.emit();\n"
             cb_code_section += "            }\n"
             cb_code_section += "        }\n\n"
 
             cb_code_section += "        std::shared_ptr<" + module_name + "_"  + func_name + "_cb> try_get_and_del_" + func_name + "_cb(uint64_t uuid){\n"
-            cb_code_section += "            std::std::lock_guard<std::mutex> l(mutex_map_" + func_name + ");\n"
+            cb_code_section += "            std::lock_guard<std::mutex> l(mutex_map_" + func_name + ");\n"
             cb_code_section += "            auto rsp = map_" + func_name + "[uuid];\n"
             cb_code_section += "            map_" + func_name + ".erase(uuid);\n"
             cb_code_section += "            return rsp;\n"
@@ -365,7 +365,7 @@ def gen_module_caller(module_name, funcs, dependent_struct, dependent_enum):
                     code += "            _argv_" + _argv_uuid + ".push_back(_array_" + _array_uuid + ");\n"
             code += "            call_module_method(\"" + func_name + "\", _argv_" + _argv_uuid + ");\n\n"
             code += "            auto cb_" + func_name + "_obj = std::make_shared<" + module_name + "_"  + func_name + "_cb>(uuid_" + _cb_uuid_uuid + ", rsp_cb_" + module_name + "_handle);\n"
-            code += "            std::std::lock_guard<std::mutex> l(rsp_cb_" + module_name + "_handle->mutex_map_" + func_name + ");\n"
+            code += "            std::lock_guard<std::mutex> l(rsp_cb_" + module_name + "_handle->mutex_map_" + func_name + ");\n"
             code += "            rsp_cb_" + module_name + "_handle->map_" + func_name + ".insert(std::make_pair(uuid_" + _cb_uuid_uuid + ", cb_" + func_name + "_obj));\n"
             code += "            return cb_" + func_name + "_obj;\n"
             code += "        }\n\n"

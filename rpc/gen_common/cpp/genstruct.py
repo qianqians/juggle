@@ -60,7 +60,7 @@ def genstructprotocol(struct_name, elems, dependent_struct, dependent_enum):
     return code
 
 def genprotocolstruct(struct_name, elems, dependent_struct, dependent_enum):
-    code = "        static " + struct_name + " protcol_to_" + struct_name + "(msgpack11::MsgPack::array& _protocol){\n"
+    code = "        static " + struct_name + " protcol_to_" + struct_name + "(const msgpack11::MsgPack::array& _protocol){\n"
     count = 0
     for key, value in elems:
         type_ = tools.check_type(key, dependent_struct, dependent_enum)
@@ -92,7 +92,7 @@ def genprotocolstruct(struct_name, elems, dependent_struct, dependent_enum):
         elif type_ == tools.TypeType.Bin:
             code += "            std::string _" + value + " = _protocol[" + str(count) + "].binary_items();\n"
         elif type_ == tools.TypeType.Custom:
-            code += "            auto _" + value + " = " + key + "::protcol_to_" + key + "(_protocol[" + str(count) + "]);\n"
+            code += "            auto _" + value + " = " + key + "::protcol_to_" + key + "(_protocol[" + str(count) + "].array_items());\n"
         elif type_ == tools.TypeType.Array:
             array_type = key[:-2]
             array_type_ = tools.check_type(array_type, dependent_struct, dependent_enum)
@@ -127,7 +127,7 @@ def genprotocolstruct(struct_name, elems, dependent_struct, dependent_enum):
             elif array_type_ == tools.TypeType.Bin:
                 code += "        _" + value + ".push_back(it_.binary_items());\n"
             elif array_type_ == tools.TypeType.Custom:
-                code += "        _" + value + ".push_back(" + array_type + "::protcol_to_" + array_type + "(it_" + _v_uuid + "));\n"
+                code += "        _" + value + ".push_back(" + array_type + "::protcol_to_" + array_type + "(it_.array_items()));\n"
             elif array_type_ == tools.TypeType.Array:
                 raise Exception("not support nested array:%s in struct:%s" % (key, struct_name))
             code += "            }\n"

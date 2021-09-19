@@ -37,7 +37,7 @@ namespace abelkhan
             _protocol.push_back(_struct.argv4);
             return _protocol;
         }
-        static test1 protcol_to_test1(msgpack11::MsgPack::array& _protocol){
+        static test1 protcol_to_test1(const msgpack11::MsgPack::array& _protocol){
             auto _argv1 = _protocol[0].int32_value();
             std::string _argv2 = _protocol[1].string_value();
             auto _argv3 = _protocol[2].float32_value();
@@ -69,9 +69,9 @@ namespace abelkhan
             _protocol.push_back(test1::test1_to_protcol(_struct.argv2));
             return _protocol;
         }
-        static test2 protcol_to_test2(msgpack11::MsgPack::array& _protocol){
+        static test2 protcol_to_test2(const msgpack11::MsgPack::array& _protocol){
             auto _argv1 = _protocol[0].int32_value();
-            auto _argv2 = test1::protcol_to_test1(_protocol[1]);
+            auto _argv2 = test1::protcol_to_test1(_protocol[1].array_items());
             test2 _structf1917643_06b2_3e6d_ab77_0a5044067d0a(_argv1, _argv2);
             return _structf1917643_06b2_3e6d_ab77_0a5044067d0a;
         }
@@ -104,7 +104,9 @@ namespace abelkhan
 
         void timeout(uint64_t tick, std::function<void()> timeout_cb)
         {
-            TinyTimer.add_timer(tick, [cb_uuid, module_rsp_cb](){                module_rsp_cb->test3_timeout(cb_uuid);            });
+            TinyTimer::add_timer(tick, [this](){
+                module_rsp_cb->test3_timeout(cb_uuid);
+            });
             sig_test3_timeout.connect(timeout_cb);
         }
 
@@ -127,7 +129,7 @@ namespace abelkhan
         }
         void test3_rsp(const msgpack11::MsgPack::array& inArray){
             auto uuid = inArray[0].uint64_value();
-            auto _t1 = test1::protcol_to_test1(inArray[1]);
+            auto _t1 = test1::protcol_to_test1(inArray[1].array_items());
             auto rsp = try_get_and_del_test3_cb(uuid);
             if (rsp != nullptr){
                 rsp->sig_test3_cb.emit(_t1);
@@ -143,14 +145,14 @@ namespace abelkhan
         }
 
         void test3_timeout(uint64_t cb_uuid){
-            auto rsp = try_get_and_del_test3_cb(uuid);
+            auto rsp = try_get_and_del_test3_cb(cb_uuid);
             if (rsp != nullptr){
                 rsp->sig_test3_timeout.emit();
             }
         }
 
         std::shared_ptr<test_test3_cb> try_get_and_del_test3_cb(uint64_t uuid){
-            std::std::lock_guard<std::mutex> l(mutex_map_test3);
+            std::lock_guard<std::mutex> l(mutex_map_test3);
             auto rsp = map_test3[uuid];
             map_test3.erase(uuid);
             return rsp;
@@ -182,7 +184,7 @@ namespace abelkhan
             call_module_method("test3", _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7);
 
             auto cb_test3_obj = std::make_shared<test_test3_cb>(uuid_20ca53af_d04c_58a2_a8b3_d02b9e414e80, rsp_cb_test_handle);
-            std::std::lock_guard<std::mutex> l(rsp_cb_test_handle->mutex_map_test3);
+            std::lock_guard<std::mutex> l(rsp_cb_test_handle->mutex_map_test3);
             rsp_cb_test_handle->map_test3.insert(std::make_pair(uuid_20ca53af_d04c_58a2_a8b3_d02b9e414e80, cb_test3_obj));
             return cb_test3_obj;
         }
@@ -213,14 +215,14 @@ namespace abelkhan
             msgpack11::MsgPack::array _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7;
             _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7.push_back(uuid);
             _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7.push_back(test1::test1_to_protcol(t1));
-            call_module_method("test3_rsp", _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7.GetArray());
+            call_module_method("test3_rsp", _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7);
         }
 
         void err(int32_t err){
             msgpack11::MsgPack::array _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7;
             _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7.push_back(uuid);
             _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7.push_back(err);
-            call_module_method("test3_err", _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7.GetArray());
+            call_module_method("test3_err", _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7);
         }
 
     };
@@ -238,24 +240,22 @@ namespace abelkhan
             reg_method("test4", std::bind(&test_module::test4, this, std::placeholders::_1));
         }
 
-        signals<void(test2 t2)> sig_test3;
+        concurrent::signals<void(test2 t2)> sig_test3;
         void test3(const msgpack11::MsgPack::array& inArray){
             auto _cb_uuid = inArray[0].uint64_value();
-            auto _t2 = test2::protcol_to_test2(inArray[1]);
-        }
+            auto _t2 = test2::protcol_to_test2(inArray[1].array_items());
             rsp = std::make_shared<test_test3_rsp>(current_ch, _cb_uuid);
             sig_test3.emit(_t2);
             rsp = nullptr;
         }
 
-        signals<void(std::vector<test2> argv)> sig_test4;
+        concurrent::signals<void(std::vector<test2> argv)> sig_test4;
         void test4(const msgpack11::MsgPack::array& inArray){
             std::vector<test2> _argv;
             auto _protocol_array = inArray[0].array_items();
             for(auto it_51e4d59a_5357_5634_9bc1_e9c2e0aa9ab0 : _protocol_array){
-                _argv.push_back(test2::protcol_to_test2(it_51e4d59a_5357_5634_9bc1_e9c2e0aa9ab0));
+                _argv.push_back(test2::protcol_to_test2(it_51e4d59a_5357_5634_9bc1_e9c2e0aa9ab0.array_items()));
             }
-        }
             sig_test4.emit(_argv);
         }
 

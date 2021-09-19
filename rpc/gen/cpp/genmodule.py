@@ -24,7 +24,7 @@ def gen_module_module(module_name, funcs, dependent_struct, dependent_enum):
         if i[1] == "ntf":
             code_constructor += "            reg_method(\"" + func_name + "\", std::bind(&" + module_name + "_module::" + func_name + ", this, std::placeholders::_1));\n"
                 
-            code_func += "        signals<void("
+            code_func += "        concurrent::signals<void("
             count = 0
             for _type, _name in i[2]:
                 code_func += tools.convert_type(_type, dependent_struct, dependent_enum) + " " + _name 
@@ -65,7 +65,7 @@ def gen_module_module(module_name, funcs, dependent_struct, dependent_enum):
                 elif type_ == tools.TypeType.Bin:
                     code_func += "            auto _" + _name + " = inArray[" + str(count) + "].binary_items();\n"
                 elif type_ == tools.TypeType.Custom:
-                    code_func += "            auto _" + _name + " = " + _type + "::protcol_to_" + _type + "(inArray[" + str(count) + "]);\n"
+                    code_func += "            auto _" + _name + " = " + _type + "::protcol_to_" + _type + "(inArray[" + str(count) + "].array_items());\n"
                 elif type_ == tools.TypeType.Array:
                     array_type = _type[:-2]
                     array_type_ = tools.check_type(array_type, dependent_struct, dependent_enum)
@@ -101,11 +101,10 @@ def gen_module_module(module_name, funcs, dependent_struct, dependent_enum):
                     elif array_type_ == tools.TypeType.String:
                         code_func += "                _" + _name + ".push_back(it_" + _v_uuid + "->binary_items());\n"
                     elif array_type_ == tools.TypeType.Custom:
-                        code_func += "                _" + _name + ".push_back(" + array_type + "::protcol_to_" + array_type + "(it_" + _v_uuid + "));\n"
+                        code_func += "                _" + _name + ".push_back(" + array_type + "::protcol_to_" + array_type + "(it_" + _v_uuid + ".array_items()));\n"
                     elif array_type_ == tools.TypeType.Array:
                         raise Exception("not support nested array:%s in func:%s" % (_type, func_name))
                     code_func += "            }\n"
-                code_func += "        }\n"
                 count += 1
 
             code_func += "            sig_" + func_name + ".emit("
@@ -120,7 +119,7 @@ def gen_module_module(module_name, funcs, dependent_struct, dependent_enum):
         elif i[1] == "req" and i[3] == "rsp" and i[5] == "err":
             code_constructor += "            reg_method(\"" + func_name + "\", std::bind(&" + module_name + "_module::" + func_name + ", this, std::placeholders::_1));\n"
             
-            code_func += "        signals<void("
+            code_func += "        concurrent::signals<void("
             count = 0
             for _type, _name in i[2]:
                 code_func += tools.convert_type(_type, dependent_struct, dependent_enum) + " " + _name
@@ -162,7 +161,7 @@ def gen_module_module(module_name, funcs, dependent_struct, dependent_enum):
                 elif type_ == tools.TypeType.Bin:
                     code_func += "            auto _" + _name + " = inArray[" + str(count) + "].binary_items();\n"
                 elif type_ == tools.TypeType.Custom:
-                    code_func += "            auto _" + _name + " = " + _type + "::protcol_to_" + _type + "(inArray[" + str(count) + "]);\n"
+                    code_func += "            auto _" + _name + " = " + _type + "::protcol_to_" + _type + "(inArray[" + str(count) + "].array_items());\n"
                 elif type_ == tools.TypeType.Array:
                     array_type = _type[:-2]
                     array_type_ = tools.check_type(array_type, dependent_struct, dependent_enum)
@@ -198,11 +197,10 @@ def gen_module_module(module_name, funcs, dependent_struct, dependent_enum):
                     elif array_type_ == tools.TypeType.String:
                         code_func += "                _" + _name + ".push_back(it_" + _v_uuid + "->binary_items());\n"
                     elif array_type_ == tools.TypeType.Custom:
-                        code_func += "                _" + _name + ".push_back(" + array_type + "::protcol_to_" + array_type + "(it_" + _v_uuid + "));\n"
+                        code_func += "                _" + _name + ".push_back(" + array_type + "::protcol_to_" + array_type + "(it_" + _v_uuid + ".array_items()));\n"
                     elif array_type_ == tools.TypeType.Array:
                         raise Exception("not support nested array:%s in func:%s" % (_type, func_name))
                     code_func += "            }\n"
-                code_func += "        }\n"
                 count += 1
 
             code_func += "            rsp = std::make_shared<" + module_name + "_" + func_name + "_rsp>(current_ch, _cb_uuid);\n"
@@ -259,7 +257,7 @@ def gen_module_module(module_name, funcs, dependent_struct, dependent_enum):
                         raise Exception("not support nested array:%s in func:%s" % (_type, func_name))
                     rsp_code += "            }\n"                                                     
                     rsp_code += "            _argv_" + _argv_uuid + ".push_back(_array_" + _array_uuid + ");\n"
-            rsp_code += "            call_module_method(\"" + func_name + "_rsp\", _argv_" + _argv_uuid + ".GetArray());\n"
+            rsp_code += "            call_module_method(\"" + func_name + "_rsp\", _argv_" + _argv_uuid + ");\n"
             rsp_code += "        }\n\n"
 
             rsp_code += "        void err("
@@ -296,7 +294,7 @@ def gen_module_module(module_name, funcs, dependent_struct, dependent_enum):
                         raise Exception("not support nested array:%s in func:%s" % (_type, func_name))
                     rsp_code += "            }\n"                                                     
                     rsp_code += "            _argv_" + _argv_uuid + ".push_back(_array_" + _array_uuid + ");\n"
-            rsp_code += "            call_module_method(\"" + func_name + "_err\", _argv_" + _argv_uuid + ".GetArray());\n"
+            rsp_code += "            call_module_method(\"" + func_name + "_err\", _argv_" + _argv_uuid + ");\n"
             rsp_code += "        }\n\n"
             rsp_code += "    };\n\n"
 
