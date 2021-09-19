@@ -31,8 +31,7 @@ def gen(inputdir, outputdir):
 
     pretreatmentdata = jparser.batch(inputdir)
     for pretreatment in pretreatmentdata:
-        _uuid = str(uuid.uuid1())
-        _uuid = '_'.join(_uuid.split('-'))
+        _uuid = '_'.join(str(uuid.uuid3(uuid.NAMESPACE_DNS, pretreatment.name)).split('-'))
         code = "#ifndef _h_" + pretreatment.name + "_" + _uuid + "_\n"
         code += "#define _h_" + pretreatment.name + "_" + _uuid + "_\n\n"
         code += gen_import(pretreatment._import)
