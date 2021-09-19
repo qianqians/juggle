@@ -33,27 +33,37 @@ def gen_module_module(module_name, funcs, dependent_struct, dependent_enum):
                     code_func += ", "
             code_func += ")> sig_" + func_name + ";\n"
 
-            code_func += "        void " + func_name + "(rapidjson::Value& inArray){\n"
+            code_func += "        void " + func_name + "(const msgpack11::MsgPack::array& inArray){\n"
             count = 0 
             for _type, _name in i[2]:
                 type_ = tools.check_type(_type, dependent_struct, dependent_enum)
                 _type_ = tools.convert_type(_type, dependent_struct, dependent_enum)
-                if type_ == tools.TypeType.Int32:
-                    code_func += "            auto _" + _name + " = inArray[" + str(count) + "].GetInt();\n"
+                if type_ == tools.TypeType.Int8:
+                    code_func += "            auto _" + _name + " = inArray[" + str(count) + "].int8_value();\n"
+                elif type_ == tools.TypeType.Int16:
+                    code_func += "            auto _" + _name + " = inArray[" + str(count) + "].int16_value();\n"
+                elif type_ == tools.TypeType.Int32:
+                    code_func += "            auto _" + _name + " = inArray[" + str(count) + "].int32_value();\n"
                 elif type_ == tools.TypeType.Int64:
-                    code_func += "            auto _" + _name + " = inArray[" + str(count) + "].GetInt64();\n"
+                    code_func += "            auto _" + _name + " = inArray[" + str(count) + "].int64_value();\n"
+                elif type_ == tools.TypeType.Uint8:
+                    code_func += "            auto _" + _name + " = inArray[" + str(count) + "].uint8_value();\n"
+                elif type_ == tools.TypeType.Uint16:
+                    code_func += "            auto _" + _name + " = inArray[" + str(count) + "].uint16_value();\n"
                 elif type_ == tools.TypeType.Uint32:
-                    code_func += "            auto _" + _name + " = inArray[" + str(count) + "].GetUint();\n"
+                    code_func += "            auto _" + _name + " = inArray[" + str(count) + "].uint32_value();\n"
                 elif type_ == tools.TypeType.Uint64:
-                    code_func += "            auto _" + _name + " = inArray[" + str(count) + "].GetUint64();\n"
+                    code_func += "            auto _" + _name + " = inArray[" + str(count) + "].uint64_value();\n"
                 elif type_ == tools.TypeType.Float:
-                    code_func += "            auto _" + _name + " = inArray[" + str(count) + "].GetFloat();\n"
+                    code_func += "            auto _" + _name + " = inArray[" + str(count) + "].float32_value();\n"
                 elif type_ == tools.TypeType.Double:
-                    code_func += "            auto _" + _name + " = inArray[" + str(count) + "].GetDouble();\n"
+                    code_func += "            auto _" + _name + " = inArray[" + str(count) + "].float64_value();\n"
                 elif type_ == tools.TypeType.Bool:
-                    code_func += "            auto _" + _name + " = inArray[" + str(count) + "].GetBool();\n"
+                    code_func += "            auto _" + _name + " = inArray[" + str(count) + "].bool_value();\n"
                 elif type_ == tools.TypeType.String:
-                    code_func += "            auto _" + _name + " = inArray[" + str(count) + "].GetString();\n"
+                    code_func += "            auto _" + _name + " = inArray[" + str(count) + "].string_value();\n"
+                elif type_ == tools.TypeType.Bin:
+                    code_func += "            auto _" + _name + " = inArray[" + str(count) + "].binary_items();\n"
                 elif type_ == tools.TypeType.Custom:
                     code_func += "            auto _" + _name + " = " + _type + "::protcol_to_" + _type + "(inArray[" + str(count) + "]);\n"
                 elif type_ == tools.TypeType.Array:
@@ -61,30 +71,41 @@ def gen_module_module(module_name, funcs, dependent_struct, dependent_enum):
                     array_type_ = tools.check_type(array_type, dependent_struct, dependent_enum)
                     _array_type = tools.convert_type(array_type, dependent_struct, dependent_enum)
                     code_func += "            std::vector<" + _array_type + "> _" + _name + ";\n"
-                    _v_uuid = str(uuid.uuid1())
-                    _v_uuid = '_'.join(_v_uuid.split('-'))
-                    code_func += "            for(auto it_" + _v_uuid + " = inArray[" + str(count) + "].Begin(); it_" + _v_uuid + " != inArray[" + str(count) + "].End(); ++it_" + _v_uuid + "){\n"
-                    if array_type_ == tools.TypeType.Int32:
-                        code_func += "                _" + _name + ".push_back(it_" + _v_uuid + "->GetInt());\n"
+                    code_func += "            auto _protocol_array = inArray[" + str(count) + "].array_items();\n"
+                    _v_uuid = '_'.join(str(uuid.uuid5(uuid.NAMESPACE_DNS, _name)).split('-'))
+                    code_func += "            for(auto it_" + _v_uuid + " : _protocol_array){\n"
+                    if array_type_ == tools.TypeType.Int8:
+                        code_func += "                _" + _name + ".push_back(it_" + _v_uuid + "->int8_value());\n"
+                    elif array_type_ == tools.TypeType.Int16:
+                        code_func += "                _" + _name + ".push_back(it_" + _v_uuid + "->int16_value());\n"
+                    elif array_type_ == tools.TypeType.Int32:
+                        code_func += "                _" + _name + ".push_back(it_" + _v_uuid + "->int32_value());\n"
                     elif array_type_ == tools.TypeType.Int64:
-                        code_func += "                _" + _name + ".push_back(it_" + _v_uuid + "->GetInt64());\n"
+                        code_func += "                _" + _name + ".push_back(it_" + _v_uuid + "->int64_value());\n"
+                    elif array_type_ == tools.TypeType.Uint8:
+                        code_func += "                _" + _name + ".push_back(it_" + _v_uuid + "->uint8_value());\n"
+                    elif array_type_ == tools.TypeType.Uint16:
+                        code_func += "                _" + _name + ".push_back(it_" + _v_uuid + "->uint16_value());\n"
                     elif array_type_ == tools.TypeType.Uint32:
-                        code_func += "                _" + _name + ".push_back(it_" + _v_uuid + "->GetUint());\n"
+                        code_func += "                _" + _name + ".push_back(it_" + _v_uuid + "->uint32_value());\n"
                     elif array_type_ == tools.TypeType.Uint64:
-                        code_func += "                _" + _name + ".push_back(it_" + _v_uuid + "->GetUint64());\n"
+                        code_func += "                _" + _name + ".push_back(it_" + _v_uuid + "->uint64_value());\n"
                     elif array_type_ == tools.TypeType.Float:
-                        code_func += "                _" + _name + ".push_back(it_" + _v_uuid + "->GetFloat());\n"
+                        code_func += "                _" + _name + ".push_back(it_" + _v_uuid + "->float32_value());\n"
                     elif array_type_ == tools.TypeType.Double:
-                        code_func += "                _" + _name + ".push_back(it_" + _v_uuid + "->GetDouble());\n"
+                        code_func += "                _" + _name + ".push_back(it_" + _v_uuid + "->float64_value());\n"
                     elif array_type_ == tools.TypeType.Bool:
-                        code_func += "                _" + _name + ".push_back(it_" + _v_uuid + "->GetBool());\n"
+                        code_func += "                _" + _name + ".push_back(it_" + _v_uuid + "->bool_value());\n"
                     elif array_type_ == tools.TypeType.String:
-                        code_func += "                _" + _name + ".push_back(it_" + _v_uuid + "->GetString());\n"
+                        code_func += "                _" + _name + ".push_back(it_" + _v_uuid + "->string_value());\n"
+                    elif array_type_ == tools.TypeType.String:
+                        code_func += "                _" + _name + ".push_back(it_" + _v_uuid + "->binary_items());\n"
                     elif array_type_ == tools.TypeType.Custom:
-                        code_func += "                _" + _name + ".push_back(" + array_type + "::protcol_to_" + array_type + "(*it_" + _v_uuid + "));\n"
+                        code_func += "                _" + _name + ".push_back(" + array_type + "::protcol_to_" + array_type + "(it_" + _v_uuid + "));\n"
                     elif array_type_ == tools.TypeType.Array:
                         raise Exception("not support nested array:%s in func:%s" % (_type, func_name))
-                    code_func += "            }\n"                                                     
+                    code_func += "            }\n"
+                code_func += "        }\n"
                 count += 1
 
             code_func += "            sig_" + func_name + ".emit("
@@ -108,28 +129,38 @@ def gen_module_module(module_name, funcs, dependent_struct, dependent_enum):
                     code_func += ", "
             code_func += ")> sig_" + func_name + ";\n"
             
-            code_func += "        void " + func_name + "(rapidjson::Value& inArray){\n"
-            code_func += "            auto _cb_uuid = inArray[0].GetString();\n"
+            code_func += "        void " + func_name + "(const msgpack11::MsgPack::array& inArray){\n"
+            code_func += "            auto _cb_uuid = inArray[0].uint64_value();\n"
             count = 1 
             for _type, _name in i[2]:
                 type_ = tools.check_type(_type, dependent_struct, dependent_enum)
                 _type_ = tools.convert_type(_type, dependent_struct, dependent_enum)
-                if type_ == tools.TypeType.Int32:
-                    code_func += "            auto _" + _name + " = inArray[" + str(count) + "].GetInt();\n"
+                if type_ == tools.TypeType.Int8:
+                    code_func += "            auto _" + _name + " = inArray[" + str(count) + "].int8_value();\n"
+                elif type_ == tools.TypeType.Int16:
+                    code_func += "            auto _" + _name + " = inArray[" + str(count) + "].int16_value();\n"
+                elif type_ == tools.TypeType.Int32:
+                    code_func += "            auto _" + _name + " = inArray[" + str(count) + "].int32_value();\n"
                 elif type_ == tools.TypeType.Int64:
-                    code_func += "            auto _" + _name + " = inArray[" + str(count) + "].GetInt64();\n"
+                    code_func += "            auto _" + _name + " = inArray[" + str(count) + "].int64_value();\n"
+                elif type_ == tools.TypeType.Uint8:
+                    code_func += "            auto _" + _name + " = inArray[" + str(count) + "].uint8_value();\n"
+                elif type_ == tools.TypeType.Uint16:
+                    code_func += "            auto _" + _name + " = inArray[" + str(count) + "].uint16_value();\n"
                 elif type_ == tools.TypeType.Uint32:
-                    code_func += "            auto _" + _name + " = inArray[" + str(count) + "].GetUint();\n"
+                    code_func += "            auto _" + _name + " = inArray[" + str(count) + "].uint32_value();\n"
                 elif type_ == tools.TypeType.Uint64:
-                    code_func += "            auto _" + _name + " = inArray[" + str(count) + "].GetUint64();\n"
+                    code_func += "            auto _" + _name + " = inArray[" + str(count) + "].uint64_value();\n"
                 elif type_ == tools.TypeType.Float:
-                    code_func += "            auto _" + _name + " = inArray[" + str(count) + "].GetFloat();\n"
+                    code_func += "            auto _" + _name + " = inArray[" + str(count) + "].float32_value();\n"
                 elif type_ == tools.TypeType.Double:
-                    code_func += "            auto _" + _name + " = inArray[" + str(count) + "].GetDouble();\n"
+                    code_func += "            auto _" + _name + " = inArray[" + str(count) + "].float64_value();\n"
                 elif type_ == tools.TypeType.Bool:
-                    code_func += "            auto _" + _name + " = inArray[" + str(count) + "].GetBool();\n"
+                    code_func += "            auto _" + _name + " = inArray[" + str(count) + "].bool_value();\n"
                 elif type_ == tools.TypeType.String:
-                    code_func += "            auto _" + _name + " = inArray[" + str(count) + "].GetString();\n"
+                    code_func += "            auto _" + _name + " = inArray[" + str(count) + "].string_value();\n"
+                elif type_ == tools.TypeType.Bin:
+                    code_func += "            auto _" + _name + " = inArray[" + str(count) + "].binary_items();\n"
                 elif type_ == tools.TypeType.Custom:
                     code_func += "            auto _" + _name + " = " + _type + "::protcol_to_" + _type + "(inArray[" + str(count) + "]);\n"
                 elif type_ == tools.TypeType.Array:
@@ -137,30 +168,41 @@ def gen_module_module(module_name, funcs, dependent_struct, dependent_enum):
                     array_type_ = tools.check_type(array_type, dependent_struct, dependent_enum)
                     _array_type = tools.convert_type(array_type, dependent_struct, dependent_enum)
                     code_func += "            std::vector<" + _array_type + "> _" + _name + ";\n"
-                    _v_uuid = str(uuid.uuid1())
-                    _v_uuid = '_'.join(_v_uuid.split('-'))
-                    code_func += "            for(auto it_" + _v_uuid + " = inArray[" + str(count) + "].Begin(); it_" + _v_uuid + " != inArray[" + str(count) + "].End(); ++it_" + _v_uuid + "){\n"
-                    if array_type_ == tools.TypeType.Int32:
-                        code_func += "                _" + _name + ".push_back(it_" + _v_uuid + "->GetInt());\n"
+                    code_func += "            auto _protocol_array = inArray[" + str(count) + "].array_items();\n"
+                    _v_uuid = '_'.join(str(uuid.uuid5(uuid.NAMESPACE_DNS, _name)).split('-'))
+                    code_func += "            for(auto it_" + _v_uuid + " : _protocol_array){\n"
+                    if array_type_ == tools.TypeType.Int8:
+                        code_func += "                _" + _name + ".push_back(it_" + _v_uuid + "->int8_value());\n"
+                    elif array_type_ == tools.TypeType.Int16:
+                        code_func += "                _" + _name + ".push_back(it_" + _v_uuid + "->int16_value());\n"
+                    elif array_type_ == tools.TypeType.Int32:
+                        code_func += "                _" + _name + ".push_back(it_" + _v_uuid + "->int32_value());\n"
                     elif array_type_ == tools.TypeType.Int64:
-                        code_func += "                _" + _name + ".push_back(it_" + _v_uuid + "->GetInt64());\n"
+                        code_func += "                _" + _name + ".push_back(it_" + _v_uuid + "->int64_value());\n"
+                    elif array_type_ == tools.TypeType.Uint8:
+                        code_func += "                _" + _name + ".push_back(it_" + _v_uuid + "->uint8_value());\n"
+                    elif array_type_ == tools.TypeType.Uint16:
+                        code_func += "                _" + _name + ".push_back(it_" + _v_uuid + "->uint16_value());\n"
                     elif array_type_ == tools.TypeType.Uint32:
-                        code_func += "                _" + _name + ".push_back(it_" + _v_uuid + "->GetUint());\n"
+                        code_func += "                _" + _name + ".push_back(it_" + _v_uuid + "->uint32_value());\n"
                     elif array_type_ == tools.TypeType.Uint64:
-                        code_func += "                _" + _name + ".push_back(it_" + _v_uuid + "->GetUint64());\n"
+                        code_func += "                _" + _name + ".push_back(it_" + _v_uuid + "->uint64_value());\n"
                     elif array_type_ == tools.TypeType.Float:
-                        code_func += "                _" + _name + ".push_back(it_" + _v_uuid + "->GetFloat());\n"
+                        code_func += "                _" + _name + ".push_back(it_" + _v_uuid + "->float32_value());\n"
                     elif array_type_ == tools.TypeType.Double:
-                        code_func += "                _" + _name + ".push_back(it_" + _v_uuid + "->GetDouble());\n"
+                        code_func += "                _" + _name + ".push_back(it_" + _v_uuid + "->float64_value());\n"
                     elif array_type_ == tools.TypeType.Bool:
-                        code_func += "                _" + _name + ".push_back(it_" + _v_uuid + "->GetBool());\n"
+                        code_func += "                _" + _name + ".push_back(it_" + _v_uuid + "->bool_value());\n"
                     elif array_type_ == tools.TypeType.String:
-                        code_func += "                _" + _name + ".push_back(it_" + _v_uuid + "->GetString());\n"
+                        code_func += "                _" + _name + ".push_back(it_" + _v_uuid + "->string_value());\n"
+                    elif array_type_ == tools.TypeType.String:
+                        code_func += "                _" + _name + ".push_back(it_" + _v_uuid + "->binary_items());\n"
                     elif array_type_ == tools.TypeType.Custom:
-                        code_func += "                _" + _name + ".push_back(" + array_type + "::protcol_to_" + array_type + "(*it_" + _v_uuid + "));\n"
+                        code_func += "                _" + _name + ".push_back(" + array_type + "::protcol_to_" + array_type + "(it_" + _v_uuid + "));\n"
                     elif array_type_ == tools.TypeType.Array:
                         raise Exception("not support nested array:%s in func:%s" % (_type, func_name))
-                    code_func += "            }\n"                                                     
+                    code_func += "            }\n"
+                code_func += "        }\n"
                 count += 1
 
             code_func += "            rsp = std::make_shared<" + module_name + "_" + func_name + "_rsp>(current_ch, _cb_uuid);\n"
@@ -177,9 +219,9 @@ def gen_module_module(module_name, funcs, dependent_struct, dependent_enum):
 
             rsp_code += "    class " + module_name + "_"  + func_name + "_rsp : Response {\n"
             rsp_code += "    private:\n"
-            rsp_code += "        std::string uuid;\n\n"
+            rsp_code += "        uint64_t uuid;\n\n"
             rsp_code += "    public:\n"
-            rsp_code += "        " + module_name + "_"  + func_name + "_rsp(std::shared_ptr<Ichannel> _ch, std::string _uuid) : Response(\"" + module_name + "_rsp_cb\", _ch)\n"
+            rsp_code += "        " + module_name + "_"  + func_name + "_rsp(std::shared_ptr<Ichannel> _ch, uint64_t _uuid) : Response(\"" + module_name + "_rsp_cb\", _ch)\n"
             rsp_code += "        {\n"
             rsp_code += "            uuid = _uuid;\n"
             rsp_code += "        }\n\n"
@@ -191,45 +233,32 @@ def gen_module_module(module_name, funcs, dependent_struct, dependent_enum):
                 if count < len(i[4]):
                     rsp_code += ", "
             rsp_code += "){\n"
-            _argv_uuid = str(uuid.uuid1())
-            _argv_uuid = '_'.join(_argv_uuid.split('-'))
-            rsp_code += "            rapidjson::Document _argv_" + _argv_uuid + ";\n"
-            rsp_code += "            rapidjson::Document::AllocatorType& allocator = _argv_" + _argv_uuid + ".GetAllocator();\n"
-            rsp_code += "            _argv_" + _argv_uuid + ".SetArray();\n"
-            rsp_code += "            rapidjson::Value str_uuid(rapidjson::kStringType);\n"
-            rsp_code += "            str_uuid.SetString(uuid.c_str(), uuid.size());\n"
-            rsp_code += "            _argv_" + _argv_uuid + ".PushBack(str_uuid, allocator);\n"
+            _argv_uuid = '_'.join(str(uuid.uuid3(uuid.NAMESPACE_DNS, func_name)).split('-'))
+            rsp_code += "            msgpack11::MsgPack::array _argv_" + _argv_uuid + ";\n"
+            rsp_code += "            _argv_" + _argv_uuid + ".push_back(uuid);\n"
             for _type, _name in i[4]:
                 type_ = tools.check_type(_type, dependent_struct, dependent_enum)
-                if type_  == tools.TypeType.Int32 or type_ == tools.TypeType.Int64 or type_ == tools.TypeType.Uint32 or type_ == tools.TypeType.Uint64 or type_ == tools.TypeType.Float or type_ == tools.TypeType.Double or type_ == tools.TypeType.Bool:
-                    rsp_code += "            _argv_" + _argv_uuid + ".PushBack(" + _name + ", allocator);\n"
-                elif type_ == tools.TypeType.String:
-                    rsp_code += "            rapidjson::Value str_" + _name + "(rapidjson::kStringType);\n"
-                    rsp_code += "            str_" + _name + ".SetString(" + _name + ".c_str(), " + _name + ".size());\n"
-                    rsp_code += "            _argv_" + _argv_uuid + ".PushBack(str_" + _name + ", allocator);\n"
+                if type_ in tools.OriginalTypeList:
+                    rsp_code += "            _argv_" + _argv_uuid + ".push_back(" + _name + ");\n"
                 elif type_ == tools.TypeType.Custom:
-                    rsp_code += "            _argv_" + _argv_uuid + ".PushBack(" + _type + "::" + _type + "_to_protcol(" + _name + "), allocator);\n"
+                    rsp_code += "            _argv_" + _argv_uuid + ".push_back(" + _type + "::" + _type + "_to_protcol(" + _name + "));\n"
                 elif type_ == tools.TypeType.Array:
-                    _array_uuid = str(uuid.uuid1())
-                    _array_uuid = '_'.join(_array_uuid.split('-'))
-                    rsp_code += "            rapidjson::Value _array_" + _array_uuid + "(rapidjson::kArrayType);\n"
-                    _v_uuid = str(uuid.uuid1())
-                    _v_uuid = '_'.join(_v_uuid.split('-'))
-                    rsp_code += "            for(auto v_" + _v_uuid + " : _name){\n"
+                    _array_uuid = '_'.join(str(uuid.uuid3(uuid.NAMESPACE_DNS, _name)).split('-'))
+                    rsp_code += "            msgpack11::MsgPack::array _array_" + _array_uuid + ";\n"
+                    _v_uuid = '_'.join(str(uuid.uuid5(uuid.NAMESPACE_DNS, _name)).split('-'))
+                    rsp_code += "            for(auto v_" + _v_uuid + " : " + _name + "){\n"
                     array_type = _type[:-2]
                     array_type_ = tools.check_type(array_type, dependent_struct, dependent_enum)
-                    if array_type_ == tools.TypeType.Int32 or array_type_ == tools.TypeType.Int64 or array_type_ == tools.TypeType.Uint32 or array_type_ == tools.TypeType.Uint64 or array_type_ == tools.TypeType.Float or array_type_ == tools.TypeType.Double or array_type_ == tools.TypeType.Bool:
-                        rsp_code += "                _array_" + _array_uuid + ".PushBack(v_" + _v_uuid + ", allocator);\n"
+                    if array_type_ in tools.OriginalTypeList:
+                        rsp_code += "                _array_" + _array_uuid + ".push_back(v_" + _v_uuid + ");\n"
                     elif type_ == tools.TypeType.String:
-                        rsp_code += "                rapidjson::Value str_" + _v_uuid + "(rapidjson::kStringType);\n"
-                        rsp_code += "                str_" + _v_uuid + ".SetString(v_" + _v_uuid + ".c_str(), v_" + _v_uuid + ".size());\n"
-                        rsp_code += "                _array_" + _array_uuid + ".PushBack(str_" + _v_uuid + ", allocator);\n"
+                        rsp_code += "                _array_" + _array_uuid + ".push_back(v_" + _v_uuid + ");\n"
                     elif array_type_ == tools.TypeType.Custom:
-                        rsp_code += "                _array_" + _array_uuid + ".PushBack(" + array_type + "::" + array_type + "_to_protcol(v_" + _v_uuid + "), allocator);\n"
+                        rsp_code += "                _array_" + _array_uuid + ".push_back(" + array_type + "::" + array_type + "_to_protcol(v_" + _v_uuid + "));\n"
                     elif array_type_ == tools.TypeType.Array:
                         raise Exception("not support nested array:%s in func:%s" % (_type, func_name))
                     rsp_code += "            }\n"                                                     
-                    rsp_code += "            _argv_" + _argv_uuid + ".PushBack(_array_" + _array_uuid + ", allocator);\n"
+                    rsp_code += "            _argv_" + _argv_uuid + ".push_back(_array_" + _array_uuid + ");\n"
             rsp_code += "            call_module_method(\"" + func_name + "_rsp\", _argv_" + _argv_uuid + ".GetArray());\n"
             rsp_code += "        }\n\n"
 
@@ -241,45 +270,32 @@ def gen_module_module(module_name, funcs, dependent_struct, dependent_enum):
                 if count < len(i[6]):
                     rsp_code += ", "
             rsp_code += "){\n"
-            _argv_uuid = str(uuid.uuid1())
-            _argv_uuid = '_'.join(_argv_uuid.split('-'))
-            rsp_code += "            rapidjson::Document _argv_" + _argv_uuid + ";\n"
-            rsp_code += "            rapidjson::Document::AllocatorType& allocator = _argv_" + _argv_uuid + ".GetAllocator();\n"
-            rsp_code += "            _argv_" + _argv_uuid + ".SetArray();\n"
-            rsp_code += "            rapidjson::Value str_uuid(rapidjson::kStringType);\n"
-            rsp_code += "            str_uuid.SetString(uuid.c_str(), uuid.size());\n"
-            rsp_code += "            _argv_" + _argv_uuid + ".PushBack(str_uuid, allocator);\n"
+            _argv_uuid = '_'.join(str(uuid.uuid3(uuid.NAMESPACE_DNS, func_name)).split('-'))
+            rsp_code += "            msgpack11::MsgPack::array _argv_" + _argv_uuid + ";\n"
+            rsp_code += "            _argv_" + _argv_uuid + ".push_back(uuid);\n"
             for _type, _name in i[6]:
                 type_ = tools.check_type(_type, dependent_struct, dependent_enum)
-                if type_  == tools.TypeType.Int32 or type_ == tools.TypeType.Int64 or type_ == tools.TypeType.Uint32 or type_ == tools.TypeType.Uint64 or type_ == tools.TypeType.Float or type_ == tools.TypeType.Double or type_ == tools.TypeType.Bool:
-                    rsp_code += "            _argv_" + _argv_uuid + ".PushBack(" + _name + ", allocator);\n"
-                elif type_ == tools.TypeType.String:
-                    rsp_code += "            rapidjson::Value str_" + _name + "(rapidjson::kStringType);\n"
-                    rsp_code += "            str_" + _name + ".SetString(" + _name + ".c_str(), " + _name + ".size());\n"
-                    rsp_code += "            _argv_" + _argv_uuid + ".PushBack(str_" + _name + ", allocator);\n"
+                if type_ in tools.OriginalTypeList:
+                    rsp_code += "            _argv_" + _argv_uuid + ".push_back(" + _name + ");\n"
                 elif type_ == tools.TypeType.Custom:
-                    rsp_code += "            _argv_" + _argv_uuid + ".PushBack(" + _type + "::" + _type + "_to_protcol(" + _name + "), allocator);\n"
+                    rsp_code += "            _argv_" + _argv_uuid + ".push_back(" + _type + "::" + _type + "_to_protcol(" + _name + "));\n"
                 elif type_ == tools.TypeType.Array:
-                    _array_uuid = str(uuid.uuid1())
-                    _array_uuid = '_'.join(_array_uuid.split('-'))
-                    rsp_code += "            rapidjson::Value _array_" + _array_uuid + "(rapidjson::kArrayType);\n"
-                    _v_uuid = str(uuid.uuid1())
-                    _v_uuid = '_'.join(_v_uuid.split('-'))
-                    rsp_code += "            for(auto v_" + _v_uuid + " : _name){\n"
+                    _array_uuid = '_'.join(str(uuid.uuid3(uuid.NAMESPACE_DNS, _name)).split('-'))
+                    rsp_code += "            msgpack11::MsgPack::array _array_" + _array_uuid + ";\n"
+                    _v_uuid = '_'.join(str(uuid.uuid5(uuid.NAMESPACE_DNS, _name)).split('-'))
+                    rsp_code += "            for(auto v_" + _v_uuid + " : " + _name + "){\n"
                     array_type = _type[:-2]
                     array_type_ = tools.check_type(array_type, dependent_struct, dependent_enum)
-                    if array_type_ == tools.TypeType.Int32 or array_type_ == tools.TypeType.Int64 or array_type_ == tools.TypeType.Uint32 or array_type_ == tools.TypeType.Uint64 or array_type_ == tools.TypeType.Float or array_type_ == tools.TypeType.Double or array_type_ == tools.TypeType.Bool:
-                        rsp_code += "                _array_" + _array_uuid + ".PushBack(v_" + _v_uuid + ", allocator);\n"
+                    if array_type_ in tools.OriginalTypeList:
+                        rsp_code += "                _array_" + _array_uuid + ".push_back(v_" + _v_uuid + ");\n"
                     elif type_ == tools.TypeType.String:
-                        rsp_code += "                rapidjson::Value str_" + _v_uuid + "(rapidjson::kStringType);\n"
-                        rsp_code += "                str_" + _v_uuid + ".SetString(v_" + _v_uuid + ".c_str(), v_" + _v_uuid + ".size());\n"
-                        rsp_code += "                _array_" + _array_uuid + ".PushBack(str_" + _v_uuid + ", allocator);\n"
+                        rsp_code += "                _array_" + _array_uuid + ".push_back(v_" + _v_uuid + ");\n"
                     elif array_type_ == tools.TypeType.Custom:
-                        rsp_code += "                _array_" + _array_uuid + ".PushBack(" + array_type + "::" + array_type + "_to_protcol(v_" + _v_uuid + "), allocator);\n"
+                        rsp_code += "                _array_" + _array_uuid + ".push_back(" + array_type + "::" + array_type + "_to_protcol(v_" + _v_uuid + "));\n"
                     elif array_type_ == tools.TypeType.Array:
                         raise Exception("not support nested array:%s in func:%s" % (_type, func_name))
                     rsp_code += "            }\n"                                                     
-                    rsp_code += "            _argv_" + _argv_uuid + ".PushBack(_array_" + _array_uuid + ", allocator);\n"
+                    rsp_code += "            _argv_" + _argv_uuid + ".push_back(_array_" + _array_uuid + ");\n"
             rsp_code += "            call_module_method(\"" + func_name + "_err\", _argv_" + _argv_uuid + ".GetArray());\n"
             rsp_code += "        }\n\n"
             rsp_code += "    };\n\n"

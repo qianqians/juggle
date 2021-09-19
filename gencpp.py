@@ -20,10 +20,8 @@ import genmodule
 
 
 def gen_import(_import):
-    code = "#include <sole.hpp>\n"
-    code += "#include <rapidjson/rapidjson.h>\n\n"
-    code += "#include <signals.h>\n"
-    code += "#include <abelkhan.h>\n\n"
+    code = "#include <abelkhan.h>\n"
+    code += "#include <signals.h>\n\n"
     code += "namespace abelkhan\n{\n"
     return code
     

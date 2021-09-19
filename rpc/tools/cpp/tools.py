@@ -65,10 +65,6 @@ def check_type(typestr, dependent_struct, dependent_enum):
     elif check_in_dependent(typestr, dependent_enum):
     	return TypeType.Enum
     elif typestr[len(typestr)-2] == '[' and typestr[len(typestr)-1] == ']':
-        array_type = typestr[:-2]
-        type_ = check_type(array_type, dependent_struct, dependent_enum)
-        if type_ == TypeType.Int8 or type_ == TypeType.Uint8:
-            return TypeType.Bin
         return TypeType.Array
 
     raise Exception("non exist type:%s" % typestr)
@@ -99,18 +95,19 @@ def convert_type(typestr, dependent_struct, dependent_enum):
     elif typestr == 'bool':
         return 'bool'
     elif typestr == 'bin':
-        return 'std::string'
+        return 'std::vector<uint8_t>'
     elif check_in_dependent(typestr, dependent_struct):
 	    return typestr
     elif check_in_dependent(typestr, dependent_enum):
     	return typestr
     elif typestr[len(typestr)-2] == '[' and typestr[len(typestr)-1] == ']':
         array_type = typestr[:-2]
-        type_ = check_type(array_type, dependent_struct, dependent_enum)
-        if type_ == TypeType.Int8 or type_ == TypeType.Uint8:
-            return 'std::string'
         array_type = convert_type(array_type, dependent_struct, dependent_enum)
         return 'std::vector<' + array_type+'>'
 
     raise Exception("non exist type:%s" % typestr)
     
+
+OriginalTypeList = [TypeType.Enum, TypeType.String, TypeType.Int8, TypeType.Int16, TypeType.Int32, TypeType.Int64,
+                    TypeType.Uint8, TypeType.Uint16, TypeType.Uint32, TypeType.Uint64, 
+                    TypeType.Float, TypeType.Double, TypeType.Bool, TypeType.Bin]

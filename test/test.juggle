@@ -1,0 +1,16 @@
+struct test1{
+    int32 argv1;
+    string argv2;
+    float argv3;
+    double argv4;
+}
+
+struct test2{
+     int32 argv1;
+     test1 argv2;
+}
+
+module test{
+	test3 req(test2 t2) rsp(test1 t1) err(int32 err);
+    test4 ntf(test2[] argv);
+}
