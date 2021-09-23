@@ -4,6 +4,7 @@
 # modulemachine
 
 from deletenonespacelstrip import deleteNoneSpacelstrip
+from parametercheck import parameter_check
 
 class func(object):
     def __init__(self):
@@ -21,6 +22,8 @@ class func(object):
     def push(self, ch):
         if ch in [' ', '    ', '\r', '\n', '\t', '\0']:
             self.keyworld = deleteNoneSpacelstrip(self.keyworld)
+            if self.keyworld == '=':
+                self.keyworld = ''
             if self.keyworld != '':
                 if self.argvtuple is None:
                     self.func.append(deleteNoneSpacelstrip(self.keyworld))
@@ -34,6 +37,10 @@ class func(object):
             if self.keyworld != '':
                 self.argvPair.append(deleteNoneSpacelstrip(self.keyworld))
                 self.argvtuple.append(self.argvPair)
+                if len(self.argvPair) == 3:
+                    (key, value, parameter) = self.argvPair
+                    if parameter_check(key, value, parameter)  == False:
+                        raise Exception("wrong type default parameter:%s,%s,%s in struct:%s" % (key, value, parameter, self.func[0]))
                 self.argvPair = []
                 self.keyworld = ''
 
@@ -52,6 +59,9 @@ class func(object):
             if self.keyworld != '':
                 self.argvPair.append(deleteNoneSpacelstrip(self.keyworld))
                 self.argvtuple.append(self.argvPair)
+                (key, value, parameter) = self.argvPair
+                if parameter_check(key, value, parameter)  == False:
+                    raise Exception("wrong type default parameter:%s,%s,%s in struct:%s" % (key, value, parameter, self.func[0]))
 
             if self.argvtuple is None:
                 self.func.append([])
