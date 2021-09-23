@@ -32,18 +32,19 @@ namespace abelkhan
         static test1 protcol_to_test1(const msgpack11::MsgPack::object& _protocol){
             test1 _structc501822b_22a8_37ff_91a9_9545f4689a3d;
             for(auto i : _protocol){
-                if (i.frist == "argv1"){
-            _structc501822b_22a8_37ff_91a9_9545f4689a3d.argv1 = i.second.int32_value();
+                if (i.first == "argv1"){
+                    _structc501822b_22a8_37ff_91a9_9545f4689a3d.argv1 = i.second.int32_value();
                 }
-                else if (i.frist == "argv2"){
-            _structc501822b_22a8_37ff_91a9_9545f4689a3d.argv2 = i.second.string_value();
+                else if (i.first == "argv2"){
+                    _structc501822b_22a8_37ff_91a9_9545f4689a3d.argv2 = i.second.string_value();
                 }
-                else if (i.frist == "argv3"){
-            _structc501822b_22a8_37ff_91a9_9545f4689a3d.argv3 = i.second.float32_value();
+                else if (i.first == "argv3"){
+                    _structc501822b_22a8_37ff_91a9_9545f4689a3d.argv3 = i.second.float32_value();
                 }
-                else if (i.frist == "argv4"){
-            _structc501822b_22a8_37ff_91a9_9545f4689a3d.argv4 = i.second.float64_value();
+                else if (i.first == "argv4"){
+                    _structc501822b_22a8_37ff_91a9_9545f4689a3d.argv4 = i.second.float64_value();
                 }
+            }
             return _structc501822b_22a8_37ff_91a9_9545f4689a3d;
         }
     };
@@ -67,12 +68,13 @@ namespace abelkhan
         static test2 protcol_to_test2(const msgpack11::MsgPack::object& _protocol){
             test2 _structf1917643_06b2_3e6d_ab77_0a5044067d0a;
             for(auto i : _protocol){
-                if (i.frist == "argv1"){
-            _structf1917643_06b2_3e6d_ab77_0a5044067d0a.argv1 = i.second.int32_value();
+                if (i.first == "argv1"){
+                    _structf1917643_06b2_3e6d_ab77_0a5044067d0a.argv1 = i.second.int32_value();
                 }
-                else if (i.frist == "argv2"){
-            _structf1917643_06b2_3e6d_ab77_0a5044067d0a.argv2 = test1::protcol_to_test1(i.second.object_items());
+                else if (i.first == "argv2"){
+                    _structf1917643_06b2_3e6d_ab77_0a5044067d0a.argv2 = test1::protcol_to_test1(i.second.object_items());
                 }
+            }
             return _structf1917643_06b2_3e6d_ab77_0a5044067d0a;
         }
     };

@@ -61,77 +61,77 @@ def genprotocolstruct(struct_name, elems, dependent_struct, dependent_enum):
         type_ = tools.check_type(key, dependent_struct, dependent_enum)
         _type_ = tools.convert_type(key, dependent_struct, dependent_enum)
         if count == 0:
-            code += "                if (i.frist == \"" + value + "\"){\n"
+            code += "                if (i.first == \"" + value + "\"){\n"
         else:
-            code += "                else if (i.frist == \"" + value + "\"){\n"
+            code += "                else if (i.first == \"" + value + "\"){\n"
         if type_ == tools.TypeType.Int8:
-            code += "            _struct" + _struct_uuid + "." + value + " = i.second.int8_value();\n"
+            code += "                    _struct" + _struct_uuid + "." + value + " = i.second.int8_value();\n"
         elif type_ == tools.TypeType.Int16:
-            code += "            _struct" + _struct_uuid + "." + value + " = i.second.int16_value();\n"
+            code += "                    _struct" + _struct_uuid + "." + value + " = i.second.int16_value();\n"
         elif type_ == tools.TypeType.Int32:
-            code += "            _struct" + _struct_uuid + "." + value + " = i.second.int32_value();\n"
+            code += "                    _struct" + _struct_uuid + "." + value + " = i.second.int32_value();\n"
         elif type_ == tools.TypeType.Int64:
-            code += "            _struct" + _struct_uuid + "." + value + " = i.second.int64_value();\n"
+            code += "                    _struct" + _struct_uuid + "." + value + " = i.second.int64_value();\n"
         elif type_ == tools.TypeType.Uint8:
-            code += "            _struct" + _struct_uuid + "." + value + " = i.second.uint8_value();\n"
+            code += "                    _struct" + _struct_uuid + "." + value + " = i.second.uint8_value();\n"
         elif type_ == tools.TypeType.Uint16:
-            code += "            _struct" + _struct_uuid + "." + value + " = i.second.uint16_value();\n"
+            code += "                    _struct" + _struct_uuid + "." + value + " = i.second.uint16_value();\n"
         elif type_ == tools.TypeType.Uint32:
-            code += "            _struct" + _struct_uuid + "." + value + " = i.second.uint32_value();\n"
+            code += "                    _struct" + _struct_uuid + "." + value + " = i.second.uint32_value();\n"
         elif type_ == tools.TypeType.Uint64:
-            code += "            _struct" + _struct_uuid + "." + value + " = i.second.uint64_value();\n"
+            code += "                    _struct" + _struct_uuid + "." + value + " = i.second.uint64_value();\n"
         elif type_ == tools.TypeType.Float:
-            code += "            _struct" + _struct_uuid + "." + value + " = i.second.float32_value();\n"
+            code += "                    _struct" + _struct_uuid + "." + value + " = i.second.float32_value();\n"
         elif type_ == tools.TypeType.Double:
-            code += "            _struct" + _struct_uuid + "." + value + " = i.second.float64_value();\n"
+            code += "                    _struct" + _struct_uuid + "." + value + " = i.second.float64_value();\n"
         elif type_ == tools.TypeType.Bool:
-            code += "            _struct" + _struct_uuid + "." + value + " = i.second.bool_value();\n"
+            code += "                    _struct" + _struct_uuid + "." + value + " = i.second.bool_value();\n"
         elif type_ == tools.TypeType.String:
-            code += "            _struct" + _struct_uuid + "." + value + " = i.second.string_value();\n"
+            code += "                    _struct" + _struct_uuid + "." + value + " = i.second.string_value();\n"
         elif type_ == tools.TypeType.Bin:
-            code += "            _struct" + _struct_uuid + "." + value + " = i.second.binary_items();\n"
+            code += "                    _struct" + _struct_uuid + "." + value + " = i.second.binary_items();\n"
         elif type_ == tools.TypeType.Custom:
-            code += "            _struct" + _struct_uuid + "." + value + " = " + key + "::protcol_to_" + key + "(i.second.object_items());\n"
+            code += "                    _struct" + _struct_uuid + "." + value + " = " + key + "::protcol_to_" + key + "(i.second.object_items());\n"
         elif type_ == tools.TypeType.Array:
             array_type = key[:-2]
             array_type_ = tools.check_type(array_type, dependent_struct, dependent_enum)
             _array_type = tools.convert_type(array_type, dependent_struct, dependent_enum)
-            code += "            std::vector<" + _array_type + "> _" + value + ";\n"
-            code += "            auto _protocol_array = i.second.array_items();n"
-            code += "            for(auto it_ : _protocol_array){\n"
+            code += "                    auto _protocol_array = i.second.array_items();n"
+            code += "                    for(auto it_ : _protocol_array){\n"
             if array_type_ == tools.TypeType.Int8:
-                code += "        _struct" + _struct_uuid + "." + value + ".push_back(it_.int8_value());\n"
+                code += "                        _struct" + _struct_uuid + "." + value + ".push_back(it_.int8_value());\n"
             elif array_type_ == tools.TypeType.Int16:
-                code += "        _struct" + _struct_uuid + "." + value + ".push_back(it_.int16_value());\n"
+                code += "                        _struct" + _struct_uuid + "." + value + ".push_back(it_.int16_value());\n"
             elif array_type_ == tools.TypeType.Int32:
-                code += "        _struct" + _struct_uuid + "." + value + ".push_back(it_.int32_value());\n"
+                code += "                        _struct" + _struct_uuid + "." + value + ".push_back(it_.int32_value());\n"
             elif array_type_ == tools.TypeType.Int64:
-                code += "        _struct" + _struct_uuid + "." + value + ".push_back(it_.int64_value());\n"
+                code += "                        _struct" + _struct_uuid + "." + value + ".push_back(it_.int64_value());\n"
             elif array_type_ == tools.TypeType.Uint8:
-                code += "        _struct" + _struct_uuid + "." + value + ".push_back(it_.uint8_value());\n"
+                code += "                        _struct" + _struct_uuid + "." + value + ".push_back(it_.uint8_value());\n"
             elif array_type_ == tools.TypeType.Uint16:
-                code += "        _struct" + _struct_uuid + "." + value + ".push_back(it_.uint16_value());\n"
+                code += "                        _struct" + _struct_uuid + "." + value + ".push_back(it_.uint16_value());\n"
             elif array_type_ == tools.TypeType.Uint32:
-                code += "        _struct" + _struct_uuid + "." + value + ".push_back(it_.uint32_value());\n"
+                code += "                        _struct" + _struct_uuid + "." + value + ".push_back(it_.uint32_value());\n"
             elif array_type_ == tools.TypeType.Uint64:
-                code += "        _struct" + _struct_uuid + "." + value + ".push_back(it_.uint64_value());\n"
+                code += "                        _struct" + _struct_uuid + "." + value + ".push_back(it_.uint64_value());\n"
             elif array_type_ == tools.TypeType.Float:
-                code += "        _struct" + _struct_uuid + "." + value + ".push_back(it_.float32_value());\n"
+                code += "                        _struct" + _struct_uuid + "." + value + ".push_back(it_.float32_value());\n"
             elif array_type_ == tools.TypeType.Double:
-                code += "        _struct" + _struct_uuid + "." + value + ".push_back(it_.float64_value());\n"
+                code += "                        _struct" + _struct_uuid + "." + value + ".push_back(it_.float64_value());\n"
             elif array_type_ == tools.TypeType.Bool:
-                code += "        _struct" + _struct_uuid + "." + value + ".push_back(it_.bool_value());\n"
+                code += "                        _struct" + _struct_uuid + "." + value + ".push_back(it_.bool_value());\n"
             elif array_type_ == tools.TypeType.String:
-                code += "        _struct" + _struct_uuid + "." + value + ".push_back(it_.string_value());\n"
+                code += "                        _struct" + _struct_uuid + "." + value + ".push_back(it_.string_value());\n"
             elif array_type_ == tools.TypeType.Bin:
-                code += "        _struct" + _struct_uuid + "." + value + ".push_back(it_.binary_items());\n"
+                code += "                        _struct" + _struct_uuid + "." + value + ".push_back(it_.binary_items());\n"
             elif array_type_ == tools.TypeType.Custom:
-                code += "        _struct" + _struct_uuid + "." + value + ".push_back(" + array_type + "::protcol_to_" + array_type + "(it_.array_items()));\n"
+                code += "                        _struct" + _struct_uuid + "." + value + ".push_back(" + array_type + "::protcol_to_" + array_type + "(it_.array_items()));\n"
             elif array_type_ == tools.TypeType.Array:
                 raise Exception("not support nested array:%s in struct:%s" % (key, struct_name))
             code += "            }\n"
         code += "                }\n"
         count += 1
+    code += "            }\n"
     code += "            return _struct" + _struct_uuid + ";\n"
     code += "        }\n"
     return code
