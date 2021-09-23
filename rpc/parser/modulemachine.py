@@ -59,9 +59,10 @@ class func(object):
             if self.keyworld != '':
                 self.argvPair.append(deleteNoneSpacelstrip(self.keyworld))
                 self.argvtuple.append(self.argvPair)
-                (key, value, parameter) = self.argvPair
-                if parameter_check(key, value, parameter)  == False:
-                    raise Exception("wrong type default parameter:%s,%s,%s in struct:%s" % (key, value, parameter, self.func[0]))
+                if len(self.argvPair) == 3:
+                    (key, value, parameter) = self.argvPair
+                    if parameter_check(key, value, parameter)  == False:
+                        raise Exception("wrong type default parameter:%s,%s,%s in struct:%s" % (key, value, parameter, self.func[0]))
 
             if self.argvtuple is None:
                 self.func.append([])

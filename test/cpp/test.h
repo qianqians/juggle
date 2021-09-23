@@ -12,67 +12,67 @@ namespace abelkhan
     class test1 {
     public:
         int32_t argv1;
-        std::string argv2;
+        std::string argv2 = "123";
         float argv3;
         double argv4;
 
     public:
-        test1(int32_t _argv1, std::string _argv2, float _argv3, double _argv4){
-            argv1 = _argv1;
-            argv2 = _argv2;
-            argv3 = _argv3;
-            argv4 = _argv4;
-        }
-
         test1() = default;
-
         test1(test1& value) = default;
 
     public:
-        static msgpack11::MsgPack::array test1_to_protcol(test1 _struct){
-            msgpack11::MsgPack::array _protocol;
-            _protocol.push_back(_struct.argv1);
-            _protocol.push_back(_struct.argv2);
-            _protocol.push_back(_struct.argv3);
-            _protocol.push_back(_struct.argv4);
+        static msgpack11::MsgPack::object test1_to_protcol(test1 _struct){
+            msgpack11::MsgPack::object _protocol;
+            _protocol.insert(std::make_pair("argv1", _struct.argv1));
+            _protocol.insert(std::make_pair("argv2", _struct.argv2));
+            _protocol.insert(std::make_pair("argv3", _struct.argv3));
+            _protocol.insert(std::make_pair("argv4", _struct.argv4));
             return _protocol;
         }
-        static test1 protcol_to_test1(const msgpack11::MsgPack::array& _protocol){
-            auto _argv1 = _protocol[0].int32_value();
-            std::string _argv2 = _protocol[1].string_value();
-            auto _argv3 = _protocol[2].float32_value();
-            auto _argv4 = _protocol[3].float64_value();
-            test1 _structc501822b_22a8_37ff_91a9_9545f4689a3d(_argv1, _argv2, _argv3, _argv4);
+        static test1 protcol_to_test1(const msgpack11::MsgPack::object& _protocol){
+            test1 _structc501822b_22a8_37ff_91a9_9545f4689a3d;
+            for(auto i : _protocol){
+                if (i.frist == "argv1"){
+            _structc501822b_22a8_37ff_91a9_9545f4689a3d.argv1 = i.second.int32_value();
+                }
+                else if (i.frist == "argv2"){
+            _structc501822b_22a8_37ff_91a9_9545f4689a3d.argv2 = i.second.string_value();
+                }
+                else if (i.frist == "argv3"){
+            _structc501822b_22a8_37ff_91a9_9545f4689a3d.argv3 = i.second.float32_value();
+                }
+                else if (i.frist == "argv4"){
+            _structc501822b_22a8_37ff_91a9_9545f4689a3d.argv4 = i.second.float64_value();
+                }
             return _structc501822b_22a8_37ff_91a9_9545f4689a3d;
         }
     };
 
     class test2 {
     public:
-        int32_t argv1;
+        int32_t argv1 = 0;
         test1 argv2;
 
     public:
-        test2(int32_t _argv1, test1 _argv2){
-            argv1 = _argv1;
-            argv2 = _argv2;
-        }
-
         test2() = default;
-
         test2(test2& value) = default;
 
     public:
-        static msgpack11::MsgPack::array test2_to_protcol(test2 _struct){
-            msgpack11::MsgPack::array _protocol;
-            _protocol.push_back(_struct.argv1);
-            _protocol.push_back(test1::test1_to_protcol(_struct.argv2));
+        static msgpack11::MsgPack::object test2_to_protcol(test2 _struct){
+            msgpack11::MsgPack::object _protocol;
+            _protocol.insert(std::make_pair("argv1", _struct.argv1));
+            _protocol.insert(std::make_pair("argv2", test1::test1_to_protcol(_struct.argv2)));
             return _protocol;
         }
-        static test2 protcol_to_test2(const msgpack11::MsgPack::array& _protocol){
-            auto _argv1 = _protocol[0].int32_value();
-            auto _argv2 = test1::protcol_to_test1(_protocol[1].array_items());
-            test2 _structf1917643_06b2_3e6d_ab77_0a5044067d0a(_argv1, _argv2);
+        static test2 protcol_to_test2(const msgpack11::MsgPack::object& _protocol){
+            test2 _structf1917643_06b2_3e6d_ab77_0a5044067d0a;
+            for(auto i : _protocol){
+                if (i.frist == "argv1"){
+            _structf1917643_06b2_3e6d_ab77_0a5044067d0a.argv1 = i.second.int32_value();
+                }
+                else if (i.frist == "argv2"){
+            _structf1917643_06b2_3e6d_ab77_0a5044067d0a.argv2 = test1::protcol_to_test1(i.second.object_items());
+                }
             return _structf1917643_06b2_3e6d_ab77_0a5044067d0a;
         }
     };

@@ -21,6 +21,36 @@ class TypeType():
     Bool = 14
     Bin = 15
 
+def convert_parameter(typestr, parameter):
+    if typestr == 'int8':
+        return parameter
+    elif typestr == 'int16':
+        return parameter
+    elif typestr == 'int32':
+        return parameter
+    elif typestr == 'int64':
+        return parameter
+    elif typestr == 'uint8':
+        return parameter
+    elif typestr == 'uint16':
+        return parameter
+    elif typestr == 'uint32':
+        return parameter
+    elif typestr == 'uint64':
+        return parameter
+    elif typestr == 'string':
+        return parameter
+    elif typestr == 'float':
+        return "(float)" + parameter
+    elif typestr == 'double':
+        return "(double)" + parameter
+    elif typestr == 'bool':
+        return parameter
+    elif typestr == 'bin':
+        parameter[0] = '{'
+        parameter[-1] = '}'
+        return parameter
+
 def check_in_dependent(typestr, dependent):
     for _type, _import in dependent:
         if _type == typestr:

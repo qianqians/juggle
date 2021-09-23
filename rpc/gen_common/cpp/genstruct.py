@@ -10,20 +10,16 @@ def genmainstruct(struct_name, elems, dependent_struct, dependent_enum):
     code = "    class " + struct_name + " {\n"
     code += "    public:\n"
     names = []
-    for elem in elems:
-        if len(elem) == 2:
-            (key, value) = elem
-            if value in names:
-                raise Exception("repeat struct elem:%s in struct:%s" % (key, struct_name))
-            names.append(value)
+    for key, value, parameter in elems:
+        if value in names:
+            raise Exception("repeat struct elem:%s in struct:%s" % (key, struct_name))
+        names.append(value)
+        if parameter == None:
             code += "        " + tools.convert_type(key, dependent_struct, dependent_enum) + " " + value + ";\n"
-        elif len(elem) == 3:
-            (key, value, parameter) = elem
-            if value in names:
-                raise Exception("repeat struct elem:%s in struct:%s" % (key, struct_name))
-            names.append(value)
-            code += "        " + tools.convert_type(key, dependent_struct, dependent_enum) + " " + value + ";\n"
-    code += "        " + struct_name + "() = default;\n\n"
+        else:
+            code += "        " + tools.convert_type(key, dependent_struct, dependent_enum) + " " + value + " = " + tools.convert_parameter(key, parameter) + ";\n"
+    code += "\n    public:\n"
+    code += "        " + struct_name + "() = default;\n"
     code += "        " + struct_name + "(" + struct_name + "& value) = default;\n\n"
     return code
 
@@ -32,7 +28,7 @@ def genstructprotocol(struct_name, elems, dependent_struct, dependent_enum):
     code += "        static msgpack11::MsgPack::object " + struct_name + "_to_protcol(" + struct_name + " _struct){\n"
     code += "            msgpack11::MsgPack::object _protocol;\n"
     
-    for key, value in elems:
+    for key, value, parameter in elems:
         type_ = tools.check_type(key, dependent_struct, dependent_enum)
         if type_ in tools.OriginalTypeList:
             code += "            _protocol.insert(std::make_pair(\"" + value + "\", _struct." + value + "));\n"
@@ -61,7 +57,7 @@ def genprotocolstruct(struct_name, elems, dependent_struct, dependent_enum):
     code += "            " + struct_name + " _struct" + _struct_uuid + ";\n"
     code += "            for(auto i : _protocol){\n"
     count = 0
-    for key, value in elems:
+    for key, value, parameter in elems:
         type_ = tools.check_type(key, dependent_struct, dependent_enum)
         _type_ = tools.convert_type(key, dependent_struct, dependent_enum)
         if count == 0:

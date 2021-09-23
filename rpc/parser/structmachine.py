@@ -9,8 +9,11 @@ from parametercheck import parameter_check
 class elem(object):
     def __init__(self):
         self.keyworld = ''
+        self.step = 'key'
         self.key = ""
         self.value = None
+        self.parameter = None
+        self.list_parameter = False
 
     def clear(self):
         self.keyworld = ''
@@ -72,12 +75,10 @@ class struct(object):
 
         if self.machine is not None:
             if self.machine.push(ch):
+                self.elem.append((self.machine.key, self.machine.value, self.machine.parameter))
                 if self.machine.parameter != None:
-                    self.elem.append((self.machine.key, self.machine.value, self.machine.parameter))
-                    if parameter_check(self.key, self.parameter) == False:
+                    if parameter_check(self.machine.key, self.machine.parameter) == False:
                         raise Exception("wrong type default parameter:%s,%s,%s in struct:%s" % (self.key, self.value, self.parameter, self.name))
-                else:
-                    self.elem.append((self.machine.key, self.machine.value))
                 self.machine.clear()
         else:
             if ch == '{':
