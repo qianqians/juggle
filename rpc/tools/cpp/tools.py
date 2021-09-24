@@ -47,9 +47,9 @@ def convert_parameter(typestr, parameter):
     elif typestr == 'bool':
         return parameter
     elif typestr == 'bin':
-        parameter[0] = '{'
-        parameter[-1] = '}'
-        return parameter
+        value = parameter[1:-1]
+        str_parameter = "{%s}"%value
+        return str_parameter
 
 def check_in_dependent(typestr, dependent):
     for _type, _import in dependent:

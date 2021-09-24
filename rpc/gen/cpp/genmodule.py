@@ -26,7 +26,7 @@ def gen_module_module(module_name, funcs, dependent_struct, dependent_enum):
                 
             code_func += "        concurrent::signals<void("
             count = 0
-            for _type, _name in i[2]:
+            for _type, _name, _parameter in i[2]:
                 code_func += tools.convert_type(_type, dependent_struct, dependent_enum) + " " + _name 
                 count += 1
                 if count < len(i[2]):
@@ -35,7 +35,7 @@ def gen_module_module(module_name, funcs, dependent_struct, dependent_enum):
 
             code_func += "        void " + func_name + "(const msgpack11::MsgPack::array& inArray){\n"
             count = 0 
-            for _type, _name in i[2]:
+            for _type, _name, _parameter in i[2]:
                 type_ = tools.check_type(_type, dependent_struct, dependent_enum)
                 _type_ = tools.convert_type(_type, dependent_struct, dependent_enum)
                 if type_ == tools.TypeType.Int8:
@@ -65,7 +65,7 @@ def gen_module_module(module_name, funcs, dependent_struct, dependent_enum):
                 elif type_ == tools.TypeType.Bin:
                     code_func += "            auto _" + _name + " = inArray[" + str(count) + "].binary_items();\n"
                 elif type_ == tools.TypeType.Custom:
-                    code_func += "            auto _" + _name + " = " + _type + "::protcol_to_" + _type + "(inArray[" + str(count) + "].array_items());\n"
+                    code_func += "            auto _" + _name + " = " + _type + "::protcol_to_" + _type + "(inArray[" + str(count) + "].object_items());\n"
                 elif type_ == tools.TypeType.Array:
                     array_type = _type[:-2]
                     array_type_ = tools.check_type(array_type, dependent_struct, dependent_enum)
@@ -101,7 +101,7 @@ def gen_module_module(module_name, funcs, dependent_struct, dependent_enum):
                     elif array_type_ == tools.TypeType.String:
                         code_func += "                _" + _name + ".push_back(it_" + _v_uuid + "->binary_items());\n"
                     elif array_type_ == tools.TypeType.Custom:
-                        code_func += "                _" + _name + ".push_back(" + array_type + "::protcol_to_" + array_type + "(it_" + _v_uuid + ".array_items()));\n"
+                        code_func += "                _" + _name + ".push_back(" + array_type + "::protcol_to_" + array_type + "(it_" + _v_uuid + ".object_items()));\n"
                     elif array_type_ == tools.TypeType.Array:
                         raise Exception("not support nested array:%s in func:%s" % (_type, func_name))
                     code_func += "            }\n"
@@ -109,7 +109,7 @@ def gen_module_module(module_name, funcs, dependent_struct, dependent_enum):
 
             code_func += "            sig_" + func_name + ".emit("
             count = 0
-            for _type, _name in i[2]:
+            for _type, _name, _parameter in i[2]:
                 code_func += "_" + _name
                 count = count + 1
                 if count < len(i[2]):
@@ -121,7 +121,7 @@ def gen_module_module(module_name, funcs, dependent_struct, dependent_enum):
             
             code_func += "        concurrent::signals<void("
             count = 0
-            for _type, _name in i[2]:
+            for _type, _name, _parameter in i[2]:
                 code_func += tools.convert_type(_type, dependent_struct, dependent_enum) + " " + _name
                 count += 1
                 if count < len(i[2]):
@@ -131,7 +131,7 @@ def gen_module_module(module_name, funcs, dependent_struct, dependent_enum):
             code_func += "        void " + func_name + "(const msgpack11::MsgPack::array& inArray){\n"
             code_func += "            auto _cb_uuid = inArray[0].uint64_value();\n"
             count = 1 
-            for _type, _name in i[2]:
+            for _type, _name, _parameter in i[2]:
                 type_ = tools.check_type(_type, dependent_struct, dependent_enum)
                 _type_ = tools.convert_type(_type, dependent_struct, dependent_enum)
                 if type_ == tools.TypeType.Int8:
@@ -161,7 +161,7 @@ def gen_module_module(module_name, funcs, dependent_struct, dependent_enum):
                 elif type_ == tools.TypeType.Bin:
                     code_func += "            auto _" + _name + " = inArray[" + str(count) + "].binary_items();\n"
                 elif type_ == tools.TypeType.Custom:
-                    code_func += "            auto _" + _name + " = " + _type + "::protcol_to_" + _type + "(inArray[" + str(count) + "].array_items());\n"
+                    code_func += "            auto _" + _name + " = " + _type + "::protcol_to_" + _type + "(inArray[" + str(count) + "].object_items());\n"
                 elif type_ == tools.TypeType.Array:
                     array_type = _type[:-2]
                     array_type_ = tools.check_type(array_type, dependent_struct, dependent_enum)
@@ -197,7 +197,7 @@ def gen_module_module(module_name, funcs, dependent_struct, dependent_enum):
                     elif array_type_ == tools.TypeType.String:
                         code_func += "                _" + _name + ".push_back(it_" + _v_uuid + "->binary_items());\n"
                     elif array_type_ == tools.TypeType.Custom:
-                        code_func += "                _" + _name + ".push_back(" + array_type + "::protcol_to_" + array_type + "(it_" + _v_uuid + ".array_items()));\n"
+                        code_func += "                _" + _name + ".push_back(" + array_type + "::protcol_to_" + array_type + "(it_" + _v_uuid + ".object_items()));\n"
                     elif array_type_ == tools.TypeType.Array:
                         raise Exception("not support nested array:%s in func:%s" % (_type, func_name))
                     code_func += "            }\n"
@@ -206,7 +206,7 @@ def gen_module_module(module_name, funcs, dependent_struct, dependent_enum):
             code_func += "            rsp = std::make_shared<" + module_name + "_" + func_name + "_rsp>(current_ch, _cb_uuid);\n"
             code_func += "            sig_" + func_name + ".emit("
             count = 0
-            for _type, _name in i[2]:
+            for _type, _name, _parameter in i[2]:
                 code_func += "_" + _name
                 count = count + 1
                 if count < len(i[2]):
@@ -225,8 +225,12 @@ def gen_module_module(module_name, funcs, dependent_struct, dependent_enum):
             rsp_code += "        }\n\n"
 
             rsp_code += "        void rsp("
-            for _type, _name in i[4]:
-                rsp_code += tools.convert_type(_type, dependent_struct, dependent_enum) + " " + _name 
+            count = 0
+            for _type, _name, _parameter in i[4]:
+                if _parameter == None:
+                    rsp_code += tools.convert_type(_type, dependent_struct, dependent_enum) + " " + _name 
+                else:
+                    rsp_code += tools.convert_type(_type, dependent_struct, dependent_enum) + " " + _name + " = " + tools.convert_parameter(_type, _parameter)
                 count = count + 1
                 if count < len(i[4]):
                     rsp_code += ", "
@@ -234,7 +238,7 @@ def gen_module_module(module_name, funcs, dependent_struct, dependent_enum):
             _argv_uuid = '_'.join(str(uuid.uuid3(uuid.NAMESPACE_DNS, func_name)).split('-'))
             rsp_code += "            msgpack11::MsgPack::array _argv_" + _argv_uuid + ";\n"
             rsp_code += "            _argv_" + _argv_uuid + ".push_back(uuid);\n"
-            for _type, _name in i[4]:
+            for _type, _name, _parameter in i[4]:
                 type_ = tools.check_type(_type, dependent_struct, dependent_enum)
                 if type_ in tools.OriginalTypeList:
                     rsp_code += "            _argv_" + _argv_uuid + ".push_back(" + _name + ");\n"
@@ -262,8 +266,11 @@ def gen_module_module(module_name, funcs, dependent_struct, dependent_enum):
 
             rsp_code += "        void err("
             count = 0
-            for _type, _name in i[6]:
-                rsp_code += tools.convert_type(_type, dependent_struct, dependent_enum) + " " + _name
+            for _type, _name, _parameter in i[6]:
+                if _parameter == None:
+                    rsp_code += tools.convert_type(_type, dependent_struct, dependent_enum) + " " + _name 
+                else:
+                    rsp_code += tools.convert_type(_type, dependent_struct, dependent_enum) + " " + _name + " = " + tools.convert_parameter(_type, _parameter)
                 count = count + 1
                 if count < len(i[6]):
                     rsp_code += ", "
@@ -271,7 +278,7 @@ def gen_module_module(module_name, funcs, dependent_struct, dependent_enum):
             _argv_uuid = '_'.join(str(uuid.uuid3(uuid.NAMESPACE_DNS, func_name)).split('-'))
             rsp_code += "            msgpack11::MsgPack::array _argv_" + _argv_uuid + ";\n"
             rsp_code += "            _argv_" + _argv_uuid + ".push_back(uuid);\n"
-            for _type, _name in i[6]:
+            for _type, _name, _parameter in i[6]:
                 type_ = tools.check_type(_type, dependent_struct, dependent_enum)
                 if type_ in tools.OriginalTypeList:
                     rsp_code += "            _argv_" + _argv_uuid + ".push_back(" + _name + ");\n"

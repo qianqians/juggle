@@ -92,12 +92,12 @@ namespace abelkhan
         }
 
     public:
-        concurrent::signals<void(test1 t1)> sig_test3_cb;
-        concurrent::signals<void(int32_t err)> sig_test3_err;
+        concurrent::signals<void(test1 t1, int32_t i)> sig_test3_cb;
+        concurrent::signals<void(test1 err, std::vector<uint8_t> bytearray)> sig_test3_err;
 
         concurrent::signals<void()> sig_test3_timeout;
 
-        std::shared_ptr<test_test3_cb> callBack(std::function<void(test1 t1)> cb, std::function<void(int32_t err)> err)
+        std::shared_ptr<test_test3_cb> callBack(std::function<void(test1 t1, int32_t i)> cb, std::function<void(test1 err, std::vector<uint8_t> bytearray)> err)
         {
             sig_test3_cb.connect(cb);
             sig_test3_err.connect(err);
@@ -131,18 +131,20 @@ namespace abelkhan
         }
         void test3_rsp(const msgpack11::MsgPack::array& inArray){
             auto uuid = inArray[0].uint64_value();
-            auto _t1 = test1::protcol_to_test1(inArray[1].array_items());
+            auto _t1 = test1::protcol_to_test1(inArray[1].object_items());
+            auto _i = inArray[2].int32_value();
             auto rsp = try_get_and_del_test3_cb(uuid);
             if (rsp != nullptr){
-                rsp->sig_test3_cb.emit(_t1);
+                rsp->sig_test3_cb.emit(_t1, _i);
             }
         }
         void test3_err(const msgpack11::MsgPack::array& inArray){
             auto uuid = inArray[0].uint64_value();
-            auto _err = inArray[1].int32_value();
+            auto _err = test1::protcol_to_test1(inArray[1].object_items());
+            auto _bytearray = inArray[2].binary_items();
             auto rsp = try_get_and_del_test3_cb(uuid);
             if (rsp != nullptr){
-                rsp->sig_test3_err.emit(_err);
+                rsp->sig_test3_err.emit(_err, _bytearray);
             }
         }
 
@@ -178,11 +180,12 @@ namespace abelkhan
             }
             uuid.store(random());        }
 
-        std::shared_ptr<test_test3_cb> test3(test2 t2){
+        std::shared_ptr<test_test3_cb> test3(test2 t2, std::string str = "qianqians"){
             auto uuid_20ca53af_d04c_58a2_a8b3_d02b9e414e80 = uuid++;
             msgpack11::MsgPack::array _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7;
             _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7.push_back(uuid_20ca53af_d04c_58a2_a8b3_d02b9e414e80);
             _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7.push_back(test2::test2_to_protcol(t2));
+            _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7.push_back(str);
             call_module_method("test3", _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7);
 
             auto cb_test3_obj = std::make_shared<test_test3_cb>(uuid_20ca53af_d04c_58a2_a8b3_d02b9e414e80, rsp_cb_test_handle);
@@ -191,13 +194,14 @@ namespace abelkhan
             return cb_test3_obj;
         }
 
-        void test4(std::vector<test2> argv){
+        void test4(std::vector<test2> argv, float num = (float)0.110){
             msgpack11::MsgPack::array _argv_fe584e24_96c8_3d2d_8b39_f1cc6a877f72;
             msgpack11::MsgPack::array _array_80252816_2442_30bc_bd5c_59666cae8a23;
             for(auto v_51e4d59a_5357_5634_9bc1_e9c2e0aa9ab0 : argv){
                 _array_80252816_2442_30bc_bd5c_59666cae8a23.push_back(test2::test2_to_protcol(v_51e4d59a_5357_5634_9bc1_e9c2e0aa9ab0));
             }
             _argv_fe584e24_96c8_3d2d_8b39_f1cc6a877f72.push_back(_array_80252816_2442_30bc_bd5c_59666cae8a23);
+            _argv_fe584e24_96c8_3d2d_8b39_f1cc6a877f72.push_back(num);
             call_module_method("test4", _argv_fe584e24_96c8_3d2d_8b39_f1cc6a877f72);
         }
 
@@ -213,17 +217,19 @@ namespace abelkhan
             uuid = _uuid;
         }
 
-        void rsp(test1 t1){
+        void rsp(test1 t1, int32_t i = 110){
             msgpack11::MsgPack::array _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7;
             _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7.push_back(uuid);
             _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7.push_back(test1::test1_to_protcol(t1));
+            _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7.push_back(i);
             call_module_method("test3_rsp", _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7);
         }
 
-        void err(int32_t err){
+        void err(test1 err, std::vector<uint8_t> bytearray = {1,1,0}){
             msgpack11::MsgPack::array _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7;
             _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7.push_back(uuid);
-            _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7.push_back(err);
+            _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7.push_back(test1::test1_to_protcol(err));
+            _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7.push_back(bytearray);
             call_module_method("test3_err", _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7);
         }
 
@@ -242,23 +248,25 @@ namespace abelkhan
             reg_method("test4", std::bind(&test_module::test4, this, std::placeholders::_1));
         }
 
-        concurrent::signals<void(test2 t2)> sig_test3;
+        concurrent::signals<void(test2 t2, std::string str)> sig_test3;
         void test3(const msgpack11::MsgPack::array& inArray){
             auto _cb_uuid = inArray[0].uint64_value();
-            auto _t2 = test2::protcol_to_test2(inArray[1].array_items());
+            auto _t2 = test2::protcol_to_test2(inArray[1].object_items());
+            auto _str = inArray[2].string_value();
             rsp = std::make_shared<test_test3_rsp>(current_ch, _cb_uuid);
-            sig_test3.emit(_t2);
+            sig_test3.emit(_t2, _str);
             rsp = nullptr;
         }
 
-        concurrent::signals<void(std::vector<test2> argv)> sig_test4;
+        concurrent::signals<void(std::vector<test2> argv, float num)> sig_test4;
         void test4(const msgpack11::MsgPack::array& inArray){
             std::vector<test2> _argv;
             auto _protocol_array = inArray[0].array_items();
             for(auto it_51e4d59a_5357_5634_9bc1_e9c2e0aa9ab0 : _protocol_array){
-                _argv.push_back(test2::protcol_to_test2(it_51e4d59a_5357_5634_9bc1_e9c2e0aa9ab0.array_items()));
+                _argv.push_back(test2::protcol_to_test2(it_51e4d59a_5357_5634_9bc1_e9c2e0aa9ab0.object_items()));
             }
-            sig_test4.emit(_argv);
+            auto _num = inArray[1].float32_value();
+            sig_test4.emit(_argv, _num);
         }
 
     };

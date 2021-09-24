@@ -11,18 +11,35 @@ class func(object):
         self.keyworld = ''
         self.func = []
         self.argvtuple = None
-        self.ignore = False
+        self.argvPair = None
+        self.parameter = False
+        self.list_parameter = False
+        self.isdefaultparameter = False
 
     def clear(self):
         self.keyworld = ''
         self.func = []
         self.argvtuple = None
         self.argvPair = None
+        self.parameter = False
+        self.list_parameter = False
+        self.isdefaultparameter = False
 
     def push(self, ch):
+        if ch == '[' and self.parameter:
+            self.list_parameter = True
+
+        if self.parameter and self.list_parameter == True:
+            self.keyworld += ch
+            self.keyworld = deleteNoneSpacelstrip(self.keyworld)
+            if ch == ']':
+                self.list_parameter = False
+            return False
+
         if ch in [' ', '    ', '\r', '\n', '\t', '\0']:
             self.keyworld = deleteNoneSpacelstrip(self.keyworld)
             if self.keyworld == '=':
+                self.parameter = True
                 self.keyworld = ''
             if self.keyworld != '':
                 if self.argvtuple is None:
@@ -36,14 +53,20 @@ class func(object):
         if ch == ',':
             if self.keyworld != '':
                 self.argvPair.append(deleteNoneSpacelstrip(self.keyworld))
-                self.argvtuple.append(self.argvPair)
-                if len(self.argvPair) == 3:
+                n = len(self.argvPair)
+                if n == 2:
+                    if self.isdefaultparameter:
+                        raise Exception("after default parameter mast have default parameter:%s,%s in func:%s" % (self.argvPair[0], self.argvPair[1], self.func[0]))
+                    else:
+                        self.argvPair.append(None)
+                elif n == 3:
+                    self.isdefaultparameter = True
                     (key, value, parameter) = self.argvPair
-                    if parameter_check(key, value, parameter)  == False:
-                        raise Exception("wrong type default parameter:%s,%s,%s in struct:%s" % (key, value, parameter, self.func[0]))
+                    if parameter_check(key, parameter)  == False:
+                        raise Exception("wrong type default parameter:%s,%s,%s in func:%s" % (key, value, parameter, self.func[0]))
+                self.argvtuple.append(self.argvPair)
                 self.argvPair = []
                 self.keyworld = ''
-
             return False
 
         if ch == '(':
@@ -58,11 +81,17 @@ class func(object):
         if ch == ')':
             if self.keyworld != '':
                 self.argvPair.append(deleteNoneSpacelstrip(self.keyworld))
-                self.argvtuple.append(self.argvPair)
-                if len(self.argvPair) == 3:
+                n = len(self.argvPair)
+                if n == 2:
+                    if self.isdefaultparameter:
+                        raise Exception("after default parameter mast have default parameter:%s,%s in func:%s" % (self.argvPair[0], self.argvPair[1], self.func[0]))
+                    else:
+                        self.argvPair.append(None)
+                elif n == 3:
                     (key, value, parameter) = self.argvPair
-                    if parameter_check(key, value, parameter)  == False:
-                        raise Exception("wrong type default parameter:%s,%s,%s in struct:%s" % (key, value, parameter, self.func[0]))
+                    if parameter_check(key, parameter)  == False:
+                        raise Exception("wrong type default parameter:%s,%s,%s in func:%s" % (key, value, parameter, self.func[0]))
+                self.argvtuple.append(self.argvPair)
 
             if self.argvtuple is None:
                 self.func.append([])

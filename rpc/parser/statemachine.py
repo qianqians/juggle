@@ -50,6 +50,7 @@ class statemachine(object):
                 self.keyworld += ch
 
     def getmodule(self):
+        print(self.module)
         return self.module
 
     def getenum(self):
