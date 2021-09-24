@@ -113,6 +113,7 @@ void modulemng::process_event(std::shared_ptr<Ichannel> _ch, const msgpack11::Ms
 
 
 void TinyTimer::add_timer(int64_t _tick, std::function<void()> cb){
+    tick = msec_time();
     auto tick_ = _tick + tick;
     add_timer_list.push(std::make_pair(tick_, cb));
 }
