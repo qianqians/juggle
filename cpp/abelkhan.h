@@ -36,6 +36,7 @@ public:
 
 class Ichannel {
 public:
+    virtual void disconnect() = 0;
     virtual void send(std::string& data) = 0;
 };
 
