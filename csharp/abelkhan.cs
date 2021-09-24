@@ -2,7 +2,6 @@ using System;
 using System.IO;
 using System.Collections;
 using System.Collections.Generic;
-using Newtonsoft.Json.Linq;
 
 namespace abelkhan
 {
@@ -13,10 +12,58 @@ namespace abelkhan
         }
     }
 
+    public class TinyTimer
+    {
+        private static Int64 tick;
+        private static Dictionary<Int64, Action> timer;
+
+        private static Int64 refresh()
+        {
+            return (Int64)(DateTime.UtcNow - new DateTime(1970, 1, 1)).TotalMilliseconds;
+        }
+
+        public static void add_timer(Int64 _tick, Action cb)
+        {
+            tick = refresh();
+            var tick_ = tick + _tick;
+            while(timer.ContainsKey(tick_)){ tick_++; }
+
+            lock(timer)
+            {
+                timer.Add(tick_, cb);
+            }
+        }
+        public static void poll()
+        {
+            tick = refresh();
+
+            lock(timer)
+            {
+                var list = new List<Int64>();
+                foreach (var item in timer)
+				{
+					if (item.Key <= tick)
+					{
+						list.Add(item.Key);
+                        item.Value();
+					}
+                    else
+                    {
+                        break;
+                    }
+				}
+                foreach (var item in list)
+				{
+					timer.Remove(item);
+				}
+            }
+        }
+    }
+
     public interface Ichannel
     {
         void disconnect();
-        void push(JArray ev);
+        void send(byte[] data);
     }
 
     public class Icaller
@@ -27,16 +74,21 @@ namespace abelkhan
             ch = _ch;
         }
 
-        public void call_module_method(String methodname, JArray argvs)
+        public void call_module_method(String methodname, ArrayList argvs)
         {
-			JArray _event = new JArray();
+			ArrayList _event = new ArrayList();
             _event.Add(module_name);
             _event.Add(methodname);
             _event.Add(argvs);
 
             try
             {
-                ch.push(_event);
+                var stream = new MemoryStream();
+                var serializer = MessagePackSerializer.Get<ArrayList>();
+                serializer.Pack( stream, _event );
+                stream.Position = 0;
+
+                ch.send(stream.ToArray());
             }
             catch (System.Exception)
             {
@@ -55,32 +107,31 @@ namespace abelkhan
 
     public class Imodule
     {
-        public delegate void on_event(JArray _event);
-        protected Dictionary<string, on_event> events;
+        protected Dictionary<string, Action<ArrayList> > events;
 
         public Imodule(String _module_name){
             module_name = _module_name;
-            events = new Dictionary<string, on_event>();
+            events = new Dictionary<string, Action<ArrayList> >();
             current_ch = null;
             rsp = null;
         }
 
-        public void reg_method(String method_name, on_event method){
+        public void reg_method(String method_name, Action<ArrayList> method){
             events.Add(method_name, method);
         }
 
-        public void process_event(Ichannel _ch, JArray _event)
+        public void process_event(Ichannel _ch, ArrayList _event)
 		{
 			current_ch = _ch;
             try
             {
                 String func_name = (String)_event[1];
 
-                if (events.TryGetValue(func_name, out on_event method))
+                if (events.TryGetValue(func_name, out Action<ArrayList> method))
                 {
                     try
                     {
-                        method((JArray)_event[2]);
+                        method((ArrayList)_event[2]);
                     }
                     catch (System.Exception e)
                     {
@@ -124,7 +175,7 @@ namespace abelkhan
 			module_set.Remove(module.module_name);
         }
 
-        public void process_event(Ichannel _ch, JArray _event){
+        public void process_event(Ichannel _ch, ArrayList _event){
             try{
                 String module_name = (String)_event[0];
                 if (module_set.TryGetValue(module_name, out Imodule _module))
