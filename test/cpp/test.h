@@ -128,6 +128,7 @@ namespace abelkhan
             reg_method("test3_rsp", std::bind(&test_rsp_cb::test3_rsp, this, std::placeholders::_1));
             reg_method("test3_err", std::bind(&test_rsp_cb::test3_err, this, std::placeholders::_1));
         }
+
         void test3_rsp(const msgpack11::MsgPack::array& inArray){
             auto uuid = inArray[0].uint64_value();
             auto _t1 = test1::protcol_to_test1(inArray[1].object_items());
@@ -137,6 +138,7 @@ namespace abelkhan
                 rsp->sig_test3_cb.emit(_t1, _i);
             }
         }
+
         void test3_err(const msgpack11::MsgPack::array& inArray){
             auto uuid = inArray[0].uint64_value();
             auto _err = test1::protcol_to_test1(inArray[1].object_items());

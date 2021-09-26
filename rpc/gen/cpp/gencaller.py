@@ -227,7 +227,7 @@ def gen_module_caller(module_name, funcs, dependent_struct, dependent_enum):
                     cb_code_section += ", "
             cb_code_section += ");\n"
             cb_code_section += "            }\n"
-            cb_code_section += "        }\n"
+            cb_code_section += "        }\n\n"
 
             cb_code_section += "        void " + func_name + "_err(const msgpack11::MsgPack::array& inArray){\n"
             cb_code_section += "            auto uuid = inArray[0].uint64_value();\n"
@@ -379,7 +379,7 @@ def gen_module_caller(module_name, funcs, dependent_struct, dependent_enum):
         else:
             raise Exception("func:" + func_name + " wrong rpc type:" + i[1] + ", must req or ntf")
 
-    cb_code_constructor += "        }\n"
+    cb_code_constructor += "        }\n\n"
     cb_code_section += "    };\n\n"
     code += "    };\n"
 
