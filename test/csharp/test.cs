@@ -221,7 +221,7 @@ namespace abelkhan
             call_module_method("test3_rsp", _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7);
         }
 
-        public void err(test1 err, byte[] bytearray){
+        public void err(test1 err, byte[] bytearray = new byte[3]{1,1,0}){
             var _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7 = new ArrayList();
             _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7.Add(this.uuid);
             _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7.Add(test1.test1_to_protcol(err));

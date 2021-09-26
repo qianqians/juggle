@@ -49,7 +49,7 @@ def convert_parameter(typestr, parameter):
     elif typestr == 'bin':
         count = len(eval(parameter))
         value = parameter[1:-1]
-        str_parameter = "{new byte[%d]%s}"%(count, value)
+        str_parameter = "new byte[%d]{%s}"%(count, value)
         return str_parameter
 
 def check_in_dependent(typestr, dependent):

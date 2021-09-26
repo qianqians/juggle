@@ -168,7 +168,10 @@ def gen_module_module(module_name, funcs, dependent_struct, dependent_enum):
             rsp_code += "        public void err("
             count = 0
             for _type, _name, _parameter in i[6]:
-                rsp_code += tools.convert_type(_type, dependent_struct, dependent_enum) + " " + _name
+                if _parameter == None:
+                    rsp_code += tools.convert_type(_type, dependent_struct, dependent_enum) + " " + _name 
+                else:
+                    rsp_code += tools.convert_type(_type, dependent_struct, dependent_enum) + " " + _name + " = " + tools.convert_parameter(_type, _parameter)
                 count = count + 1
                 if count < len(i[6]):
                     rsp_code += ", "
