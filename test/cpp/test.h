@@ -94,7 +94,6 @@ namespace abelkhan
     public:
         concurrent::signals<void(test1 t1, int32_t i)> sig_test3_cb;
         concurrent::signals<void(test1 err, std::vector<uint8_t> bytearray)> sig_test3_err;
-
         concurrent::signals<void()> sig_test3_timeout;
 
         std::shared_ptr<test_test3_cb> callBack(std::function<void(test1 t1, int32_t i)> cb, std::function<void(test1 err, std::vector<uint8_t> bytearray)> err)

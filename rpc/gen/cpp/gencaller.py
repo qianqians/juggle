@@ -105,7 +105,7 @@ def gen_module_caller(module_name, funcs, dependent_struct, dependent_enum):
                 count = count + 1
                 if count < len(i[6]):
                     cb_func += ", "
-            cb_func += ")> sig_" + func_name + "_err;\n\n"
+            cb_func += ")> sig_" + func_name + "_err;\n"
 
             cb_func += "        concurrent::signals<void()> sig_" + func_name + "_timeout;\n\n"
             
