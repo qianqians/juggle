@@ -31,7 +31,7 @@ def gen_module_caller(module_name, funcs, dependent_struct, dependent_enum):
     code += "                rsp_cb_" + module_name + "_handle = std::make_shared<" + module_name + "_rsp_cb>();\n"
     code += "                rsp_cb_" + module_name + "_handle->Init(modules);\n"
     code += "            }\n"
-    code += "            uuid.store(random());"
+    code += "            uuid.store(random());\n"
     code += "        }\n\n"
     cpp_code = "std::shared_ptr<" + module_name + "_rsp_cb> " + module_name + "_caller::rsp_cb_" + module_name + "_handle = nullptr;\n"
 

@@ -178,7 +178,8 @@ namespace abelkhan
                 rsp_cb_test_handle = std::make_shared<test_rsp_cb>();
                 rsp_cb_test_handle->Init(modules);
             }
-            uuid.store(random());        }
+            uuid.store(random());
+        }
 
         std::shared_ptr<test_test3_cb> test3(test2 t2, std::string str = "qianqians"){
             auto uuid_20ca53af_d04c_58a2_a8b3_d02b9e414e80 = uuid++;
