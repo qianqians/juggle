@@ -4,9 +4,53 @@
 # tools
 
 class TypeType():
-    Original = 0
+    Enum = 0
     Custom = 1
     Array = 2
+    String = 3
+    Int8 = 4
+    Int16 = 5
+    Int32 = 6
+    Int64 = 7
+    Uint8 = 8
+    Uint16 = 9
+    Uint32 = 10
+    Uint64 = 11
+    Float = 12
+    Double = 13
+    Bool = 14
+    Bin = 15
+
+def convert_parameter(typestr, parameter):
+    if typestr == 'int8':
+        return parameter
+    elif typestr == 'int16':
+        return parameter
+    elif typestr == 'int32':
+        return parameter
+    elif typestr == 'int64':
+        return parameter
+    elif typestr == 'uint8':
+        return parameter
+    elif typestr == 'uint16':
+        return parameter
+    elif typestr == 'uint32':
+        return parameter
+    elif typestr == 'uint64':
+        return parameter
+    elif typestr == 'string':
+        return parameter
+    elif typestr == 'float':
+        return "(float)" + parameter
+    elif typestr == 'double':
+        return "(double)" + parameter
+    elif typestr == 'bool':
+        return parameter
+    elif typestr == 'bin':
+        count = len(eval(parameter))
+        value = parameter[1:-1]
+        str_parameter = "{new byte[%d]%s}"%(count, value)
+        return str_parameter
 
 def check_in_dependent(typestr, dependent):
     for _type, _import in dependent:
@@ -21,48 +65,68 @@ def get_import(typestr, dependent):
     return ""
 
 def check_type(typestr, dependent_struct, dependent_enum):
-    if typestr == 'int32':
-        return TypeType.Original
+    if typestr == 'int8':
+        return TypeType.Int8
+    elif typestr == 'int16':
+        return TypeType.Int16
+    elif typestr == 'int32':
+        return TypeType.Int32
     elif typestr == 'int64':
-        return TypeType.Original
+        return TypeType.Int64
+    elif typestr == 'uint8':
+        return TypeType.Uint8
+    elif typestr == 'uint16':
+        return TypeType.Uint16
     elif typestr == 'uint32':
-        return TypeType.Original
+        return TypeType.Uint32
     elif typestr == 'uint64':
-        return TypeType.Original
+        return TypeType.Uint64
     elif typestr == 'string':
-        return TypeType.Original
+        return TypeType.String
     elif typestr == 'float':
-        return TypeType.Original
+        return TypeType.Float
     elif typestr == 'double':
-        return TypeType.Original
+        return TypeType.Double
     elif typestr == 'bool':
-        return TypeType.Original
+        return TypeType.Bool
+    elif typestr == 'bin':
+        return TypeType.Bin
     elif check_in_dependent(typestr, dependent_struct):
 	    return TypeType.Custom
     elif check_in_dependent(typestr, dependent_enum):
-    	return TypeType.Original
+    	return TypeType.Enum
     elif typestr[len(typestr)-2] == '[' and typestr[len(typestr)-1] == ']':
         return TypeType.Array
 
     raise Exception("non exist type:%s" % typestr)
 
 def convert_type(typestr, dependent_struct, dependent_enum):
-    if typestr == 'int32':
+    if typestr == 'int8':
+        return 'Int8'
+    elif typestr == 'int16':
+        return 'Int16'
+    elif typestr == 'int32':
         return 'Int32'
     elif typestr == 'int64':
         return 'Int64'
+    elif typestr == 'uint8':
+        return 'UInt8'
+    elif typestr == 'uint16':
+        return 'UInt16'
     elif typestr == 'uint32':
         return 'UInt32'
     elif typestr == 'uint64':
         return 'UInt64'
     elif typestr == 'string':
-        return 'String'
+        return 'string'
     elif typestr == 'float':
-        return 'Single'
+        return 'float'
     elif typestr == 'double':
-        return 'Double'
+        return 'double'
     elif typestr == 'bool':
-        return 'Boolean'
+        return 'bool'
+    elif typestr == 'bin':
+        return 'byte[]'
     elif check_in_dependent(typestr, dependent_struct):
 	    return typestr
     elif check_in_dependent(typestr, dependent_enum):
@@ -74,3 +138,7 @@ def convert_type(typestr, dependent_struct, dependent_enum):
 
     raise Exception("non exist type:%s" % typestr)
     
+
+OriginalTypeList = [TypeType.Enum, TypeType.String, TypeType.Int8, TypeType.Int16, TypeType.Int32, TypeType.Int64,
+                    TypeType.Uint8, TypeType.Uint16, TypeType.Uint32, TypeType.Uint64, 
+                    TypeType.Float, TypeType.Double, TypeType.Bool, TypeType.Bin]

@@ -12,6 +12,15 @@ namespace abelkhan
         }
     }
 
+    public class RandomUUID
+    {
+        private Random ran = new Random();
+        public static UInt64 random()
+        {
+            return (UInt64)(ran.NextDouble() * UInt64.MaxValue());
+        }
+    }
+
     public class TinyTimer
     {
         private static Int64 tick;

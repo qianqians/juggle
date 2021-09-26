@@ -20,7 +20,10 @@ import genmodule
 
 def gen_import(_import):
     code = "using System;\n"
-    code += "using Newtonsoft.Json.Linq;\n\n"
+    code += "using System.Collections;\n"
+    code += "using System.Collections.Generic;\n"
+    code += "using System.Threading;\n"
+    code += "using MsgPack.Serialization;\n\n"
     code += "namespace abelkhan\n{\n"
     return code
     

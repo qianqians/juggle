@@ -23,37 +23,35 @@ def gen_module_module(module_name, funcs, dependent_struct, dependent_enum):
         if i[1] == "ntf":
             code_constructor += "            reg_method(\"" + func_name + "\", " + func_name + ");\n"
                 
-            code_func += "        public delegate void cb_" + func_name + "_handle("
+            code_func += "        public event Action<"
             count = 0
-            for _type, _name in i[2]:
-                code_func += tools.convert_type(_type, dependent_struct, dependent_enum) + " " + _name 
+            for _type, _name, _parameter in i[2]:
+                code_func += tools.convert_type(_type, dependent_struct, dependent_enum)
                 count += 1
                 if count < len(i[2]):
                     code_func += ", "
-            code_func += ");\n"
-            code_func += "        public event cb_" + func_name + "_handle on_" + func_name + ";\n\n"
+            code_func += "> on_" + func_name + ";\n"
 
-            code_func += "        public void " + func_name + "(JArray inArray){\n"
+            code_func += "        public void " + func_name + "(ArrayList inArray){\n"
             count = 0 
-            for _type, _name in i[2]:
+            for _type, _name, _parameter in i[2]:
                 type_ = tools.check_type(_type, dependent_struct, dependent_enum)
                 _type_ = tools.convert_type(_type, dependent_struct, dependent_enum)
-                if type_ == tools.TypeType.Original:
+                if type_ in tools.OriginalTypeList:
                     code_func += "            var _" + _name + " = (" + _type_ + ")inArray[" + str(count) + "];\n"
                 elif type_ == tools.TypeType.Custom:
-                    code_func += "            var _" + _name + " = " + _type + ".protcol_to_" + _type + "(inArray[" + str(count) + "]);\n"
+                    code_func += "            var _" + _name + " = " + _type + ".protcol_to_" + _type + "((Hashtable)inArray[" + str(count) + "]);\n"
                 elif type_ == tools.TypeType.Array:
                     array_type = _type[:-2]
                     array_type_ = tools.check_type(array_type, dependent_struct, dependent_enum)
                     _array_type = tools.convert_type(array_type, dependent_struct, dependent_enum)
                     code_func += "            var _" + _name + " = new List<" + _array_type + ">();\n"
-                    _v_uuid = str(uuid.uuid1())
-                    _v_uuid = '_'.join(_v_uuid.split('-'))
-                    code_func += "            foreach(var v_" + _v_uuid + " in inArray[" + str(count) + "]){\n"
-                    if array_type_ == tools.TypeType.Original:
+                    _v_uuid = '_'.join(str(uuid.uuid5(uuid.NAMESPACE_DNS, _name)).split('-'))
+                    code_func += "            foreach(var v_" + _v_uuid + " in (ArrayList)inArray[" + str(count) + "]){\n"
+                    if array_type_ in tools.OriginalTypeList:
                         code_func += "                _" + _name + ".Add((" + _array_type + ")v_" + _v_uuid + ");\n"
                     elif array_type_ == tools.TypeType.Custom:
-                        code_func += "                _" + _name + ".Add(" + array_type + ".protcol_to_" + array_type + "(v_" + _v_uuid + "));\n"
+                        code_func += "                _" + _name + ".Add(" + array_type + ".protcol_to_" + array_type + "((Hashtable)v_" + _v_uuid + "));\n"
                     elif array_type_ == tools.TypeType.Array:
                         raise Exception("not support nested array:%s in func:%s" % (_type, func_name))
                     code_func += "            }\n"                                                     
@@ -62,7 +60,7 @@ def gen_module_module(module_name, funcs, dependent_struct, dependent_enum):
             code_func += "            if (on_" + func_name + " != null){\n"
             code_func += "                on_" + func_name + "("
             count = 0
-            for _type, _name in i[2]:
+            for _type, _name, _parameter in i[2]:
                 code_func += "_" + _name
                 count = count + 1
                 if count < len(i[2]):
@@ -73,38 +71,36 @@ def gen_module_module(module_name, funcs, dependent_struct, dependent_enum):
         elif i[1] == "req" and i[3] == "rsp" and i[5] == "err":
             code_constructor += "            reg_method(\"" + func_name + "\", " + func_name + ");\n"
             
-            code_func += "        public delegate void cb_" + func_name + "_handle("
+            code_func += "        public event Action<"
             count = 0
-            for _type, _name in i[2]:
-                code_func += tools.convert_type(_type, dependent_struct, dependent_enum) + " " + _name
+            for _type, _name, _parameter in i[2]:
+                code_func += tools.convert_type(_type, dependent_struct, dependent_enum)
                 count += 1
                 if count < len(i[2]):
                     code_func += ", "
-            code_func += ");\n"
-            code_func += "        public event cb_" + func_name + "_handle on_" + func_name + ";\n\n"
+            code_func += "> on_" + func_name + ";\n"
             
-            code_func += "        public void " + func_name + "(JArray inArray){\n"
-            code_func += "            var _cb_uuid = (String)inArray[0];\n"
+            code_func += "        public void " + func_name + "(ArrayList inArray){\n"
+            code_func += "            var _cb_uuid = (UInt64)inArray[0];\n"
             count = 1 
-            for _type, _name in i[2]:
+            for _type, _name, _parameter in i[2]:
                 type_ = tools.check_type(_type, dependent_struct, dependent_enum)
                 _type_ = tools.convert_type(_type, dependent_struct, dependent_enum)
-                if type_ == tools.TypeType.Original:
+                if type_ in tools.OriginalTypeList:
                     code_func += "            var _" + _name + " = (" + _type_ + ")inArray[" + str(count) + "];\n"
                 elif type_ == tools.TypeType.Custom:
-                    code_func += "            var _" + _name + " = " + _type + ".protcol_to_" + _type + "(inArray[" + str(count) + "]);\n"
+                    code_func += "            var _" + _name + " = " + _type + ".protcol_to_" + _type + "((Hashtable)inArray[" + str(count) + "]);\n"
                 elif type_ == tools.TypeType.Array:
                     array_type = _type[:-2]
                     array_type_ = tools.check_type(array_type, dependent_struct, dependent_enum)
                     _array_type = tools.convert_type(array_type, dependent_struct, dependent_enum)
                     code_func += "            var _" + _name + " = new List<" + _array_type + ">();\n"
-                    _v_uuid = str(uuid.uuid1())
-                    _v_uuid = '_'.join(_v_uuid.split('-'))
-                    code_func += "            foreach(var v_" + _v_uuid + " in inArray[" + str(count) + "]){\n"
-                    if array_type_ == tools.TypeType.Original:
+                    _v_uuid = '_'.join(str(uuid.uuid5(uuid.NAMESPACE_DNS, _name)).split('-'))
+                    code_func += "            foreach(var v_" + _v_uuid + " in (ArrayList)inArray[" + str(count) + "]){\n"
+                    if array_type_ in tools.OriginalTypeList:
                         code_func += "                _" + _name + ".Add((" + _array_type + ")v_" + _v_uuid + ");\n"
                     elif array_type_ == tools.TypeType.Custom:
-                        code_func += "                _" + _name + ".Add(" + array_type + ".protcol_to_" + array_type + "(v_" + _v_uuid + "));\n"
+                        code_func += "                _" + _name + ".Add(" + array_type + ".protcol_to_" + array_type + "((Hashtable)v_" + _v_uuid + "));\n"
                     elif array_type_ == tools.TypeType.Array:
                         raise Exception("not support nested array:%s in func:%s" % (_type, func_name))
                     code_func += "            }\n"                                                     
@@ -114,7 +110,7 @@ def gen_module_module(module_name, funcs, dependent_struct, dependent_enum):
             code_func += "            if (on_" + func_name + " != null){\n"
             code_func += "                on_" + func_name + "("
             count = 0
-            for _type, _name in i[2]:
+            for _type, _name, _parameter in i[2]:
                 code_func += "_" + _name
                 count = count + 1
                 if count < len(i[2]):
@@ -125,39 +121,40 @@ def gen_module_module(module_name, funcs, dependent_struct, dependent_enum):
             code_func += "        }\n\n"
 
             rsp_code += "    public class " + module_name + "_" + func_name + "_rsp : abelkhan.Response {\n"
-            rsp_code += "        private string uuid;\n"
-            rsp_code += "        public " + module_name + "_" + func_name + "_rsp(abelkhan.Ichannel _ch, String _uuid) : base(\"" + module_name + "_rsp_cb\", _ch)\n"
+            rsp_code += "        private UInt64 uuid;\n"
+            rsp_code += "        public " + module_name + "_" + func_name + "_rsp(abelkhan.Ichannel _ch, UInt64 _uuid) : base(\"" + module_name + "_rsp_cb\", _ch)\n"
             rsp_code += "        {\n"
             rsp_code += "            uuid = _uuid;\n"
             rsp_code += "        }\n\n"
 
             rsp_code += "        public void rsp("
-            for _type, _name in i[4]:
-                rsp_code += tools.convert_type(_type, dependent_struct, dependent_enum) + " " + _name 
+            count = 0
+            for _type, _name, _parameter in i[4]:
+                if _parameter == None:
+                    rsp_code += tools.convert_type(_type, dependent_struct, dependent_enum) + " " + _name 
+                else:
+                    rsp_code += tools.convert_type(_type, dependent_struct, dependent_enum) + " " + _name + " = " + tools.convert_parameter(_type, _parameter)
                 count = count + 1
                 if count < len(i[4]):
                     rsp_code += ", "
             rsp_code += "){\n"
-            _argv_uuid = str(uuid.uuid1())
-            _argv_uuid = '_'.join(_argv_uuid.split('-'))
-            rsp_code += "            var _argv_" + _argv_uuid + " = new JArray();\n"
+            _argv_uuid = '_'.join(str(uuid.uuid3(uuid.NAMESPACE_DNS, func_name)).split('-'))
+            rsp_code += "            var _argv_" + _argv_uuid + " = new ArrayList();\n"
             rsp_code += "            _argv_" + _argv_uuid + ".Add(uuid);\n"
-            for _type, _name in i[4]:
+            for _type, _name, _parameter in i[4]:
                 type_ = tools.check_type(_type, dependent_struct, dependent_enum)
-                if type_ == tools.TypeType.Original:
+                if type_ in tools.OriginalTypeList:
                     rsp_code += "            _argv_" + _argv_uuid + ".Add(" + _name + ");\n"
                 elif type_ == tools.TypeType.Custom:
                     rsp_code += "            _argv_" + _argv_uuid + ".Add(" + _type + "." + _type + "_to_protcol(" + _name + "));\n"
                 elif type_ == tools.TypeType.Array:
-                    _array_uuid = str(uuid.uuid1())
-                    _array_uuid = '_'.join(_array_uuid.split('-'))
+                    _array_uuid = '_'.join(str(uuid.uuid3(uuid.NAMESPACE_DNS, _name)).split('-'))
                     rsp_code += "            var _array_" + _array_uuid + " = new JArray();"
-                    _v_uuid = str(uuid.uuid1())
-                    _v_uuid = '_'.join(_v_uuid.split('-'))
+                    _v_uuid = '_'.join(str(uuid.uuid5(uuid.NAMESPACE_DNS, _name)).split('-'))
                     rsp_code += "            foreach(var v_" + _v_uuid + " in " + _name + "){\n"
                     array_type = _type[:-2]
                     array_type_ = tools.check_type(array_type, dependent_struct, dependent_enum)
-                    if array_type_ == tools.TypeType.Original:
+                    if array_type_ in tools.OriginalTypeList:
                         rsp_code += "                _array_" + _array_uuid + ".Add(v_" + _v_uuid + ");\n"
                     elif array_type_ == tools.TypeType.Custom:
                         rsp_code += "                _array_" + _array_uuid + ".Add(" + array_type + "." + array_type + "_to_protcol(v_" + _v_uuid + "));\n"
@@ -170,32 +167,29 @@ def gen_module_module(module_name, funcs, dependent_struct, dependent_enum):
 
             rsp_code += "        public void err("
             count = 0
-            for _type, _name in i[6]:
+            for _type, _name, _parameter in i[6]:
                 rsp_code += tools.convert_type(_type, dependent_struct, dependent_enum) + " " + _name
                 count = count + 1
                 if count < len(i[6]):
                     rsp_code += ", "
             rsp_code += "){\n"
-            _argv_uuid = str(uuid.uuid1())
-            _argv_uuid = '_'.join(_argv_uuid.split('-'))
-            rsp_code += "            var _argv_" + _argv_uuid + " = new JArray();\n"
+            _argv_uuid = '_'.join(str(uuid.uuid3(uuid.NAMESPACE_DNS, func_name)).split('-'))
+            rsp_code += "            var _argv_" + _argv_uuid + " = new ArrayList();\n"
             rsp_code += "            _argv_" + _argv_uuid + ".Add(this.uuid);\n"
-            for _type, _name in i[6]:
+            for _type, _name, _parameter in i[6]:
                 type_ = tools.check_type(_type, dependent_struct, dependent_enum)
-                if type_ == tools.TypeType.Original:
+                if type_ in tools.OriginalTypeList:
                     rsp_code += "            _argv_" + _argv_uuid + ".Add(" + _name + ");\n"
                 elif type_ == tools.TypeType.Custom:
                     rsp_code += "            _argv_" + _argv_uuid + ".Add(" + _type + "." + _type + "_to_protcol(" + _name + "));\n"
                 elif type_ == tools.TypeType.Array:
-                    _array_uuid = str(uuid.uuid1())
-                    _array_uuid = '_'.join(_array_uuid.split('-'))
+                    _array_uuid = '_'.join(str(uuid.uuid3(uuid.NAMESPACE_DNS, _name)).split('-'))
                     rsp_code += "            var _array_" + _array_uuid + " = new JArray();"
-                    _v_uuid = str(uuid.uuid1())
-                    _v_uuid = '_'.join(_v_uuid.split('-'))
+                    _v_uuid = '_'.join(str(uuid.uuid5(uuid.NAMESPACE_DNS, _name)).split('-'))
                     rsp_code += "            foreach(var v_" + _v_uuid + " in " + _name + "){\n"
                     array_type = _type[:-2]
                     array_type_ = tools.check_type(array_type, dependent_struct, dependent_enum)
-                    if array_type_ == tools.TypeType.Original:
+                    if array_type_ in tools.OriginalTypeList:
                         rsp_code += "                _array_" + _array_uuid + ".Add(v_" + _v_uuid + ");\n"
                     elif array_type_ == tools.TypeType.Custom:
                         rsp_code += "                _array_" + _array_uuid + ".Add(" + array_type + "." + array_type + "_to_protcol(v_" + _v_uuid + "));\n"

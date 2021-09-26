@@ -18,6 +18,7 @@ def gen_module_caller(module_name, funcs, dependent_struct, dependent_enum):
 
     code = "    public class " + module_name + "_caller : abelkhan.Icaller {\n"
     code += "        public static " + module_name + "_rsp_cb rsp_cb_" + module_name + "_handle = null;\n"
+    code += "        private UInt64 uuid = RandomUUID.random();\n\n"
     code += "        public " + module_name + "_caller(abelkhan.Ichannel _ch, abelkhan.modulemng modules) : base(\"" + module_name + "\", _ch)\n"
     code += "        {\n"
     code += "            if (rsp_cb_" + module_name + "_handle == null)\n            {\n"
@@ -31,31 +32,31 @@ def gen_module_caller(module_name, funcs, dependent_struct, dependent_enum):
         if i[1] == "ntf":
             code += "        public void " + func_name + "("
             count = 0
-            for _type, _name in i[2]:
-                code += tools.convert_type(_type, dependent_struct, dependent_enum) + " " + _name 
+            for _type, _name, _parameter in i[2]:
+                if _parameter == None:
+                    code += tools.convert_type(_type, dependent_struct, dependent_enum) + " " + _name 
+                else:
+                    code += tools.convert_type(_type, dependent_struct, dependent_enum) + " " + _name + " = " + tools.convert_parameter(_type, _parameter)
                 count = count + 1
                 if count < len(i[2]):
                     code += ", "
             code += "){\n"
-            _argv_uuid = str(uuid.uuid1())
-            _argv_uuid = '_'.join(_argv_uuid.split('-'))
-            code += "            var _argv_" + _argv_uuid + " = new JArray();\n"
-            for _type, _name in i[2]:
+            _argv_uuid = '_'.join(str(uuid.uuid3(uuid.NAMESPACE_DNS, func_name)).split('-'))
+            code += "            var _argv_" + _argv_uuid + " = new ArrayList();\n"
+            for _type, _name, _parameter in i[2]:
                 type_ = tools.check_type(_type, dependent_struct, dependent_enum)
-                if type_ == tools.TypeType.Original:
+                if type_ in tools.OriginalTypeList:
                     code += "            _argv_" + _argv_uuid + ".Add(" + _name + ");\n"
                 elif type_ == tools.TypeType.Custom:
                     code += "            _argv_" + _argv_uuid + ".Add(" + _type + "." + _type + "_to_protcol(" + _name + "));\n"
                 elif type_ == tools.TypeType.Array:
-                    _array_uuid = str(uuid.uuid1())
-                    _array_uuid = '_'.join(_array_uuid.split('-'))
-                    code += "            var _array_" + _array_uuid + " = new JArray();\n"
-                    _v_uuid = str(uuid.uuid1())
-                    _v_uuid = '_'.join(_v_uuid.split('-'))
+                    _array_uuid = '_'.join(str(uuid.uuid3(uuid.NAMESPACE_DNS, _name)).split('-'))
+                    code += "            var _array_" + _array_uuid + " = new ArrayList();\n"
+                    _v_uuid = '_'.join(str(uuid.uuid5(uuid.NAMESPACE_DNS, _name)).split('-'))
                     code += "            foreach(var v_" + _v_uuid + " in " + _name + "){\n"
                     array_type = _type[:-2]
                     array_type_ = tools.check_type(array_type, dependent_struct, dependent_enum)
-                    if array_type_ == tools.TypeType.Original:
+                    if array_type_ in tools.OriginalTypeList:
                         code += "                _array_" + _array_uuid + ".Add(v_" + _v_uuid + ");\n"
                     elif array_type_ == tools.TypeType.Custom:
                         code += "                _array_" + _array_uuid + ".Add(" + array_type + "." + array_type + "_to_protcol(v_" + _v_uuid + "));\n"
@@ -67,44 +68,73 @@ def gen_module_caller(module_name, funcs, dependent_struct, dependent_enum):
             code += "        }\n\n"
         elif i[1] == "req" and i[3] == "rsp" and i[5] == "err":
             cb_func += "    public class " + module_name + "_" + func_name + "_cb\n    {\n"
-            cb_func += "        public delegate void " + func_name + "_handle_cb("
+            cb_func += "        private UInt64 cb_uuid;\n"
+            cb_func += "        private " + module_name + "_rsp_cb module_rsp_cb;\n\n"
+            cb_func += "        public " + module_name + "_" + func_name + "_cb(UInt64 _cb_uuid, " + module_name + "_rsp_cb _module_rsp_cb)\n"
+            cb_func += "        {\n"
+            cb_func += "            cb_uuid = _cb_uuid;\n"
+            cb_func += "            module_rsp_cb = _module_rsp_cb;\n"
+            cb_func += "        }\n\n"
+            cb_func += "        public event Action<"
             count = 0
-            for _type, _name in i[4]:
-                cb_func += tools.convert_type(_type, dependent_struct, dependent_enum) + " " + _name 
+            for _type, _name, _parameter in i[4]:
+                cb_func += tools.convert_type(_type, dependent_struct, dependent_enum)
                 count = count + 1
                 if count < len(i[4]):
                     cb_func += ", "
-            cb_func += ");\n"
-            cb_func += "        public event " + func_name + "_handle_cb on" + func_name + "_cb;\n\n"
+            cb_func += "> on_" + func_name + "_cb;\n"
 
-            cb_func += "        public delegate void " + func_name + "_handle_err("
+            cb_func += "        public event Action<"
             count = 0
-            for _type, _name in i[6]:
-                cb_func += tools.convert_type(_type, dependent_struct, dependent_enum) + " " + _name
+            for _type, _name, _parameter in i[6]:
+                cb_func += tools.convert_type(_type, dependent_struct, dependent_enum)
                 count = count + 1
                 if count < len(i[6]):
                     cb_func += ", "
-            cb_func += ");\n"
-            cb_func += "        public event " + func_name + "_handle_err on" + func_name + "_err;\n\n"
+            cb_func += "> on_" + func_name + "_err;\n"
 
-            cb_func += "        public void callBack(" + func_name + "_handle_cb cb, " + func_name + "_handle_err err)\n        {\n"
-            cb_func += "            on" + func_name + "_cb += cb;\n"
-            cb_func += "            on" + func_name + "_err += err;\n"
+            cb_func += "        public event Action on_" + func_name + "_timeout;\n\n"
+
+            cb_func += "        public " + module_name + "_" + func_name + "_cb callBack(Action<"
+            count = 0
+            for _type, _name, _parameter in i[4]:
+                cb_func += tools.convert_type(_type, dependent_struct, dependent_enum)
+                count = count + 1
+                if count < len(i[4]):
+                    cb_func += ", "
+            cb_func += "> cb, Action<"
+            count = 0
+            for _type, _name, _parameter in i[6]:
+                cb_func += tools.convert_type(_type, dependent_struct, dependent_enum)
+                count = count + 1
+                if count < len(i[6]):
+                    cb_func += ", "
+            cb_func += "> err)\n        {\n"
+            cb_func += "            on_" + func_name + "_cb += cb;\n"
+            cb_func += "            on_" + func_name + "_err += err;\n"
+            cb_func += "            return this;\n"
+            cb_func += "        }\n\n"
+
+            cb_func += "        void timeout(Uint64 tick, Action timeout_cb)\n        {\n"
+            cb_func += "            TinyTimer.add_timer(tick, ()=>{\n"
+            cb_func += "                module_rsp_cb." + func_name + "_timeout(cb_uuid);\n"
+            cb_func += "            });\n"
+            cb_func += "            on_" + func_name + "_timeout += timeout_cb;\n"
             cb_func += "        }\n\n"
             
             cb_func += "        public void call_cb("
             count = 0
-            for _type, _name in i[4]:
+            for _type, _name, _parameter in i[4]:
                 cb_func += tools.convert_type(_type, dependent_struct, dependent_enum) + " " + _name 
                 count = count + 1
                 if count < len(i[4]):
                     cb_func += ", "
             cb_func += ")\n        {\n"
-            cb_func += "            if (on" + func_name + "_cb != null)\n"
+            cb_func += "            if (on_" + func_name + "_cb != null)\n"
             cb_func += "            {\n"
-            cb_func += "                on" + func_name + "_cb(" 
+            cb_func += "                on_" + func_name + "_cb(" 
             count = 0
-            for _type, _name in i[4]:
+            for _type, _name, _parameter in i[4]:
                 cb_func += _name
                 count = count + 1
                 if count < len(i[4]):
@@ -115,17 +145,17 @@ def gen_module_caller(module_name, funcs, dependent_struct, dependent_enum):
             
             cb_func += "        public void call_err("
             count = 0
-            for _type, _name in i[6]:
+            for _type, _name, _parameter in i[6]:
                 cb_func += tools.convert_type(_type, dependent_struct, dependent_enum) + " " + _name 
                 count = count + 1
                 if count < len(i[6]):
                     cb_func += ", "
             cb_func += ")\n        {\n"
-            cb_func += "            if (on" + func_name + "_err != null)\n"
+            cb_func += "            if (on_" + func_name + "_err != null)\n"
             cb_func += "            {\n"
-            cb_func += "                on" + func_name + "_err(" 
+            cb_func += "                on_" + func_name + "_err(" 
             count = 0
-            for _type, _name in i[6]:
+            for _type, _name, _parameter in i[6]:
                 cb_func += _name
                 count = count + 1
                 if count < len(i[6]):
@@ -134,20 +164,28 @@ def gen_module_caller(module_name, funcs, dependent_struct, dependent_enum):
             cb_func += "            }\n"
             cb_func += "        }\n\n"
 
+            cb_func += "        public void call_timeout()\n"
+            cb_func += "        {\n"
+            cb_func += "            if (on_" + func_name + "_timeout != null)\n"
+            cb_func += "            {\n"
+            cb_func += "                on_" + func_name + "_timeout();\n"
+            cb_func += "            }\n"
+            cb_func += "        }\n\n"
+
             cb_func += "    }\n\n"
 
-            cb_code += "        public Dictionary<string, " + module_name + "_" + func_name + "_cb> map_" + func_name + ";\n"
-            cb_code_constructor += "            map_" + func_name + " = new Dictionary<string, " + module_name + "_" + func_name + "_cb>();\n"
+            cb_code += "        public Dictionary<UInt64, " + module_name + "_" + func_name + "_cb> map_" + func_name + ";\n"
+            cb_code_constructor += "            map_" + func_name + " = new Dictionary<UInt64, " + module_name + "_" + func_name + "_cb>();\n"
             cb_code_constructor += "            reg_method(\"" + func_name + "_rsp\", " + func_name + "_rsp);\n"
             cb_code_constructor += "            reg_method(\"" + func_name + "_err\", " + func_name + "_err);\n"
 
-            cb_code_section += "        public void " + func_name + "_rsp(JArray inArray){\n"
-            cb_code_section += "            var uuid = (String)inArray[0];\n"
+            cb_code_section += "        public void " + func_name + "_rsp(ArrayList inArray){\n"
+            cb_code_section += "            var uuid = (UInt64)inArray[0];\n"
             count = 1 
-            for _type, _name in i[4]:
+            for _type, _name, _parameter in i[4]:
                 type_ = tools.check_type(_type, dependent_struct, dependent_enum)
                 _type_ = tools.convert_type(_type, dependent_struct, dependent_enum)
-                if type_ == tools.TypeType.Original:
+                if type_ in tools.OriginalTypeList:
                     cb_code_section += "            var _" + _name + " = (" + _type_ + ")inArray[" + str(count) + "];\n"
                 elif type_ == tools.TypeType.Custom:
                     cb_code_section += "            var _" + _name + " = " + _type + ".protcol_to_" + _type + "(inArray[" + str(count) + "]);\n"
@@ -156,10 +194,9 @@ def gen_module_caller(module_name, funcs, dependent_struct, dependent_enum):
                     array_type_ = tools.check_type(array_type, dependent_struct, dependent_enum)
                     _array_type = tools.convert_type(array_type, dependent_struct, dependent_enum)
                     cb_code_section += "            var _" + _name + " = new List<" + _array_type + ">();\n"
-                    _v_uuid = str(uuid.uuid1())
-                    _v_uuid = '_'.join(_v_uuid.split('-'))
+                    _v_uuid = '_'.join(str(uuid.uuid5(uuid.NAMESPACE_DNS, _name)).split('-'))
                     cb_code_section += "            foreach(var v_" + _v_uuid + " in inArray[" + str(count) + "]){\n"
-                    if array_type_ == tools.TypeType.Original:
+                    if array_type_ in tools.OriginalTypeList:
                         cb_code_section += "                _" + _name + ".Add((" + _array_type + ")v_" + _v_uuid + ");\n"
                     elif array_type_ == tools.TypeType.Custom:
                         cb_code_section += "                _" + _name + ".Add(" + array_type + ".protcol_to_" + array_type + "(v_" + _v_uuid + "));\n"
@@ -167,25 +204,24 @@ def gen_module_caller(module_name, funcs, dependent_struct, dependent_enum):
                         raise Exception("not support nested array:%s in func:%s" % (_type, func_name))
                     cb_code_section += "            }\n"
                 count += 1
-            cb_code_section += "            var rsp = map_" + func_name + "[uuid];\n"
+            cb_code_section += "            var rsp = try_get_and_del_" + func_name + "_cb(uuid);\n"
             cb_code_section += "            rsp.call_cb("
             count = 0
-            for _type, _name in i[4]:
+            for _type, _name, _parameter in i[4]:
                 cb_code_section += "_" + _name
                 count = count + 1
                 if count < len(i[4]):
                     cb_code_section += ", "
             cb_code_section += ");\n"
-            cb_code_section += "            map_" + func_name + ".Remove(uuid);\n"
             cb_code_section += "        }\n"
 
-            cb_code_section += "        public void " + func_name + "_err(JArray inArray){\n"
-            cb_code_section += "            var uuid = (String)inArray[0];\n"
+            cb_code_section += "        public void " + func_name + "_err(ArrayList inArray){\n"
+            cb_code_section += "            var uuid = (UInt64)inArray[0];\n"
             count = 1 
-            for _type, _name in i[6]:
+            for _type, _name, _parameter in i[6]:
                 type_ = tools.check_type(_type, dependent_struct, dependent_enum)
                 _type_ = tools.convert_type(_type, dependent_struct, dependent_enum)
-                if type_ == tools.TypeType.Original:
+                if type_ in tools.OriginalTypeList:
                     cb_code_section += "            var _" + _name + " = (" + _type_ + ")inArray[" + str(count) + "];\n"
                 elif type_ == tools.TypeType.Custom:
                     cb_code_section += "            var _" + _name + " = " + _type + ".protcol_to_" + _type + "(inArray[" + str(count) + "]);\n"
@@ -194,10 +230,9 @@ def gen_module_caller(module_name, funcs, dependent_struct, dependent_enum):
                     array_type_ = tools.check_type(array_type, dependent_struct, dependent_enum)
                     _array_type = tools.convert_type(array_type, dependent_struct, dependent_enum)
                     cb_code_section += "            var _" + _name + " = new List<" + _array_type + ">();\n"
-                    _v_uuid = str(uuid.uuid1())
-                    _v_uuid = '_'.join(_v_uuid.split('-'))
+                    _v_uuid = '_'.join(str(uuid.uuid5(uuid.NAMESPACE_DNS, _name)).split('-'))
                     cb_code_section += "            foreach(var v_" + _v_uuid + " in inArray[" + str(count) + "]){\n"
-                    if array_type_ == tools.TypeType.Original:
+                    if array_type_ in tools.OriginalTypeList:
                         cb_code_section += "                _" + _name + ".Add((" + _array_type + ")v_" + _v_uuid + ");\n"
                     elif array_type_ == tools.TypeType.Custom:
                         cb_code_section += "                _" + _name + ".Add(" + array_type + ".protcol_to_" + array_type + "(v_" + _v_uuid + "));\n"
@@ -205,49 +240,64 @@ def gen_module_caller(module_name, funcs, dependent_struct, dependent_enum):
                         raise Exception("not support nested array:%s in func:%s" % (_type, func_name))
                     cb_code_section += "            }\n"
                 count += 1
-            cb_code_section += "            var rsp = map_" + func_name + "[uuid];\n"
+            cb_code_section += "            var rsp = try_get_and_del_" + func_name + "_cb(uuid);\n"
             cb_code_section += "            rsp.call_err("
             count = 0
-            for _type, _name in i[6]:
+            for _type, _name, _parameter in i[6]:
                 cb_code_section += "_" + _name
                 count = count + 1
                 if count < len(i[6]):
                     cb_code_section += ", "
             cb_code_section += ");\n"
-            cb_code_section += "            map_" + func_name + ".Remove(uuid);\n"
             cb_code_section += "        }\n"
+
+            cb_code_section += "        void " + func_name + "_timeout(UInt64 cb_uuid){\n"
+            cb_code_section += "            auto rsp = try_get_and_del_" + func_name + "_cb(cb_uuid);\n"
+            cb_code_section += "            if (rsp != nullptr){\n"
+            cb_code_section += "                rsp.call_timeout();\n"
+            cb_code_section += "            }\n"
+            cb_code_section += "        }\n\n"
+
+            cb_code_section += "        " + module_name + "_" + func_name + "_cb try_get_and_del_" + func_name + "_cb(UInt64 uuid){\n"
+            cb_code_section += "            lock(map_" + func_name + ")\n"
+            cb_code_section += "            {"
+            cb_code_section += "                var rsp = map_" + func_name + "[uuid];\n"
+            cb_code_section += "                map_" + func_name + ".Remove(uuid);\n"
+            cb_code_section += "                return rsp;\n"
+            cb_code_section += "            }"
+            cb_code_section += "        }\n\n"
 
             code += "        public " + module_name + "_" + func_name + "_cb " + func_name + "("
             count = 0
-            for _type, _name in i[2]:
-                code += tools.convert_type(_type, dependent_struct, dependent_enum) + " " + _name 
+            for _type, _name, _parameter in i[2]:
+                if _parameter == None:
+                    code += tools.convert_type(_type, dependent_struct, dependent_enum) + " " + _name 
+                else:
+                    code += tools.convert_type(_type, dependent_struct, dependent_enum) + " " + _name + " = " + tools.convert_parameter(_type, _parameter)
                 count = count + 1
                 if count < len(i[2]):
                     code += ", "
             code += "){\n"
-            _cb_uuid_uuid = str(uuid.uuid1())
-            _cb_uuid_uuid = '_'.join(_cb_uuid_uuid.split('-'))
-            code += "            var uuid_" + _cb_uuid_uuid + " = System.Guid.NewGuid().ToString(\"N\");\n\n"
-            _argv_uuid = str(uuid.uuid1())
-            _argv_uuid = '_'.join(_argv_uuid.split('-'))
-            code += "            var _argv_" + _argv_uuid + " = new JArray();\n"
+            _cb_uuid_uuid = '_'.join(str(uuid.uuid5(uuid.NAMESPACE_DNS, func_name)).split('-'))
+            code += "            Interlocked.Increment(ref uuid);\n"
+            code += "            var uuid_" + _cb_uuid_uuid + " = uuid;\n\n"
+            _argv_uuid = '_'.join(str(uuid.uuid3(uuid.NAMESPACE_DNS, func_name)).split('-'))
+            code += "            var _argv_" + _argv_uuid + " = new ArrayList();\n"
             code += "            _argv_" + _argv_uuid + ".Add(uuid_" + _cb_uuid_uuid + ");\n"
-            for _type, _name in i[2]:
+            for _type, _name, _parameter in i[2]:
                 type_ = tools.check_type(_type, dependent_struct, dependent_enum)
-                if type_ == tools.TypeType.Original:
+                if type_ in tools.OriginalTypeList:
                     code += "            _argv_" + _argv_uuid + ".Add(" + _name + ");\n"
                 elif type_ == tools.TypeType.Custom:
                     code += "            _argv_" + _argv_uuid + ".Add(" + _type + "." + _type + "_to_protcol(" + _name + "));\n"
                 elif type_ == tools.TypeType.Array:
-                    _array_uuid = str(uuid.uuid1())
-                    _array_uuid = '_'.join(_array_uuid.split('-'))
-                    code += "            var _array_" + _array_uuid + " = new JArray();\n"
-                    _v_uuid = str(uuid.uuid1())
-                    _v_uuid = '_'.join(_v_uuid.split('-'))
+                    _array_uuid = '_'.join(str(uuid.uuid3(uuid.NAMESPACE_DNS, _name)).split('-'))
+                    code += "            var _array_" + _array_uuid + " = new ArrayList();\n"
+                    _v_uuid = '_'.join(str(uuid.uuid5(uuid.NAMESPACE_DNS, _name)).split('-'))
                     code += "            foreach(var v_" + _v_uuid + " in " + _name + "){\n"
                     array_type = _type[:-2]
                     array_type_ = tools.check_type(array_type, dependent_struct, dependent_enum)
-                    if array_type_ == tools.TypeType.Original:
+                    if array_type_ in tools.OriginalTypeList:
                         code += "                _array_" + _array_uuid + ".Add(v_" + _v_uuid + ");\n"
                     elif array_type_ == tools.TypeType.Custom:
                         code += "                _array_" + _array_uuid + ".Add(" + array_type + "." + array_type + "_to_protcol(v_" + _v_uuid + "));\n"
