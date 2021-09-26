@@ -161,7 +161,8 @@ namespace abelkhan
             {                var rsp = map_test3[uuid];
                 map_test3.Remove(uuid);
                 return rsp;
-            }        }
+            }
+        }
 
     }
 

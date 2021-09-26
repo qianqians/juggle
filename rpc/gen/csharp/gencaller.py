@@ -264,7 +264,7 @@ def gen_module_caller(module_name, funcs, dependent_struct, dependent_enum):
             cb_code_section += "                var rsp = map_" + func_name + "[uuid];\n"
             cb_code_section += "                map_" + func_name + ".Remove(uuid);\n"
             cb_code_section += "                return rsp;\n"
-            cb_code_section += "            }"
+            cb_code_section += "            }\n"
             cb_code_section += "        }\n\n"
 
             code += "        public " + module_name + "_" + func_name + "_cb " + func_name + "("
