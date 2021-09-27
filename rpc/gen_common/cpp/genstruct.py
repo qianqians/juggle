@@ -6,7 +6,7 @@
 import tools
 import uuid
 
-def genmainstruct(struct_name, elems, dependent_struct, dependent_enum):
+def genmainstruct(struct_name, elems, dependent_struct, dependent_enum, enum):
     code = "    class " + struct_name + " {\n"
     code += "    public:\n"
     names = []
@@ -17,7 +17,7 @@ def genmainstruct(struct_name, elems, dependent_struct, dependent_enum):
         if parameter == None:
             code += "        " + tools.convert_type(key, dependent_struct, dependent_enum) + " " + value + ";\n"
         else:
-            code += "        " + tools.convert_type(key, dependent_struct, dependent_enum) + " " + value + " = " + tools.convert_parameter(key, parameter) + ";\n"
+            code += "        " + tools.convert_type(key, dependent_struct, dependent_enum) + " " + value + " = " + tools.convert_parameter(key, parameter, dependent_enum, enum) + ";\n"
     code += "\n    public:\n"
     code += "        " + struct_name + "() = default;\n"
     code += "        " + struct_name + "(" + struct_name + "& value) = default;\n\n"
@@ -32,6 +32,8 @@ def genstructprotocol(struct_name, elems, dependent_struct, dependent_enum):
         type_ = tools.check_type(key, dependent_struct, dependent_enum)
         if type_ in tools.OriginalTypeList:
             code += "            _protocol.insert(std::make_pair(\"" + value + "\", _struct." + value + "));\n"
+        elif type_ == tools.TypeType.Enum:
+            code += "            _protocol.insert(std::make_pair(\"" + value + "\", (int)_struct." + value + "));\n"
         elif type_ == tools.TypeType.Custom:
             code += "            _protocol.insert(std::make_pair(\"" + value + "\", " + key + "::" + key + "_to_protcol(_struct." + value + ")));\n"
         elif type_ == tools.TypeType.Array:
@@ -41,6 +43,8 @@ def genstructprotocol(struct_name, elems, dependent_struct, dependent_enum):
             array_type_ = tools.check_type(array_type, dependent_struct, dependent_enum)
             if array_type_ in tools.OriginalTypeList:
                 code += "                _array_" + value + ".push_back(v_);\n"
+            elif array_type_ == tools.TypeType.Enum:
+                code += "                _array_" + value + ".push_back((int)v_);\n"
             elif array_type_ == tools.TypeType.Custom:
                 code += "                _array_" + value + ".push_back(" + array_type + "::" + array_type + "_to_protcol(v_));\n"
             elif array_type_ == tools.TypeType.Array:
@@ -48,7 +52,7 @@ def genstructprotocol(struct_name, elems, dependent_struct, dependent_enum):
             code += "            }\n"
             code += "            _protocol.insert(std::make_pair(\"" + value + "\", _array_" + value + ");\n"
     code += "            return _protocol;\n"
-    code += "        }\n"
+    code += "        }\n\n"
     return code
 
 def genprotocolstruct(struct_name, elems, dependent_struct, dependent_enum):
@@ -80,6 +84,8 @@ def genprotocolstruct(struct_name, elems, dependent_struct, dependent_enum):
             code += "                    _struct" + _struct_uuid + "." + value + " = i.second.uint32_value();\n"
         elif type_ == tools.TypeType.Uint64:
             code += "                    _struct" + _struct_uuid + "." + value + " = i.second.uint64_value();\n"
+        elif type_ == tools.TypeType.Enum:
+            code += "                    _struct" + _struct_uuid + "." + value + " = (" + _type_ + ")i.second.int32_value();\n"
         elif type_ == tools.TypeType.Float:
             code += "                    _struct" + _struct_uuid + "." + value + " = i.second.float32_value();\n"
         elif type_ == tools.TypeType.Double:
@@ -114,6 +120,8 @@ def genprotocolstruct(struct_name, elems, dependent_struct, dependent_enum):
                 code += "                        _struct" + _struct_uuid + "." + value + ".push_back(it_.uint32_value());\n"
             elif array_type_ == tools.TypeType.Uint64:
                 code += "                        _struct" + _struct_uuid + "." + value + ".push_back(it_.uint64_value());\n"
+            elif array_type_ == tools.TypeType.Enum:
+                code += "                        _struct" + _struct_uuid + "." + value + ".push_back((" + _type_ + ")it_.int32_value());\n"
             elif array_type_ == tools.TypeType.Float:
                 code += "                        _struct" + _struct_uuid + "." + value + ".push_back(it_.float32_value());\n"
             elif array_type_ == tools.TypeType.Double:
@@ -144,7 +152,7 @@ def genstruct(pretreatment):
     
     code = "/*this struct code is codegen by abelkhan codegen for cpp*/\n"
     for struct_name, elems in struct.items():
-        code += genmainstruct(struct_name, elems, dependent_struct, dependent_enum)
+        code += genmainstruct(struct_name, elems, dependent_struct, dependent_enum, pretreatment.enum)
         code += genstructprotocol(struct_name, elems, dependent_struct, dependent_enum)
         code += genprotocolstruct(struct_name, elems, dependent_struct, dependent_enum)
         code += "    };\n\n"

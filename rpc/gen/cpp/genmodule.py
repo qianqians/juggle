@@ -6,7 +6,7 @@
 import uuid
 import tools
 
-def gen_module_module(module_name, funcs, dependent_struct, dependent_enum):
+def gen_module_module(module_name, funcs, dependent_struct, dependent_enum, enum):
     code_constructor = "    class " + module_name + "_module : Imodule, public std::enable_shared_from_this<" + module_name + "_module>{\n"
     code_constructor += "    public:\n"
     code_constructor += "        " + module_name + "_module() : Imodule(\"" + module_name + "\")\n"
@@ -54,6 +54,8 @@ def gen_module_module(module_name, funcs, dependent_struct, dependent_enum):
                     code_func += "            auto _" + _name + " = inArray[" + str(count) + "].uint32_value();\n"
                 elif type_ == tools.TypeType.Uint64:
                     code_func += "            auto _" + _name + " = inArray[" + str(count) + "].uint64_value();\n"
+                elif type_ == tools.TypeType.Enum:
+                    code_func += "            auto _" + _name + " = (" + _type_ + ")inArray[" + str(count) + "].int32_value();\n"
                 elif type_ == tools.TypeType.Float:
                     code_func += "            auto _" + _name + " = inArray[" + str(count) + "].float32_value();\n"
                 elif type_ == tools.TypeType.Double:
@@ -90,6 +92,8 @@ def gen_module_module(module_name, funcs, dependent_struct, dependent_enum):
                         code_func += "                _" + _name + ".push_back(it_" + _v_uuid + "->uint32_value());\n"
                     elif array_type_ == tools.TypeType.Uint64:
                         code_func += "                _" + _name + ".push_back(it_" + _v_uuid + "->uint64_value());\n"
+                    elif array_type_ == tools.TypeType.Enum:
+                        code_func += "                _" + _name + ".push_back((" + _array_type + ")it_" + _v_uuid + "->int32_value());\n"
                     elif array_type_ == tools.TypeType.Float:
                         code_func += "                _" + _name + ".push_back(it_" + _v_uuid + "->float32_value());\n"
                     elif array_type_ == tools.TypeType.Double:
@@ -150,6 +154,8 @@ def gen_module_module(module_name, funcs, dependent_struct, dependent_enum):
                     code_func += "            auto _" + _name + " = inArray[" + str(count) + "].uint32_value();\n"
                 elif type_ == tools.TypeType.Uint64:
                     code_func += "            auto _" + _name + " = inArray[" + str(count) + "].uint64_value();\n"
+                elif type_ == tools.TypeType.Enum:
+                    code_func += "            auto _" + _name + " = (" + _type_ + ")inArray[" + str(count) + "].int32_value();\n"
                 elif type_ == tools.TypeType.Float:
                     code_func += "            auto _" + _name + " = inArray[" + str(count) + "].float32_value();\n"
                 elif type_ == tools.TypeType.Double:
@@ -186,6 +192,8 @@ def gen_module_module(module_name, funcs, dependent_struct, dependent_enum):
                         code_func += "                _" + _name + ".push_back(it_" + _v_uuid + "->uint32_value());\n"
                     elif array_type_ == tools.TypeType.Uint64:
                         code_func += "                _" + _name + ".push_back(it_" + _v_uuid + "->uint64_value());\n"
+                    elif array_type_ == tools.TypeType.Enum:
+                        code_func += "                _" + _name + ".push_back((" + _array_type + ")it_" + _v_uuid + "->int32_value());\n"
                     elif array_type_ == tools.TypeType.Float:
                         code_func += "                _" + _name + ".push_back(it_" + _v_uuid + "->float32_value());\n"
                     elif array_type_ == tools.TypeType.Double:
@@ -230,7 +238,7 @@ def gen_module_module(module_name, funcs, dependent_struct, dependent_enum):
                 if _parameter == None:
                     rsp_code += tools.convert_type(_type, dependent_struct, dependent_enum) + " " + _name 
                 else:
-                    rsp_code += tools.convert_type(_type, dependent_struct, dependent_enum) + " " + _name + " = " + tools.convert_parameter(_type, _parameter)
+                    rsp_code += tools.convert_type(_type, dependent_struct, dependent_enum) + " " + _name + " = " + tools.convert_parameter(_type, _parameter, dependent_enum, enum)
                 count = count + 1
                 if count < len(i[4]):
                     rsp_code += ", "
@@ -242,6 +250,8 @@ def gen_module_module(module_name, funcs, dependent_struct, dependent_enum):
                 type_ = tools.check_type(_type, dependent_struct, dependent_enum)
                 if type_ in tools.OriginalTypeList:
                     rsp_code += "            _argv_" + _argv_uuid + ".push_back(" + _name + ");\n"
+                elif type_ == tools.TypeType.Enum:
+                    rsp_code += "            _argv_" + _argv_uuid + ".push_back((int)" + _name + ");\n"
                 elif type_ == tools.TypeType.Custom:
                     rsp_code += "            _argv_" + _argv_uuid + ".push_back(" + _type + "::" + _type + "_to_protcol(" + _name + "));\n"
                 elif type_ == tools.TypeType.Array:
@@ -253,8 +263,8 @@ def gen_module_module(module_name, funcs, dependent_struct, dependent_enum):
                     array_type_ = tools.check_type(array_type, dependent_struct, dependent_enum)
                     if array_type_ in tools.OriginalTypeList:
                         rsp_code += "                _array_" + _array_uuid + ".push_back(v_" + _v_uuid + ");\n"
-                    elif type_ == tools.TypeType.String:
-                        rsp_code += "                _array_" + _array_uuid + ".push_back(v_" + _v_uuid + ");\n"
+                    elif array_type_ == tools.TypeType.Enum:
+                        rsp_code += "                _array_" + _array_uuid + ".push_back((int)v_" + _v_uuid + ");\n"
                     elif array_type_ == tools.TypeType.Custom:
                         rsp_code += "                _array_" + _array_uuid + ".push_back(" + array_type + "::" + array_type + "_to_protcol(v_" + _v_uuid + "));\n"
                     elif array_type_ == tools.TypeType.Array:
@@ -270,7 +280,7 @@ def gen_module_module(module_name, funcs, dependent_struct, dependent_enum):
                 if _parameter == None:
                     rsp_code += tools.convert_type(_type, dependent_struct, dependent_enum) + " " + _name 
                 else:
-                    rsp_code += tools.convert_type(_type, dependent_struct, dependent_enum) + " " + _name + " = " + tools.convert_parameter(_type, _parameter)
+                    rsp_code += tools.convert_type(_type, dependent_struct, dependent_enum) + " " + _name + " = " + tools.convert_parameter(_type, _parameter, dependent_enum, enum)
                 count = count + 1
                 if count < len(i[6]):
                     rsp_code += ", "
@@ -282,6 +292,8 @@ def gen_module_module(module_name, funcs, dependent_struct, dependent_enum):
                 type_ = tools.check_type(_type, dependent_struct, dependent_enum)
                 if type_ in tools.OriginalTypeList:
                     rsp_code += "            _argv_" + _argv_uuid + ".push_back(" + _name + ");\n"
+                elif type_ == tools.TypeType.Enum:
+                    rsp_code += "            _argv_" + _argv_uuid + ".push_back((int)" + _name + ");\n"
                 elif type_ == tools.TypeType.Custom:
                     rsp_code += "            _argv_" + _argv_uuid + ".push_back(" + _type + "::" + _type + "_to_protcol(" + _name + "));\n"
                 elif type_ == tools.TypeType.Array:
@@ -293,8 +305,8 @@ def gen_module_module(module_name, funcs, dependent_struct, dependent_enum):
                     array_type_ = tools.check_type(array_type, dependent_struct, dependent_enum)
                     if array_type_ in tools.OriginalTypeList:
                         rsp_code += "                _array_" + _array_uuid + ".push_back(v_" + _v_uuid + ");\n"
-                    elif type_ == tools.TypeType.String:
-                        rsp_code += "                _array_" + _array_uuid + ".push_back(v_" + _v_uuid + ");\n"
+                    elif array_type_ == tools.TypeType.Enum:
+                        rsp_code += "                _array_" + _array_uuid + ".push_back((int)v_" + _v_uuid + ");\n"
                     elif array_type_ == tools.TypeType.Custom:
                         rsp_code += "                _array_" + _array_uuid + ".push_back(" + array_type + "::" + array_type + "_to_protcol(v_" + _v_uuid + "));\n"
                     elif array_type_ == tools.TypeType.Array:
@@ -322,6 +334,6 @@ def genmodule(pretreatment):
         
     code = "/*this module code is codegen by abelkhan codegen for cpp*/\n"
     for module_name, funcs in modules.items():
-        code += gen_module_module(module_name, funcs, dependent_struct, dependent_enum)
+        code += gen_module_module(module_name, funcs, dependent_struct, dependent_enum, pretreatment.enum)
                 
     return code

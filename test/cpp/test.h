@@ -8,6 +8,10 @@ namespace abelkhan
 {
 /*this enum code is codegen by abelkhan codegen for cpp*/
 
+    enum class em_test3{
+        enum_test3 = 1
+    };
+
 /*this struct code is codegen by abelkhan codegen for cpp*/
     class test1 {
     public:
@@ -29,6 +33,7 @@ namespace abelkhan
             _protocol.insert(std::make_pair("argv4", _struct.argv4));
             return _protocol;
         }
+
         static test1 protcol_to_test1(const msgpack11::MsgPack::object& _protocol){
             test1 _structc501822b_22a8_37ff_91a9_9545f4689a3d;
             for(auto i : _protocol){
@@ -53,6 +58,8 @@ namespace abelkhan
     public:
         int32_t argv1 = 0;
         test1 argv2;
+        std::vector<uint8_t> bytel = {1,1,9};
+        em_test3 t = em_test3::enum_test3;
 
     public:
         test2() = default;
@@ -63,8 +70,11 @@ namespace abelkhan
             msgpack11::MsgPack::object _protocol;
             _protocol.insert(std::make_pair("argv1", _struct.argv1));
             _protocol.insert(std::make_pair("argv2", test1::test1_to_protcol(_struct.argv2)));
+            _protocol.insert(std::make_pair("bytel", _struct.bytel));
+            _protocol.insert(std::make_pair("t", (int)_struct.t));
             return _protocol;
         }
+
         static test2 protcol_to_test2(const msgpack11::MsgPack::object& _protocol){
             test2 _structf1917643_06b2_3e6d_ab77_0a5044067d0a;
             for(auto i : _protocol){
@@ -73,6 +83,12 @@ namespace abelkhan
                 }
                 else if (i.first == "argv2"){
                     _structf1917643_06b2_3e6d_ab77_0a5044067d0a.argv2 = test1::protcol_to_test1(i.second.object_items());
+                }
+                else if (i.first == "bytel"){
+                    _structf1917643_06b2_3e6d_ab77_0a5044067d0a.bytel = i.second.binary_items();
+                }
+                else if (i.first == "t"){
+                    _structf1917643_06b2_3e6d_ab77_0a5044067d0a.t = (em_test3)i.second.int32_value();
                 }
             }
             return _structf1917643_06b2_3e6d_ab77_0a5044067d0a;
@@ -182,11 +198,12 @@ namespace abelkhan
             uuid.store(random());
         }
 
-        std::shared_ptr<test_test3_cb> test3(test2 t2, std::string str = "qianqians"){
+        std::shared_ptr<test_test3_cb> test3(test2 t2, em_test3 e = em_test3::enum_test3, std::string str = "qianqians"){
             auto uuid_20ca53af_d04c_58a2_a8b3_d02b9e414e80 = uuid++;
             msgpack11::MsgPack::array _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7;
             _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7.push_back(uuid_20ca53af_d04c_58a2_a8b3_d02b9e414e80);
             _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7.push_back(test2::test2_to_protcol(t2));
+            _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7.push_back((int)e);
             _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7.push_back(str);
             call_module_method("test3", _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7);
 
@@ -250,13 +267,14 @@ namespace abelkhan
             reg_method("test4", std::bind(&test_module::test4, this, std::placeholders::_1));
         }
 
-        concurrent::signals<void(test2 t2, std::string str)> sig_test3;
+        concurrent::signals<void(test2 t2, em_test3 e, std::string str)> sig_test3;
         void test3(const msgpack11::MsgPack::array& inArray){
             auto _cb_uuid = inArray[0].uint64_value();
             auto _t2 = test2::protcol_to_test2(inArray[1].object_items());
-            auto _str = inArray[2].string_value();
+            auto _e = (em_test3)inArray[2].int32_value();
+            auto _str = inArray[3].string_value();
             rsp = std::make_shared<test_test3_rsp>(current_ch, _cb_uuid);
-            sig_test3.emit(_t2, _str);
+            sig_test3.emit(_t2, _e, _str);
             rsp = nullptr;
         }
 
