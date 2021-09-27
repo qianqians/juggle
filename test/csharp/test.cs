@@ -8,6 +8,9 @@ namespace abelkhan
 {
 /*this enum code is codegen by abelkhan codegen for c#*/
 
+    public enum em_test3{
+        enum_test3 = 1
+    }
 /*this struct code is codegen by abelkhan codegen for c#*/
     public class test1
     {
@@ -47,10 +50,14 @@ namespace abelkhan
     {
         public Int32 argv1 = 0;
         public test1 argv2;
+        public byte[] bytel = new byte[3]{1,1,9};
+        public em_test3 t = em_test3.enum_test3;
         public static Hashtable test2_to_protcol(test2 _struct){
             var _protocol = new Hashtable();
             _protocol.Add("argv1", _struct.argv1);
             _protocol.Add("argv2", test1.test1_to_protcol(_struct.argv2));
+            _protocol.Add("bytel", _struct.bytel);
+            _protocol.Add("t", _struct.t);
             return _protocol;
         }
         public static test2 protcol_to_test2(Hashtable _protocol){
@@ -61,6 +68,12 @@ namespace abelkhan
                 }
                 else if (i.Key == "argv2"){
                     _structf1917643_06b2_3e6d_ab77_0a5044067d0a.argv2 = test1.protcol_to_test1(i.Value);
+                }
+                else if (i.Key == "bytel"){
+                    _structf1917643_06b2_3e6d_ab77_0a5044067d0a.bytel = (byte[])i.Value;
+                }
+                else if (i.Key == "t"){
+                    _structf1917643_06b2_3e6d_ab77_0a5044067d0a.t = (em_test3)i.Value;
                 }
             }
             return _struct;
@@ -130,11 +143,11 @@ namespace abelkhan
         public test_rsp_cb(abelkhan.modulemng modules) : base("test_rsp_cb")
         {
             modules.reg_module(this);
-
             map_test3 = new Dictionary<UInt64, test_test3_cb>();
             reg_method("test3_rsp", test3_rsp);
             reg_method("test3_err", test3_err);
         }
+
         public void test3_rsp(ArrayList inArray){
             var uuid = (UInt64)inArray[0];
             var _t1 = test1.protcol_to_test1(inArray[1]);
@@ -142,6 +155,7 @@ namespace abelkhan
             var rsp = try_get_and_del_test3_cb(uuid);
             rsp.call_cb(_t1, _i);
         }
+
         public void test3_err(ArrayList inArray){
             var uuid = (UInt64)inArray[0];
             var _err = test1.protcol_to_test1(inArray[1]);
@@ -149,6 +163,7 @@ namespace abelkhan
             var rsp = try_get_and_del_test3_cb(uuid);
             rsp.call_err(_err, _bytearray);
         }
+
         void test3_timeout(UInt64 cb_uuid){
             auto rsp = try_get_and_del_test3_cb(cb_uuid);
             if (rsp != nullptr){
@@ -178,13 +193,14 @@ namespace abelkhan
             }
         }
 
-        public test_test3_cb test3(test2 t2, string str = "qianqians"){
+        public test_test3_cb test3(test2 t2, em_test3 e = em_test3.enum_test3, string str = "qianqians"){
             Interlocked.Increment(ref uuid);
             var uuid_20ca53af_d04c_58a2_a8b3_d02b9e414e80 = uuid;
 
             var _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7 = new ArrayList();
             _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7.Add(uuid_20ca53af_d04c_58a2_a8b3_d02b9e414e80);
             _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7.Add(test2.test2_to_protcol(t2));
+            _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7.Add(e);
             _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7.Add(str);
             call_module_method("test3", _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7);
 
@@ -242,14 +258,15 @@ namespace abelkhan
             reg_method("test4", test4);
         }
 
-        public event Action<test2, string> on_test3;
+        public event Action<test2, em_test3, string> on_test3;
         public void test3(ArrayList inArray){
             var _cb_uuid = (UInt64)inArray[0];
             var _t2 = test2.protcol_to_test2((Hashtable)inArray[1]);
-            var _str = (string)inArray[2];
+            var _e = (em_test3)inArray[2];
+            var _str = (string)inArray[3];
             rsp = new test_test3_rsp(current_ch, _cb_uuid);
             if (on_test3 != null){
-                on_test3(_t2, _str);
+                on_test3(_t2, _e, _str);
             }
             rsp = null;
         }

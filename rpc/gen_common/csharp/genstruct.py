@@ -6,7 +6,7 @@
 import tools
 import uuid
 
-def genmainstruct(struct_name, elems, dependent_struct, dependent_enum):
+def genmainstruct(struct_name, elems, dependent_struct, dependent_enum, enum):
     code = "    public class " + struct_name + "\n    {\n"
     names = []
     for key, value, parameter in elems:
@@ -16,7 +16,7 @@ def genmainstruct(struct_name, elems, dependent_struct, dependent_enum):
         if parameter == None:
             code += "        public " + tools.convert_type(key, dependent_struct, dependent_enum) + " " + value + ";\n"
         else:
-            code += "        public " + tools.convert_type(key, dependent_struct, dependent_enum) + " " + value + " = " + tools.convert_parameter(key, parameter) + ";\n"
+            code += "        public " + tools.convert_type(key, dependent_struct, dependent_enum) + " " + value + " = " + tools.convert_parameter(key, parameter, dependent_enum, enum) + ";\n"
     return code
 
 def genstructprotocol(struct_name, elems, dependent_struct, dependent_enum):
@@ -89,7 +89,7 @@ def genstruct(pretreatment):
     
     code = "/*this struct code is codegen by abelkhan codegen for c#*/\n"
     for struct_name, elems in struct.items():
-        code += genmainstruct(struct_name, elems, dependent_struct, dependent_enum)
+        code += genmainstruct(struct_name, elems, dependent_struct, dependent_enum, pretreatment.enum)
         code += genstructprotocol(struct_name, elems, dependent_struct, dependent_enum)
         code += genprotocolstruct(struct_name, elems, dependent_struct, dependent_enum)
         code += "    }\n\n"

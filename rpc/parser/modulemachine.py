@@ -67,6 +67,8 @@ class func(object):
                 self.argvtuple.append(self.argvPair)
                 self.argvPair = []
                 self.keyworld = ''
+                self.list_parameter = False
+                self.isdefaultparameter = False
             return False
 
         if ch == '(':

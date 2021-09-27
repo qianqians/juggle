@@ -15,7 +15,7 @@ def genenum(pretreatment):
             count = count + 1
             if key in names:
                 raise Exception("repeat enum elem:%s in enum:%s" % (key, enum_name))
-            code += "    " + key + " = " + str(value)
+            code += "        " + key + " = " + str(value)
             if count < len(enums):
                 code += ",\n"
             names.append(key)

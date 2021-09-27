@@ -6,7 +6,7 @@
 import uuid
 import tools
 
-def gen_module_module(module_name, funcs, dependent_struct, dependent_enum):
+def gen_module_module(module_name, funcs, dependent_struct, dependent_enum, enum):
     code_constructor = "    public class " + module_name + "_module : abelkhan.Imodule {\n"
     code_constructor += "        private abelkhan.modulemng modules;\n"
     code_constructor += "        public " + module_name + "_module(abelkhan.modulemng _modules) : base(\"" + module_name + "\")\n"
@@ -133,7 +133,7 @@ def gen_module_module(module_name, funcs, dependent_struct, dependent_enum):
                 if _parameter == None:
                     rsp_code += tools.convert_type(_type, dependent_struct, dependent_enum) + " " + _name 
                 else:
-                    rsp_code += tools.convert_type(_type, dependent_struct, dependent_enum) + " " + _name + " = " + tools.convert_parameter(_type, _parameter)
+                    rsp_code += tools.convert_type(_type, dependent_struct, dependent_enum) + " " + _name + " = " + tools.convert_parameter(_type, _parameter, dependent_enum, enum)
                 count = count + 1
                 if count < len(i[4]):
                     rsp_code += ", "
@@ -171,7 +171,7 @@ def gen_module_module(module_name, funcs, dependent_struct, dependent_enum):
                 if _parameter == None:
                     rsp_code += tools.convert_type(_type, dependent_struct, dependent_enum) + " " + _name 
                 else:
-                    rsp_code += tools.convert_type(_type, dependent_struct, dependent_enum) + " " + _name + " = " + tools.convert_parameter(_type, _parameter)
+                    rsp_code += tools.convert_type(_type, dependent_struct, dependent_enum) + " " + _name + " = " + tools.convert_parameter(_type, _parameter, dependent_enum, enum)
                 count = count + 1
                 if count < len(i[6]):
                     rsp_code += ", "
@@ -221,6 +221,6 @@ def genmodule(pretreatment):
         
     code = "/*this module code is codegen by abelkhan codegen for c#*/\n"
     for module_name, funcs in modules.items():
-        code += gen_module_module(module_name, funcs, dependent_struct, dependent_enum)
+        code += gen_module_module(module_name, funcs, dependent_struct, dependent_enum, pretreatment.enum)
                 
     return code

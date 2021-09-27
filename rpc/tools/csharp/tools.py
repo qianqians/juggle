@@ -21,7 +21,7 @@ class TypeType():
     Bool = 14
     Bin = 15
 
-def convert_parameter(typestr, parameter):
+def convert_parameter(typestr, parameter, dependent_enum, enum):
     if typestr == 'int8':
         return parameter
     elif typestr == 'int16':
@@ -46,6 +46,12 @@ def convert_parameter(typestr, parameter):
         return "(double)" + parameter
     elif typestr == 'bool':
         return parameter
+    elif check_in_dependent(typestr, dependent_enum):
+        enum_elems = enum[typestr]
+        for key, value in enum_elems:
+            if key == parameter:
+                return typestr + '.' + parameter
+        raise Exception("parameter:%s not %s member" % (parameter, typestr))
     elif typestr == 'bin':
         count = len(eval(parameter))
         value = parameter[1:-1]

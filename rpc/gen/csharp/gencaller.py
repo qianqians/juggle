@@ -6,14 +6,14 @@
 import uuid
 import tools
 
-def gen_module_caller(module_name, funcs, dependent_struct, dependent_enum):
+def gen_module_caller(module_name, funcs, dependent_struct, dependent_enum, enum):
     cb_func = ""
 
     cb_code = "/*this cb code is codegen by abelkhan for c#*/\n"
     cb_code += "    public class " + module_name + "_rsp_cb : abelkhan.Imodule {\n"
     cb_code_constructor = "        public " + module_name + "_rsp_cb(abelkhan.modulemng modules) : base(\"" + module_name + "_rsp_cb\")\n"
     cb_code_constructor += "        {\n"
-    cb_code_constructor += "            modules.reg_module(this);\n\n"
+    cb_code_constructor += "            modules.reg_module(this);\n"
     cb_code_section = ""
 
     code = "    public class " + module_name + "_caller : abelkhan.Icaller {\n"
@@ -36,7 +36,7 @@ def gen_module_caller(module_name, funcs, dependent_struct, dependent_enum):
                 if _parameter == None:
                     code += tools.convert_type(_type, dependent_struct, dependent_enum) + " " + _name 
                 else:
-                    code += tools.convert_type(_type, dependent_struct, dependent_enum) + " " + _name + " = " + tools.convert_parameter(_type, _parameter)
+                    code += tools.convert_type(_type, dependent_struct, dependent_enum) + " " + _name + " = " + tools.convert_parameter(_type, _parameter, dependent_enum, enum)
                 count = count + 1
                 if count < len(i[2]):
                     code += ", "
@@ -213,7 +213,7 @@ def gen_module_caller(module_name, funcs, dependent_struct, dependent_enum):
                 if count < len(i[4]):
                     cb_code_section += ", "
             cb_code_section += ");\n"
-            cb_code_section += "        }\n"
+            cb_code_section += "        }\n\n"
 
             cb_code_section += "        public void " + func_name + "_err(ArrayList inArray){\n"
             cb_code_section += "            var uuid = (UInt64)inArray[0];\n"
@@ -249,7 +249,7 @@ def gen_module_caller(module_name, funcs, dependent_struct, dependent_enum):
                 if count < len(i[6]):
                     cb_code_section += ", "
             cb_code_section += ");\n"
-            cb_code_section += "        }\n"
+            cb_code_section += "        }\n\n"
 
             cb_code_section += "        void " + func_name + "_timeout(UInt64 cb_uuid){\n"
             cb_code_section += "            auto rsp = try_get_and_del_" + func_name + "_cb(cb_uuid);\n"
@@ -273,7 +273,7 @@ def gen_module_caller(module_name, funcs, dependent_struct, dependent_enum):
                 if _parameter == None:
                     code += tools.convert_type(_type, dependent_struct, dependent_enum) + " " + _name 
                 else:
-                    code += tools.convert_type(_type, dependent_struct, dependent_enum) + " " + _name + " = " + tools.convert_parameter(_type, _parameter)
+                    code += tools.convert_type(_type, dependent_struct, dependent_enum) + " " + _name + " = " + tools.convert_parameter(_type, _parameter, dependent_enum, enum)
                 count = count + 1
                 if count < len(i[2]):
                     code += ", "
@@ -314,7 +314,7 @@ def gen_module_caller(module_name, funcs, dependent_struct, dependent_enum):
         else:
             raise Exception("func:" + func_name + " wrong rpc type:" + i[1] + ", must req or ntf")
 
-    cb_code_constructor += "        }\n"
+    cb_code_constructor += "        }\n\n"
     cb_code_section += "    }\n\n"
     code += "    }\n"
 
@@ -328,6 +328,6 @@ def gencaller(pretreatment):
     
     code = "/*this caller code is codegen by abelkhan codegen for c#*/\n"
     for module_name, funcs in modules.items():
-        code += gen_module_caller(module_name, funcs, dependent_struct, dependent_enum)
+        code += gen_module_caller(module_name, funcs, dependent_struct, dependent_enum, pretreatment.enum)
         
     return code

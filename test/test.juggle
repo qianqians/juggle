@@ -8,10 +8,15 @@ struct test1{
 struct test2{
      int32 argv1 = 0;
      test1 argv2;
-     bin bytel = [1, 1, 9]
+     bin bytel = [1, 1, 9];
+     em_test3 t = enum_test3;
+}
+
+enum em_test3{
+    enum_test3 = 1;
 }
 
 module test{
-	test3 req(test2 t2, string str = "qianqians") rsp(test1 t1, int32 i = 110) err(test1 err, bin bytearray = [1, 1, 0]);
+	test3 req(test2 t2, em_test3 e = enum_test3, string str = "qianqians") rsp(test1 t1, int32 i = 110) err(test1 err, bin bytearray = [1, 1, 0]);
     test4 ntf(test2[] argv, float num = 0.110);
 }
