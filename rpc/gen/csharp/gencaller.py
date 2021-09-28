@@ -52,7 +52,7 @@ def gen_module_caller(module_name, funcs, dependent_struct, dependent_enum, enum
                 elif type_ == tools.TypeType.Array:
                     _array_uuid = '_'.join(str(uuid.uuid3(uuid.NAMESPACE_DNS, _name)).split('-'))
                     code += "            var _array_" + _array_uuid + " = new ArrayList();\n"
-                    _v_uuid = '_'.join(str(uuid.uuid5(uuid.NAMESPACE_DNS, _name)).split('-'))
+                    _v_uuid = '_'.join(str(uuid.uuid5(uuid.NAMESPACE_X500, _name)).split('-'))
                     code += "            foreach(var v_" + _v_uuid + " in " + _name + "){\n"
                     array_type = _type[:-2]
                     array_type_ = tools.check_type(array_type, dependent_struct, dependent_enum)
@@ -293,7 +293,7 @@ def gen_module_caller(module_name, funcs, dependent_struct, dependent_enum, enum
                 elif type_ == tools.TypeType.Array:
                     _array_uuid = '_'.join(str(uuid.uuid3(uuid.NAMESPACE_DNS, _name)).split('-'))
                     code += "            var _array_" + _array_uuid + " = new ArrayList();\n"
-                    _v_uuid = '_'.join(str(uuid.uuid5(uuid.NAMESPACE_DNS, _name)).split('-'))
+                    _v_uuid = '_'.join(str(uuid.uuid5(uuid.NAMESPACE_X500, _name)).split('-'))
                     code += "            foreach(var v_" + _v_uuid + " in " + _name + "){\n"
                     array_type = _type[:-2]
                     array_type_ = tools.check_type(array_type, dependent_struct, dependent_enum)

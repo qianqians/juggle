@@ -212,8 +212,8 @@ namespace abelkhan
         public void test4(List<test2> argv, float num = (float)0.110){
             var _argv_fe584e24_96c8_3d2d_8b39_f1cc6a877f72 = new ArrayList();
             var _array_80252816_2442_30bc_bd5c_59666cae8a23 = new ArrayList();
-            foreach(var v_51e4d59a_5357_5634_9bc1_e9c2e0aa9ab0 in argv){
-                _array_80252816_2442_30bc_bd5c_59666cae8a23.Add(test2.test2_to_protcol(v_51e4d59a_5357_5634_9bc1_e9c2e0aa9ab0));
+            foreach(var v_264317e3_c4ab_53c4_a9a0_63d0058d8148 in argv){
+                _array_80252816_2442_30bc_bd5c_59666cae8a23.Add(test2.test2_to_protcol(v_264317e3_c4ab_53c4_a9a0_63d0058d8148));
             }
             _argv_fe584e24_96c8_3d2d_8b39_f1cc6a877f72.Add(_array_80252816_2442_30bc_bd5c_59666cae8a23);
             _argv_fe584e24_96c8_3d2d_8b39_f1cc6a877f72.Add(num);
