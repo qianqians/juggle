@@ -205,7 +205,8 @@ def gen_module_caller(module_name, funcs, dependent_struct, dependent_enum, enum
                     cb_code_section += "            }\n"
                 count += 1
             cb_code_section += "            var rsp = try_get_and_del_" + func_name + "_cb(uuid);\n"
-            cb_code_section += "            rsp.call_cb("
+            cb_code_section += "            if (rsp != null)\n            {\n"
+            cb_code_section += "                rsp.call_cb("
             count = 0
             for _type, _name, _parameter in i[4]:
                 cb_code_section += "_" + _name
@@ -213,6 +214,7 @@ def gen_module_caller(module_name, funcs, dependent_struct, dependent_enum, enum
                 if count < len(i[4]):
                     cb_code_section += ", "
             cb_code_section += ");\n"
+            cb_code_section += "            }\n"
             cb_code_section += "        }\n\n"
 
             cb_code_section += "        public void " + func_name + "_err(ArrayList inArray){\n"
@@ -241,6 +243,7 @@ def gen_module_caller(module_name, funcs, dependent_struct, dependent_enum, enum
                     cb_code_section += "            }\n"
                 count += 1
             cb_code_section += "            var rsp = try_get_and_del_" + func_name + "_cb(uuid);\n"
+            cb_code_section += "            if (rsp != null)\n            {\n"
             cb_code_section += "            rsp.call_err("
             count = 0
             for _type, _name, _parameter in i[6]:
@@ -249,16 +252,17 @@ def gen_module_caller(module_name, funcs, dependent_struct, dependent_enum, enum
                 if count < len(i[6]):
                     cb_code_section += ", "
             cb_code_section += ");\n"
+            cb_code_section += "            }\n"
             cb_code_section += "        }\n\n"
 
-            cb_code_section += "        void " + func_name + "_timeout(UInt64 cb_uuid){\n"
-            cb_code_section += "            auto rsp = try_get_and_del_" + func_name + "_cb(cb_uuid);\n"
-            cb_code_section += "            if (rsp != nullptr){\n"
+            cb_code_section += "        public void " + func_name + "_timeout(UInt64 cb_uuid){\n"
+            cb_code_section += "            var rsp = try_get_and_del_" + func_name + "_cb(cb_uuid);\n"
+            cb_code_section += "            if (rsp != null){\n"
             cb_code_section += "                rsp.call_timeout();\n"
             cb_code_section += "            }\n"
             cb_code_section += "        }\n\n"
 
-            cb_code_section += "        " + module_name + "_" + func_name + "_cb try_get_and_del_" + func_name + "_cb(UInt64 uuid){\n"
+            cb_code_section += "        private " + module_name + "_" + func_name + "_cb try_get_and_del_" + func_name + "_cb(UInt64 uuid){\n"
             cb_code_section += "            lock(map_" + func_name + ")\n"
             cb_code_section += "            {"
             cb_code_section += "                var rsp = map_" + func_name + "[uuid];\n"

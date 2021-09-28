@@ -153,7 +153,10 @@ namespace abelkhan
             var _t1 = test1.protcol_to_test1(inArray[1]);
             var _i = (Int32)inArray[2];
             var rsp = try_get_and_del_test3_cb(uuid);
-            rsp.call_cb(_t1, _i);
+            if (rsp != null)
+            {
+                rsp.call_cb(_t1, _i);
+            }
         }
 
         public void test3_err(ArrayList inArray){
@@ -161,17 +164,20 @@ namespace abelkhan
             var _err = test1.protcol_to_test1(inArray[1]);
             var _bytearray = (byte[])inArray[2];
             var rsp = try_get_and_del_test3_cb(uuid);
+            if (rsp != null)
+            {
             rsp.call_err(_err, _bytearray);
+            }
         }
 
-        void test3_timeout(UInt64 cb_uuid){
-            auto rsp = try_get_and_del_test3_cb(cb_uuid);
-            if (rsp != nullptr){
+        public void test3_timeout(UInt64 cb_uuid){
+            var rsp = try_get_and_del_test3_cb(cb_uuid);
+            if (rsp != null){
                 rsp.call_timeout();
             }
         }
 
-        test_test3_cb try_get_and_del_test3_cb(UInt64 uuid){
+        private test_test3_cb try_get_and_del_test3_cb(UInt64 uuid){
             lock(map_test3)
             {                var rsp = map_test3[uuid];
                 map_test3.Remove(uuid);
