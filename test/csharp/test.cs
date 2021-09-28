@@ -28,7 +28,7 @@ namespace abelkhan
         }
         public static test1 protcol_to_test1(Hashtable _protocol){
             var _structc501822b_22a8_37ff_91a9_9545f4689a3d = new test1();
-            foreach(auto i in _protocol){
+            foreach(var i in _protocol){
                 if (i.Key == "argv1"){
                     _structc501822b_22a8_37ff_91a9_9545f4689a3d.argv1 = (Int32)i.Value;
                 }
@@ -62,7 +62,7 @@ namespace abelkhan
         }
         public static test2 protcol_to_test2(Hashtable _protocol){
             var _structf1917643_06b2_3e6d_ab77_0a5044067d0a = new test2();
-            foreach(auto i in _protocol){
+            foreach(var i in _protocol){
                 if (i.Key == "argv1"){
                     _structf1917643_06b2_3e6d_ab77_0a5044067d0a.argv1 = (Int32)i.Value;
                 }
