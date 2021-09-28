@@ -63,7 +63,7 @@ def gen_module_caller(module_name, funcs, dependent_struct, dependent_enum, enum
                 elif type_ == tools.TypeType.Array:
                     _array_uuid = '_'.join(str(uuid.uuid3(uuid.NAMESPACE_DNS, _name)).split('-'))
                     code += "            msgpack11::MsgPack::array _array_" + _array_uuid + ";\n"
-                    _v_uuid = '_'.join(str(uuid.uuid5(uuid.NAMESPACE_DNS, _name)).split('-'))
+                    _v_uuid = '_'.join(str(uuid.uuid5(uuid.NAMESPACE_X500, _name)).split('-'))
                     code += "            for(auto v_" + _v_uuid + " : " + _name + "){\n"
                     array_type = _type[:-2]
                     array_type_ = tools.check_type(array_type, dependent_struct, dependent_enum)
@@ -353,7 +353,7 @@ def gen_module_caller(module_name, funcs, dependent_struct, dependent_enum, enum
             code += "){\n"
             _cb_uuid_uuid = '_'.join(str(uuid.uuid5(uuid.NAMESPACE_DNS, func_name)).split('-'))
             code += "            auto uuid_" + _cb_uuid_uuid + " = uuid++;\n"
-            _argv_uuid = '_'.join(str(uuid.uuid3(uuid.NAMESPACE_DNS, func_name)).split('-'))
+            _argv_uuid = '_'.join(str(uuid.uuid3(uuid.NAMESPACE_X500, func_name)).split('-'))
             code += "            msgpack11::MsgPack::array _argv_" + _argv_uuid + ";\n"
             code += "            _argv_" + _argv_uuid + ".push_back(uuid_" + _cb_uuid_uuid + ");\n"
             for _type, _name, _parameter in i[2]:
@@ -367,7 +367,7 @@ def gen_module_caller(module_name, funcs, dependent_struct, dependent_enum, enum
                 elif type_ == tools.TypeType.Array:
                     _array_uuid = '_'.join(str(uuid.uuid3(uuid.NAMESPACE_DNS, _name)).split('-'))
                     code += "            msgpack11::MsgPack::array _array_" + _array_uuid + ";\n"
-                    _v_uuid = '_'.join(str(uuid.uuid5(uuid.NAMESPACE_DNS, _name)).split('-'))
+                    _v_uuid = '_'.join(str(uuid.uuid5(uuid.NAMESPACE_X500, _name)).split('-'))
                     code += "            for(auto v_" + _v_uuid + " : " + _name + "){\n"
                     array_type = _type[:-2]
                     array_type_ = tools.check_type(array_type, dependent_struct, dependent_enum)

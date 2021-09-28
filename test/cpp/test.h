@@ -200,12 +200,12 @@ namespace abelkhan
 
         std::shared_ptr<test_test3_cb> test3(test2 t2, em_test3 e = em_test3::enum_test3, std::string str = "qianqians"){
             auto uuid_20ca53af_d04c_58a2_a8b3_d02b9e414e80 = uuid++;
-            msgpack11::MsgPack::array _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7;
-            _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7.push_back(uuid_20ca53af_d04c_58a2_a8b3_d02b9e414e80);
-            _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7.push_back(test2::test2_to_protcol(t2));
-            _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7.push_back((int)e);
-            _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7.push_back(str);
-            call_module_method("test3", _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7);
+            msgpack11::MsgPack::array _argv_77eeaa2a_8150_3cce_bfa0_0b16e18637bd;
+            _argv_77eeaa2a_8150_3cce_bfa0_0b16e18637bd.push_back(uuid_20ca53af_d04c_58a2_a8b3_d02b9e414e80);
+            _argv_77eeaa2a_8150_3cce_bfa0_0b16e18637bd.push_back(test2::test2_to_protcol(t2));
+            _argv_77eeaa2a_8150_3cce_bfa0_0b16e18637bd.push_back((int)e);
+            _argv_77eeaa2a_8150_3cce_bfa0_0b16e18637bd.push_back(str);
+            call_module_method("test3", _argv_77eeaa2a_8150_3cce_bfa0_0b16e18637bd);
 
             auto cb_test3_obj = std::make_shared<test_test3_cb>(uuid_20ca53af_d04c_58a2_a8b3_d02b9e414e80, rsp_cb_test_handle);
             std::lock_guard<std::mutex> l(rsp_cb_test_handle->mutex_map_test3);
@@ -216,8 +216,8 @@ namespace abelkhan
         void test4(std::vector<test2> argv, float num = (float)0.110){
             msgpack11::MsgPack::array _argv_fe584e24_96c8_3d2d_8b39_f1cc6a877f72;
             msgpack11::MsgPack::array _array_80252816_2442_30bc_bd5c_59666cae8a23;
-            for(auto v_51e4d59a_5357_5634_9bc1_e9c2e0aa9ab0 : argv){
-                _array_80252816_2442_30bc_bd5c_59666cae8a23.push_back(test2::test2_to_protcol(v_51e4d59a_5357_5634_9bc1_e9c2e0aa9ab0));
+            for(auto v_264317e3_c4ab_53c4_a9a0_63d0058d8148 : argv){
+                _array_80252816_2442_30bc_bd5c_59666cae8a23.push_back(test2::test2_to_protcol(v_264317e3_c4ab_53c4_a9a0_63d0058d8148));
             }
             _argv_fe584e24_96c8_3d2d_8b39_f1cc6a877f72.push_back(_array_80252816_2442_30bc_bd5c_59666cae8a23);
             _argv_fe584e24_96c8_3d2d_8b39_f1cc6a877f72.push_back(num);
