@@ -33,6 +33,8 @@ def parameter_check(type_str, parameter_str):
             return parameter_bin_check(parameter_str)
     except:
         return False
+    
+    return True
 
 def parameter_int8_check(parameter_str):
     p = int(parameter_str)

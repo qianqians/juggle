@@ -19,7 +19,7 @@ def genenum(pretreatment):
             if count < len(enums):
                 code += ",\n"
             names.append(key)
-        code += "\n}\n"
+        code += "\n}\n\n"
 
     return code
 
