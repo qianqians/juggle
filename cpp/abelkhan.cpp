@@ -6,6 +6,8 @@
 #include <chrono>
 #include <random>
 
+#include <concurrent/string.h>
+
 #include <abelkhan.h>
 
 namespace abelkhan{

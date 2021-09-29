@@ -18,7 +18,6 @@
 
 #include <msgpack11/msgpack11.hpp>
 
-#include <concurrent/string.h>
 #include <concurrent/ringque.h>
 
 namespace abelkhan{
