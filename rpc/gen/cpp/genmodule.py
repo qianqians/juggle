@@ -318,7 +318,7 @@ def gen_module_module(module_name, funcs, dependent_struct, dependent_enum, enum
             rsp_code += "    };\n\n"
 
         else:
-            raise "func:%s wrong rpc type:%s must req or ntf" % (func_name, i[1])
+            raise Exception("func:%s wrong rpc type:%s must req or ntf" % (func_name, str(i[1])))
 
     code_constructor_end = "        }\n\n"
     code = "    };\n"
