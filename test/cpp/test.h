@@ -186,7 +186,7 @@ namespace abelkhan
         static std::shared_ptr<test_rsp_cb> rsp_cb_test_handle;
 
     private:
-        std::atomic<uint64_t> uuid;
+        std::atomic<uint64_t> uuid_45a113ac_c7f2_30b0_90a5_a399ab912716;
 
     public:
         test_caller(std::shared_ptr<Ichannel> _ch, std::shared_ptr<modulemng> modules) : Icaller("test", _ch)
@@ -199,7 +199,7 @@ namespace abelkhan
         }
 
         std::shared_ptr<test_test3_cb> test3(test2 t2, em_test3 e = em_test3::enum_test3, std::string str = "qianqians"){
-            auto uuid_20ca53af_d04c_58a2_a8b3_d02b9e414e80 = uuid++;
+            auto uuid_20ca53af_d04c_58a2_a8b3_d02b9e414e80 = uuid_45a113ac_c7f2_30b0_90a5_a399ab912716++;
             msgpack11::MsgPack::array _argv_77eeaa2a_8150_3cce_bfa0_0b16e18637bd;
             _argv_77eeaa2a_8150_3cce_bfa0_0b16e18637bd.push_back(uuid_20ca53af_d04c_58a2_a8b3_d02b9e414e80);
             _argv_77eeaa2a_8150_3cce_bfa0_0b16e18637bd.push_back(test2::test2_to_protcol(t2));
@@ -228,17 +228,17 @@ namespace abelkhan
 /*this module code is codegen by abelkhan codegen for cpp*/
     class test_test3_rsp : Response {
     private:
-        uint64_t uuid;
+        uint64_t uuid_77eeaa2a_8150_3cce_bfa0_0b16e18637bd;
 
     public:
         test_test3_rsp(std::shared_ptr<Ichannel> _ch, uint64_t _uuid) : Response("test_rsp_cb", _ch)
         {
-            uuid = _uuid;
+            uuid_77eeaa2a_8150_3cce_bfa0_0b16e18637bd = _uuid;
         }
 
         void rsp(test1 t1, int32_t i = 110){
             msgpack11::MsgPack::array _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7;
-            _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7.push_back(uuid);
+            _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7.push_back(uuid_77eeaa2a_8150_3cce_bfa0_0b16e18637bd);
             _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7.push_back(test1::test1_to_protcol(t1));
             _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7.push_back(i);
             call_module_method("test3_rsp", _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7);
@@ -246,7 +246,7 @@ namespace abelkhan
 
         void err(test1 err, std::vector<uint8_t> bytearray = {1,1,0}){
             msgpack11::MsgPack::array _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7;
-            _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7.push_back(uuid);
+            _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7.push_back(uuid_77eeaa2a_8150_3cce_bfa0_0b16e18637bd);
             _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7.push_back(test1::test1_to_protcol(err));
             _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7.push_back(bytearray);
             call_module_method("test3_err", _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7);

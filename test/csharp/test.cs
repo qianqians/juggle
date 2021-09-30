@@ -189,7 +189,7 @@ namespace abelkhan
 
     public class test_caller : abelkhan.Icaller {
         public static test_rsp_cb rsp_cb_test_handle = null;
-        private UInt64 uuid = RandomUUID.random();
+        private UInt64 uuid_45a113ac_c7f2_30b0_90a5_a399ab912716 = RandomUUID.random();
 
         public test_caller(abelkhan.Ichannel _ch, abelkhan.modulemng modules) : base("test", _ch)
         {
@@ -200,7 +200,7 @@ namespace abelkhan
         }
 
         public test_test3_cb test3(test2 t2, em_test3 e = em_test3.enum_test3, string str = "qianqians"){
-            Interlocked.Increment(ref uuid);
+            Interlocked.Increment(ref uuid_45a113ac_c7f2_30b0_90a5_a399ab912716);
             var uuid_20ca53af_d04c_58a2_a8b3_d02b9e414e80 = uuid;
 
             var _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7 = new ArrayList();
@@ -229,15 +229,15 @@ namespace abelkhan
     }
 /*this module code is codegen by abelkhan codegen for c#*/
     public class test_test3_rsp : abelkhan.Response {
-        private UInt64 uuid;
+        private UInt64 uuid_77eeaa2a_8150_3cce_bfa0_0b16e18637bd;
         public test_test3_rsp(abelkhan.Ichannel _ch, UInt64 _uuid) : base("test_rsp_cb", _ch)
         {
-            uuid = _uuid;
+            uuid_77eeaa2a_8150_3cce_bfa0_0b16e18637bd = _uuid;
         }
 
         public void rsp(test1 t1, Int32 i = 110){
             var _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7 = new ArrayList();
-            _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7.Add(uuid);
+            _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7.Add(uuid_77eeaa2a_8150_3cce_bfa0_0b16e18637bd);
             _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7.Add(test1.test1_to_protcol(t1));
             _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7.Add(i);
             call_module_method("test3_rsp", _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7);
@@ -245,7 +245,7 @@ namespace abelkhan
 
         public void err(test1 err, byte[] bytearray = new byte[3]{1,1,0}){
             var _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7 = new ArrayList();
-            _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7.Add(this.uuid);
+            _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7.Add(uuid_77eeaa2a_8150_3cce_bfa0_0b16e18637bd);
             _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7.Add(test1.test1_to_protcol(err));
             _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7.Add(bytearray);
             call_module_method("test3_err", _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7);

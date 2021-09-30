@@ -121,10 +121,11 @@ def gen_module_module(module_name, funcs, dependent_struct, dependent_enum, enum
             code_func += "        }\n\n"
 
             rsp_code += "    public class " + module_name + "_" + func_name + "_rsp : abelkhan.Response {\n"
-            rsp_code += "        private UInt64 uuid;\n"
+            _rsp_uuid = '_'.join(str(uuid.uuid3(uuid.NAMESPACE_X500, func_name)).split('-'))
+            rsp_code += "        private UInt64 uuid_" + _rsp_uuid + ";\n"
             rsp_code += "        public " + module_name + "_" + func_name + "_rsp(abelkhan.Ichannel _ch, UInt64 _uuid) : base(\"" + module_name + "_rsp_cb\", _ch)\n"
             rsp_code += "        {\n"
-            rsp_code += "            uuid = _uuid;\n"
+            rsp_code += "            uuid_" + _rsp_uuid + " = _uuid;\n"
             rsp_code += "        }\n\n"
 
             rsp_code += "        public void rsp("
@@ -140,7 +141,7 @@ def gen_module_module(module_name, funcs, dependent_struct, dependent_enum, enum
             rsp_code += "){\n"
             _argv_uuid = '_'.join(str(uuid.uuid3(uuid.NAMESPACE_DNS, func_name)).split('-'))
             rsp_code += "            var _argv_" + _argv_uuid + " = new ArrayList();\n"
-            rsp_code += "            _argv_" + _argv_uuid + ".Add(uuid);\n"
+            rsp_code += "            _argv_" + _argv_uuid + ".Add(uuid_" + _rsp_uuid + ");\n"
             for _type, _name, _parameter in i[4]:
                 type_ = tools.check_type(_type, dependent_struct, dependent_enum)
                 if type_ in tools.OriginalTypeList:
@@ -178,7 +179,7 @@ def gen_module_module(module_name, funcs, dependent_struct, dependent_enum, enum
             rsp_code += "){\n"
             _argv_uuid = '_'.join(str(uuid.uuid3(uuid.NAMESPACE_DNS, func_name)).split('-'))
             rsp_code += "            var _argv_" + _argv_uuid + " = new ArrayList();\n"
-            rsp_code += "            _argv_" + _argv_uuid + ".Add(this.uuid);\n"
+            rsp_code += "            _argv_" + _argv_uuid + ".Add(uuid_" + _rsp_uuid + ");\n"
             for _type, _name, _parameter in i[6]:
                 type_ = tools.check_type(_type, dependent_struct, dependent_enum)
                 if type_ in tools.OriginalTypeList:

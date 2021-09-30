@@ -121,10 +121,11 @@ def gen_module_module(module_name, funcs, dependent_struct, dependent_enum, enum
             code_func += "    }\n\n"
 
             rsp_code += "export class " + module_name + "_" + func_name + "_rsp extends abelkhan.Icaller {\n"
-            rsp_code += "    private uuid : number;\n"
+            _rsp_uuid = '_'.join(str(uuid.uuid3(uuid.NAMESPACE_X500, func_name)).split('-'))
+            rsp_code += "    private uuid_" + _rsp_uuid + " : number;\n"
             rsp_code += "    constructor(_ch:abelkhan.Ichannel, _uuid:number){\n"
             rsp_code += "        super(\"" + module_name + "_rsp_cb\", _ch);\n"
-            rsp_code += "        this.uuid = _uuid;\n"
+            rsp_code += "        this.uuid_" + _rsp_uuid + " = _uuid;\n"
             rsp_code += "    }\n\n"
 
             rsp_code += "    public rsp("
@@ -139,7 +140,7 @@ def gen_module_module(module_name, funcs, dependent_struct, dependent_enum, enum
                     rsp_code += ", "
             rsp_code += "){\n"
             _argv_uuid = '_'.join(str(uuid.uuid3(uuid.NAMESPACE_DNS, func_name)).split('-'))
-            rsp_code += "        let _argv_" + _argv_uuid + ":any[] = [this.uuid];\n"
+            rsp_code += "        let _argv_" + _argv_uuid + ":any[] = [this.uuid_" + _rsp_uuid + "];\n"
             for _type, _name, _parameter in i[4]:
                 type_ = tools.check_type(_type, dependent_struct, dependent_enum)
                 if type_ in tools.OriginalTypeList:
@@ -184,7 +185,7 @@ def gen_module_module(module_name, funcs, dependent_struct, dependent_enum, enum
                     rsp_code += ", "
             rsp_code += "){\n"
             _argv_uuid = '_'.join(str(uuid.uuid3(uuid.NAMESPACE_DNS, func_name)).split('-'))
-            rsp_code += "        let _argv_" + _argv_uuid + ":any[] = [this.uuid];\n"
+            rsp_code += "        let _argv_" + _argv_uuid + ":any[] = [this.uuid_" + _rsp_uuid + "];\n"
             for _type, _name, _parameter in i[6]:
                 type_ = tools.check_type(_type, dependent_struct, dependent_enum)
                 if type_ in tools.OriginalTypeList:

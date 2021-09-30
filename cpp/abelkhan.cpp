@@ -6,7 +6,7 @@
 #include <chrono>
 #include <random>
 
-#include <concurrent/string.h>
+#include <concurrent/string_tools.h>
 
 #include <abelkhan.h>
 
@@ -38,8 +38,9 @@ void Icaller::call_module_method(std::string _method_name, msgpack11::MsgPack::a
     event_.push_back(_method_name);
     event_.push_back(_argv);
     msgpack11::MsgPack _pack(event_);
+    auto data = _pack.dump();
             
-    ch->send(_pack.dump());
+    ch->send(data);
 }
 
 Response::Response(std::string _module_name, std::shared_ptr<Ichannel> _ch) : Icaller(_module_name, _ch) {

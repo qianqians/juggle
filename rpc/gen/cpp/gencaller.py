@@ -23,7 +23,8 @@ def gen_module_caller(module_name, funcs, dependent_struct, dependent_enum, enum
     code += "    private:\n"
     code += "        static std::shared_ptr<" + module_name + "_rsp_cb> rsp_cb_" + module_name + "_handle;\n\n"
     code += "    private:\n"
-    code += "        std::atomic<uint64_t> uuid;\n\n"
+    _uuid = '_'.join(str(uuid.uuid3(uuid.NAMESPACE_DNS, module_name)).split('-'))
+    code += "        std::atomic<uint64_t> uuid_" + _uuid + ";\n\n"
     code += "    public:\n"
     code += "        " + module_name + "_caller(std::shared_ptr<Ichannel> _ch, std::shared_ptr<modulemng> modules) : Icaller(\"" + module_name + "\", _ch)\n"
     code += "        {\n"
@@ -352,7 +353,7 @@ def gen_module_caller(module_name, funcs, dependent_struct, dependent_enum, enum
                     code += ", "
             code += "){\n"
             _cb_uuid_uuid = '_'.join(str(uuid.uuid5(uuid.NAMESPACE_DNS, func_name)).split('-'))
-            code += "            auto uuid_" + _cb_uuid_uuid + " = uuid++;\n"
+            code += "            auto uuid_" + _cb_uuid_uuid + " = uuid_" + _uuid + "++;\n"
             _argv_uuid = '_'.join(str(uuid.uuid3(uuid.NAMESPACE_X500, func_name)).split('-'))
             code += "            msgpack11::MsgPack::array _argv_" + _argv_uuid + ";\n"
             code += "            _argv_" + _argv_uuid + ".push_back(uuid_" + _cb_uuid_uuid + ");\n"

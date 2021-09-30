@@ -147,7 +147,7 @@ export class test_rsp_cb extends abelkhan.Imodule {
 
 export let rsp_cb_test_handle : test_rsp_cb | null = null;
 export class test_caller extends abelkhan.Icaller {
-    private uuid : number = Math.round(Math.random() * Number.MAX_VALUE);
+    private uuid_45a113ac_c7f2_30b0_90a5_a399ab912716 : number = Math.round(Math.random() * Number.MAX_VALUE);
 
     constructor(_ch:any, modules:abelkhan.modulemng){
         super("test", _ch);
@@ -157,7 +157,7 @@ export class test_caller extends abelkhan.Icaller {
     }
 
     public test3(t2:test2, e:em_test3 = em_test3.enum_test3, str:string = "qianqians"){
-        let uuid_20ca53af_d04c_58a2_a8b3_d02b9e414e80 = this.uuid++;
+        let uuid_20ca53af_d04c_58a2_a8b3_d02b9e414e80 = this.uuid_45a113ac_c7f2_30b0_90a5_a399ab912716++;
 
         let _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7:any[] = [uuid_20ca53af_d04c_58a2_a8b3_d02b9e414e80];
         _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7.push(test2_to_protcol(t2));
@@ -186,21 +186,21 @@ export class test_caller extends abelkhan.Icaller {
 }
 /*this module code is codegen by abelkhan codegen for typescript*/
 export class test_test3_rsp extends abelkhan.Icaller {
-    private uuid : number;
+    private uuid_77eeaa2a_8150_3cce_bfa0_0b16e18637bd : number;
     constructor(_ch:abelkhan.Ichannel, _uuid:number){
         super("test_rsp_cb", _ch);
-        this.uuid = _uuid;
+        this.uuid_77eeaa2a_8150_3cce_bfa0_0b16e18637bd = _uuid;
     }
 
     public rsp(t1:test1, i:number = 110){
-        let _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7:any[] = [this.uuid];
+        let _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7:any[] = [this.uuid_77eeaa2a_8150_3cce_bfa0_0b16e18637bd];
         _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7.push(test1_to_protcol(t1));
         _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7.push(i);
         this.call_module_method("test3_rsp", _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7);
     }
 
     public err(err:test1, bytearray:Uint8Array = Uint8Array.from([1,1,0])){
-        let _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7:any[] = [this.uuid];
+        let _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7:any[] = [this.uuid_77eeaa2a_8150_3cce_bfa0_0b16e18637bd];
         _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7.push(test1_to_protcol(err));
         _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7.push(bytearray);
         this.call_module_method("test3_err", _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7);

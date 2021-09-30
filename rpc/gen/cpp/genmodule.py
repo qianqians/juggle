@@ -225,11 +225,12 @@ def gen_module_module(module_name, funcs, dependent_struct, dependent_enum, enum
 
             rsp_code += "    class " + module_name + "_"  + func_name + "_rsp : Response {\n"
             rsp_code += "    private:\n"
-            rsp_code += "        uint64_t uuid;\n\n"
+            _rsp_uuid = '_'.join(str(uuid.uuid3(uuid.NAMESPACE_X500, func_name)).split('-'))
+            rsp_code += "        uint64_t uuid_" + _rsp_uuid + ";\n\n"
             rsp_code += "    public:\n"
             rsp_code += "        " + module_name + "_"  + func_name + "_rsp(std::shared_ptr<Ichannel> _ch, uint64_t _uuid) : Response(\"" + module_name + "_rsp_cb\", _ch)\n"
             rsp_code += "        {\n"
-            rsp_code += "            uuid = _uuid;\n"
+            rsp_code += "            uuid_" + _rsp_uuid + " = _uuid;\n"
             rsp_code += "        }\n\n"
 
             rsp_code += "        void rsp("
@@ -245,7 +246,7 @@ def gen_module_module(module_name, funcs, dependent_struct, dependent_enum, enum
             rsp_code += "){\n"
             _argv_uuid = '_'.join(str(uuid.uuid3(uuid.NAMESPACE_DNS, func_name)).split('-'))
             rsp_code += "            msgpack11::MsgPack::array _argv_" + _argv_uuid + ";\n"
-            rsp_code += "            _argv_" + _argv_uuid + ".push_back(uuid);\n"
+            rsp_code += "            _argv_" + _argv_uuid + ".push_back(uuid_" + _rsp_uuid + ");\n"
             for _type, _name, _parameter in i[4]:
                 type_ = tools.check_type(_type, dependent_struct, dependent_enum)
                 if type_ in tools.OriginalTypeList:
@@ -287,7 +288,7 @@ def gen_module_module(module_name, funcs, dependent_struct, dependent_enum, enum
             rsp_code += "){\n"
             _argv_uuid = '_'.join(str(uuid.uuid3(uuid.NAMESPACE_DNS, func_name)).split('-'))
             rsp_code += "            msgpack11::MsgPack::array _argv_" + _argv_uuid + ";\n"
-            rsp_code += "            _argv_" + _argv_uuid + ".push_back(uuid);\n"
+            rsp_code += "            _argv_" + _argv_uuid + ".push_back(uuid_" + _rsp_uuid + ");\n"
             for _type, _name, _parameter in i[6]:
                 type_ = tools.check_type(_type, dependent_struct, dependent_enum)
                 if type_ in tools.OriginalTypeList:
