@@ -166,7 +166,7 @@ namespace abelkhan
             var rsp = try_get_and_del_test3_cb(uuid);
             if (rsp != null)
             {
-            rsp.call_err(_err, _bytearray);
+                rsp.call_err(_err, _bytearray);
             }
         }
 
@@ -179,7 +179,8 @@ namespace abelkhan
 
         private test_test3_cb try_get_and_del_test3_cb(UInt64 uuid){
             lock(map_test3)
-            {                var rsp = map_test3[uuid];
+            {
+                var rsp = map_test3[uuid];
                 map_test3.Remove(uuid);
                 return rsp;
             }

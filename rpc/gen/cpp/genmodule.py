@@ -27,7 +27,7 @@ def gen_module_module(module_name, funcs, dependent_struct, dependent_enum, enum
             code_func += "        concurrent::signals<void("
             count = 0
             for _type, _name, _parameter in i[2]:
-                code_func += tools.convert_type(_type, dependent_struct, dependent_enum) + " " + _name 
+                code_func += tools.convert_type(_type, dependent_struct, dependent_enum)
                 count += 1
                 if count < len(i[2]):
                     code_func += ", "
@@ -126,7 +126,7 @@ def gen_module_module(module_name, funcs, dependent_struct, dependent_enum, enum
             code_func += "        concurrent::signals<void("
             count = 0
             for _type, _name, _parameter in i[2]:
-                code_func += tools.convert_type(_type, dependent_struct, dependent_enum) + " " + _name
+                code_func += tools.convert_type(_type, dependent_struct, dependent_enum)
                 count += 1
                 if count < len(i[2]):
                     code_func += ", "

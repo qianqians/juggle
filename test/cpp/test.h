@@ -108,8 +108,8 @@ namespace abelkhan
         }
 
     public:
-        concurrent::signals<void(test1 t1, int32_t i)> sig_test3_cb;
-        concurrent::signals<void(test1 err, std::vector<uint8_t> bytearray)> sig_test3_err;
+        concurrent::signals<void(test1, int32_t)> sig_test3_cb;
+        concurrent::signals<void(test1, std::vector<uint8_t>)> sig_test3_err;
         concurrent::signals<void()> sig_test3_timeout;
 
         std::shared_ptr<test_test3_cb> callBack(std::function<void(test1 t1, int32_t i)> cb, std::function<void(test1 err, std::vector<uint8_t> bytearray)> err)
@@ -267,7 +267,7 @@ namespace abelkhan
             reg_method("test4", std::bind(&test_module::test4, this, std::placeholders::_1));
         }
 
-        concurrent::signals<void(test2 t2, em_test3 e, std::string str)> sig_test3;
+        concurrent::signals<void(test2, em_test3, std::string)> sig_test3;
         void test3(const msgpack11::MsgPack::array& inArray){
             auto _cb_uuid = inArray[0].uint64_value();
             auto _t2 = test2::protcol_to_test2(inArray[1].object_items());
@@ -278,7 +278,7 @@ namespace abelkhan
             rsp = nullptr;
         }
 
-        concurrent::signals<void(std::vector<test2> argv, float num)> sig_test4;
+        concurrent::signals<void(std::vector<test2>, float)> sig_test4;
         void test4(const msgpack11::MsgPack::array& inArray){
             std::vector<test2> _argv;
             auto _protocol_array = inArray[0].array_items();
