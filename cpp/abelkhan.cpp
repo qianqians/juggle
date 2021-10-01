@@ -30,7 +30,14 @@ Exception::Exception(std::string _err) : std::exception() {
 Icaller::Icaller(std::string _module_name, std::shared_ptr<Ichannel> _ch) {
     module_name = _module_name;
     ch = _ch;
+
+    _data_size = 8 * 1024;
+    _data = (unsigned char*)malloc(_data_size);
 } 
+
+Icaller::~Icaller() {
+    free(_data);
+}
 
 void Icaller::call_module_method(std::string _method_name, msgpack11::MsgPack::array& _argv){
     msgpack11::MsgPack::array event_;
@@ -39,8 +46,21 @@ void Icaller::call_module_method(std::string _method_name, msgpack11::MsgPack::a
     event_.push_back(_argv);
     msgpack11::MsgPack _pack(event_);
     auto data = _pack.dump();
-            
-    ch->send(data);
+    
+    size_t len = data.size();
+    if (_data_size < (len + 4)) {
+        _data_size *= 2;
+        free(_data);
+        _data = (unsigned char*)malloc(_data_size);
+    }
+    _data[0] = len & 0xff;
+    _data[1] = len >> 8 & 0xff;
+    _data[2] = len >> 16 & 0xff;
+    _data[3] = len >> 24 & 0xff;
+    memcpy(&_data[4], data.c_str(), data.size());
+    size_t datasize = len + 4;
+
+    ch->send((char*)_data, datasize);
 }
 
 Response::Response(std::string _module_name, std::shared_ptr<Ichannel> _ch) : Icaller(_module_name, _ch) {
