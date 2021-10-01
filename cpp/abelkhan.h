@@ -41,7 +41,8 @@ public:
 class Icaller {
 public:
     Icaller(std::string _module_name, std::shared_ptr<Ichannel> _ch);
-        
+    virtual ~Icaller();
+
     void call_module_method(std::string _method_name, msgpack11::MsgPack::array& _argv);
 
 protected:
@@ -49,6 +50,9 @@ protected:
 
 private:
     std::shared_ptr<Ichannel> ch;
+
+    size_t _data_size;
+    unsigned char* _data;
 
 };
 

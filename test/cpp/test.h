@@ -195,7 +195,7 @@ namespace abelkhan
                 rsp_cb_test_handle = std::make_shared<test_rsp_cb>();
                 rsp_cb_test_handle->Init(modules);
             }
-            uuid.store(random());
+            uuid_45a113ac_c7f2_30b0_90a5_a399ab912716.store(random());
         }
 
         std::shared_ptr<test_test3_cb> test3(test2 t2, em_test3 e = em_test3::enum_test3, std::string str = "qianqians"){
@@ -254,7 +254,7 @@ namespace abelkhan
 
     };
 
-    class test_module : Imodule, public std::enable_shared_from_this<test_module>{
+    class test_module : public Imodule, public std::enable_shared_from_this<test_module>{
     public:
         test_module() : Imodule("test")
         {

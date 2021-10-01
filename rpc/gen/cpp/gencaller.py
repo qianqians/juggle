@@ -190,33 +190,33 @@ def gen_module_caller(module_name, funcs, dependent_struct, dependent_enum, enum
                     _v_uuid = '_'.join(str(uuid.uuid5(uuid.NAMESPACE_DNS, _name)).split('-'))
                     cb_code_section += "            for(auto it_" + _v_uuid + " : _protocol_array){\n"
                     if array_type_ == tools.TypeType.Int8:
-                        cb_code_section += "                _" + _name + ".push_back(it_" + _v_uuid + "->int8_value());\n"
+                        cb_code_section += "                _" + _name + ".push_back(it_" + _v_uuid + ".int8_value());\n"
                     elif array_type_ == tools.TypeType.Int16:
-                        cb_code_section += "                _" + _name + ".push_back(it_" + _v_uuid + "->int16_value());\n"
+                        cb_code_section += "                _" + _name + ".push_back(it_" + _v_uuid + ".int16_value());\n"
                     elif array_type_ == tools.TypeType.Int32:
-                        cb_code_section += "                _" + _name + ".push_back(it_" + _v_uuid + "->int32_value());\n"
+                        cb_code_section += "                _" + _name + ".push_back(it_" + _v_uuid + ".int32_value());\n"
                     elif array_type_ == tools.TypeType.Int64:
-                        cb_code_section += "                _" + _name + ".push_back(it_" + _v_uuid + "->int64_value());\n"
+                        cb_code_section += "                _" + _name + ".push_back(it_" + _v_uuid + ".int64_value());\n"
                     elif array_type_ == tools.TypeType.Uint8:
-                        cb_code_section += "                _" + _name + ".push_back(it_" + _v_uuid + "->uint8_value());\n"
+                        cb_code_section += "                _" + _name + ".push_back(it_" + _v_uuid + ".uint8_value());\n"
                     elif array_type_ == tools.TypeType.Uint16:
-                        cb_code_section += "                _" + _name + ".push_back(it_" + _v_uuid + "->uint16_value());\n"
+                        cb_code_section += "                _" + _name + ".push_back(it_" + _v_uuid + ".uint16_value());\n"
                     elif array_type_ == tools.TypeType.Uint32:
-                        cb_code_section += "                _" + _name + ".push_back(it_" + _v_uuid + "->uint32_value());\n"
+                        cb_code_section += "                _" + _name + ".push_back(it_" + _v_uuid + ".uint32_value());\n"
                     elif array_type_ == tools.TypeType.Uint64:
-                        cb_code_section += "                _" + _name + ".push_back(it_" + _v_uuid + "->uint64_value());\n"
+                        cb_code_section += "                _" + _name + ".push_back(it_" + _v_uuid + ".uint64_value());\n"
                     elif array_type_ == tools.TypeType.Enum:
-                        cb_code_section += "                _" + _name + ".push_back((" + _array_type + ")it_" + _v_uuid + "->int32_value());\n"
+                        cb_code_section += "                _" + _name + ".push_back((" + _array_type + ")it_" + _v_uuid + ".int32_value());\n"
                     elif array_type_ == tools.TypeType.Float:
-                        cb_code_section += "                _" + _name + ".push_back(it_" + _v_uuid + "->float32_value());\n"
+                        cb_code_section += "                _" + _name + ".push_back(it_" + _v_uuid + ".float32_value());\n"
                     elif array_type_ == tools.TypeType.Double:
-                        cb_code_section += "                _" + _name + ".push_back(it_" + _v_uuid + "->float64_value());\n"
+                        cb_code_section += "                _" + _name + ".push_back(it_" + _v_uuid + ".float64_value());\n"
                     elif array_type_ == tools.TypeType.Bool:
-                        cb_code_section += "                _" + _name + ".push_back(it_" + _v_uuid + "->bool_value());\n"
+                        cb_code_section += "                _" + _name + ".push_back(it_" + _v_uuid + ".bool_value());\n"
                     elif array_type_ == tools.TypeType.String:
-                        cb_code_section += "                _" + _name + ".push_back(it_" + _v_uuid + "->string_value());\n"
+                        cb_code_section += "                _" + _name + ".push_back(it_" + _v_uuid + ".string_value());\n"
                     elif array_type_ == tools.TypeType.String:
-                        cb_code_section += "                _" + _name + ".push_back(it_" + _v_uuid + "->binary_items());\n"
+                        cb_code_section += "                _" + _name + ".push_back(it_" + _v_uuid + ".binary_items());\n"
                     elif array_type_ == tools.TypeType.Custom:
                         cb_code_section += "                _" + _name + ".push_back(" + array_type + "::protcol_to_" + array_type + "(it_" + _v_uuid + ".object_items()));\n"
                     elif array_type_ == tools.TypeType.Array:
@@ -281,33 +281,33 @@ def gen_module_caller(module_name, funcs, dependent_struct, dependent_enum, enum
                     _v_uuid = '_'.join(str(uuid.uuid5(uuid.NAMESPACE_DNS, _name)).split('-'))
                     cb_code_section += "            for(auto it_" + _v_uuid + " : _protocol_array){\n"
                     if array_type_ == tools.TypeType.Int8:
-                        cb_code_section += "                _" + _name + ".push_back(it_" + _v_uuid + "->int8_value());\n"
+                        cb_code_section += "                _" + _name + ".push_back(it_" + _v_uuid + ".int8_value());\n"
                     elif array_type_ == tools.TypeType.Int16:
-                        cb_code_section += "                _" + _name + ".push_back(it_" + _v_uuid + "->int16_value());\n"
+                        cb_code_section += "                _" + _name + ".push_back(it_" + _v_uuid + ".int16_value());\n"
                     elif array_type_ == tools.TypeType.Int32:
-                        cb_code_section += "                _" + _name + ".push_back(it_" + _v_uuid + "->int32_value());\n"
+                        cb_code_section += "                _" + _name + ".push_back(it_" + _v_uuid + ".int32_value());\n"
                     elif array_type_ == tools.TypeType.Int64:
-                        cb_code_section += "                _" + _name + ".push_back(it_" + _v_uuid + "->int64_value());\n"
+                        cb_code_section += "                _" + _name + ".push_back(it_" + _v_uuid + ".int64_value());\n"
                     elif array_type_ == tools.TypeType.Uint8:
-                        cb_code_section += "                _" + _name + ".push_back(it_" + _v_uuid + "->uint8_value());\n"
+                        cb_code_section += "                _" + _name + ".push_back(it_" + _v_uuid + ".uint8_value());\n"
                     elif array_type_ == tools.TypeType.Uint16:
-                        cb_code_section += "                _" + _name + ".push_back(it_" + _v_uuid + "->uint16_value());\n"
+                        cb_code_section += "                _" + _name + ".push_back(it_" + _v_uuid + ".uint16_value());\n"
                     elif array_type_ == tools.TypeType.Uint32:
-                        cb_code_section += "                _" + _name + ".push_back(it_" + _v_uuid + "->uint32_value());\n"
+                        cb_code_section += "                _" + _name + ".push_back(it_" + _v_uuid + ".uint32_value());\n"
                     elif array_type_ == tools.TypeType.Uint64:
-                        cb_code_section += "                _" + _name + ".push_back(it_" + _v_uuid + "->uint64_value());\n"
+                        cb_code_section += "                _" + _name + ".push_back(it_" + _v_uuid + ".uint64_value());\n"
                     elif array_type_ == tools.TypeType.Enum:
-                        cb_code_section += "                _" + _name + ".push_back((" + _array_type + ")it_" + _v_uuid + "->int32_value());\n"
+                        cb_code_section += "                _" + _name + ".push_back((" + _array_type + ")it_" + _v_uuid + ".int32_value());\n"
                     elif array_type_ == tools.TypeType.Float:
-                        cb_code_section += "                _" + _name + ".push_back(it_" + _v_uuid + "->float32_value());\n"
+                        cb_code_section += "                _" + _name + ".push_back(it_" + _v_uuid + ".float32_value());\n"
                     elif array_type_ == tools.TypeType.Double:
-                        cb_code_section += "                _" + _name + ".push_back(it_" + _v_uuid + "->float64_value());\n"
+                        cb_code_section += "                _" + _name + ".push_back(it_" + _v_uuid + ".float64_value());\n"
                     elif array_type_ == tools.TypeType.Bool:
-                        cb_code_section += "                _" + _name + ".push_back(it_" + _v_uuid + "->bool_value());\n"
+                        cb_code_section += "                _" + _name + ".push_back(it_" + _v_uuid + ".bool_value());\n"
                     elif array_type_ == tools.TypeType.String:
-                        cb_code_section += "                _" + _name + ".push_back(it_" + _v_uuid + "->string_value());\n"
+                        cb_code_section += "                _" + _name + ".push_back(it_" + _v_uuid + ".string_value());\n"
                     elif array_type_ == tools.TypeType.String:
-                        cb_code_section += "                _" + _name + ".push_back(it_" + _v_uuid + "->binary_items());\n"
+                        cb_code_section += "                _" + _name + ".push_back(it_" + _v_uuid + ".binary_items());\n"
                     elif array_type_ == tools.TypeType.Custom:
                         cb_code_section += "                _" + _name + ".push_back(" + array_type + "::protcol_to_" + array_type + "(it_" + _v_uuid + ".object_items()));\n"
                     elif array_type_ == tools.TypeType.Array:
