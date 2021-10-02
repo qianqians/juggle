@@ -81,15 +81,17 @@ def gen_module_caller(module_name, funcs, dependent_struct, dependent_enum, enum
             code += "            call_module_method(\"" + func_name + "\", _argv_" + _argv_uuid + ");\n"
             code += "        }\n\n"
         elif i[1] == "req" and i[3] == "rsp" and i[5] == "err":
+            cb_func += "    class " + module_name + "_rsp_cb;\n"
             cb_func += "    class " + module_name + "_" + func_name + "_cb : public std::enable_shared_from_this<" +  module_name + "_" + func_name + "_cb>{\n"
             cb_func += "    private:\n"
             cb_func += "        uint64_t cb_uuid;\n"
             cb_func += "        std::shared_ptr<" + module_name + "_rsp_cb> module_rsp_cb;\n\n"
             cb_func += "    public:\n"
-            cb_func += "        " + module_name + "_" + func_name + "_cb(uint64_t _cb_uuid, std::shared_ptr<" + module_name + "_rsp_cb> _module_rsp_cb){\n"
-            cb_func += "            cb_uuid = _cb_uuid;\n"
-            cb_func += "            module_rsp_cb = _module_rsp_cb;\n"
-            cb_func += "        }\n\n"
+            cb_func += "        " + module_name + "_" + func_name + "_cb(uint64_t _cb_uuid, std::shared_ptr<" + module_name + "_rsp_cb> _module_rsp_cb);\n"
+            cpp_code += module_name + "_" + func_name + "_cb::" + module_name + "_" + func_name + "_cb(uint64_t _cb_uuid, std::shared_ptr<" + module_name + "_rsp_cb> _module_rsp_cb) {\n"
+            cpp_code += "    cb_uuid = _cb_uuid;\n"
+            cpp_code += "    module_rsp_cb = _module_rsp_cb;\n"
+            cpp_code += "}\n\n"
 
             cb_func += "    public:\n"
             cb_func += "        concurrent::signals<void("
@@ -126,19 +128,37 @@ def gen_module_caller(module_name, funcs, dependent_struct, dependent_enum, enum
                 count = count + 1
                 if count < len(i[6]):
                     cb_func += ", "
-            cb_func += ")> err)\n        {\n"
-            cb_func += "            sig_" + func_name + "_cb.connect(cb);\n"
-            cb_func += "            sig_" + func_name + "_err.connect(err);\n"
-            cb_func += "            return shared_from_this();\n"
-            cb_func += "        }\n\n"
+            cb_func += ")> err);\n"
+            cpp_code += "std::shared_ptr<" + module_name + "_"  + func_name + "_cb> " + module_name + "_" + func_name + "_cb::callBack(std::function<void("
+            count = 0
+            for _type, _name, _parameter in i[4]:
+                cpp_code += tools.convert_type(_type, dependent_struct, dependent_enum) + " " + _name 
+                count = count + 1
+                if count < len(i[4]):
+                    cpp_code += ", "
+            cpp_code += ")> cb, std::function<void("
+            count = 0
+            for _type, _name, _parameter in i[6]:
+                cpp_code += tools.convert_type(_type, dependent_struct, dependent_enum) + " " + _name
+                count = count + 1
+                if count < len(i[6]):
+                    cpp_code += ", "
+            cpp_code += ")> err) {\n"
+            cpp_code += "    sig_" + func_name + "_cb.connect(cb);\n"
+            cpp_code += "    sig_" + func_name + "_err.connect(err);\n"
+            cpp_code += "    return shared_from_this();\n"
+            cpp_code += "}\n\n"
 
-            cb_func += "        void timeout(uint64_t tick, std::function<void()> timeout_cb)\n        {\n"
-            cb_func += "            TinyTimer::add_timer(tick, [this](){\n"
-            cb_func += "                module_rsp_cb->" + func_name + "_timeout(cb_uuid);\n"
-            cb_func += "            });\n"
-            cb_func += "            sig_" + func_name + "_timeout.connect(timeout_cb);\n"
-            cb_func += "        }\n\n"
+            cb_func += "        void timeout(uint64_t tick, std::function<void()> timeout_cb);\n"
             cb_func += "    };\n\n"
+
+            cpp_code += "void " + module_name + "_" + func_name + "_cb::timeout(uint64_t tick, std::function<void()> timeout_cb) {\n"
+            cpp_code += "    TinyTimer::add_timer(tick, [this](){\n"
+            cpp_code += "        module_rsp_cb->" + func_name + "_timeout(cb_uuid);\n"
+            cpp_code += "    });\n"
+            cpp_code += "    sig_" + func_name + "_timeout.connect(timeout_cb);\n"
+            cpp_code += "}\n\n"
+            
 
             cb_code += "        std::mutex mutex_map_" + func_name + ";\n"
             cb_code += "        std::map<uint64_t, std::shared_ptr<" + module_name + "_"  + func_name + "_cb> > map_" + func_name + ";\n"

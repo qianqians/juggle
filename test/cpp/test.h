@@ -21,10 +21,6 @@ namespace abelkhan
         double argv4;
 
     public:
-        test1() = default;
-        test1(test1& value) = default;
-
-    public:
         static msgpack11::MsgPack::object test1_to_protcol(test1 _struct){
             msgpack11::MsgPack::object _protocol;
             _protocol.insert(std::make_pair("argv1", _struct.argv1));
@@ -62,10 +58,6 @@ namespace abelkhan
         em_test3 t = em_test3::enum_test3;
 
     public:
-        test2() = default;
-        test2(test2& value) = default;
-
-    public:
         static msgpack11::MsgPack::object test2_to_protcol(test2 _struct){
             msgpack11::MsgPack::object _protocol;
             _protocol.insert(std::make_pair("argv1", _struct.argv1));
@@ -96,37 +88,21 @@ namespace abelkhan
     };
 
 /*this caller code is codegen by abelkhan codegen for cpp*/
+    class test_rsp_cb;
     class test_test3_cb : public std::enable_shared_from_this<test_test3_cb>{
     private:
         uint64_t cb_uuid;
         std::shared_ptr<test_rsp_cb> module_rsp_cb;
 
     public:
-        test_test3_cb(uint64_t _cb_uuid, std::shared_ptr<test_rsp_cb> _module_rsp_cb){
-            cb_uuid = _cb_uuid;
-            module_rsp_cb = _module_rsp_cb;
-        }
-
+        test_test3_cb(uint64_t _cb_uuid, std::shared_ptr<test_rsp_cb> _module_rsp_cb);
     public:
         concurrent::signals<void(test1, int32_t)> sig_test3_cb;
         concurrent::signals<void(test1, std::vector<uint8_t>)> sig_test3_err;
         concurrent::signals<void()> sig_test3_timeout;
 
-        std::shared_ptr<test_test3_cb> callBack(std::function<void(test1 t1, int32_t i)> cb, std::function<void(test1 err, std::vector<uint8_t> bytearray)> err)
-        {
-            sig_test3_cb.connect(cb);
-            sig_test3_err.connect(err);
-            return shared_from_this();
-        }
-
-        void timeout(uint64_t tick, std::function<void()> timeout_cb)
-        {
-            TinyTimer::add_timer(tick, [this](){
-                module_rsp_cb->test3_timeout(cb_uuid);
-            });
-            sig_test3_timeout.connect(timeout_cb);
-        }
-
+        std::shared_ptr<test_test3_cb> callBack(std::function<void(test1 t1, int32_t i)> cb, std::function<void(test1 err, std::vector<uint8_t> bytearray)> err);
+        void timeout(uint64_t tick, std::function<void()> timeout_cb);
     };
 
 /*this cb code is codegen by abelkhan for cpp*/
@@ -226,7 +202,7 @@ namespace abelkhan
 
     };
 /*this module code is codegen by abelkhan codegen for cpp*/
-    class test_test3_rsp : Response {
+    class test_test3_rsp : public Response {
     private:
         uint64_t uuid_77eeaa2a_8150_3cce_bfa0_0b16e18637bd;
 

@@ -223,7 +223,7 @@ def gen_module_module(module_name, funcs, dependent_struct, dependent_enum, enum
             code_func += "            rsp = nullptr;\n"
             code_func += "        }\n\n"
 
-            rsp_code += "    class " + module_name + "_"  + func_name + "_rsp : Response {\n"
+            rsp_code += "    class " + module_name + "_"  + func_name + "_rsp : public Response {\n"
             rsp_code += "    private:\n"
             _rsp_uuid = '_'.join(str(uuid.uuid3(uuid.NAMESPACE_X500, func_name)).split('-'))
             rsp_code += "        uint64_t uuid_" + _rsp_uuid + ";\n\n"

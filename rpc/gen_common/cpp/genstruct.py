@@ -18,9 +18,7 @@ def genmainstruct(struct_name, elems, dependent_struct, dependent_enum, enum):
             code += "        " + tools.convert_type(key, dependent_struct, dependent_enum) + " " + value + ";\n"
         else:
             code += "        " + tools.convert_type(key, dependent_struct, dependent_enum) + " " + value + " = " + tools.convert_parameter(key, parameter, dependent_enum, enum) + ";\n"
-    code += "\n    public:\n"
-    code += "        " + struct_name + "() = default;\n"
-    code += "        " + struct_name + "(" + struct_name + "& value) = default;\n\n"
+    code += "\n"
     return code
 
 def genstructprotocol(struct_name, elems, dependent_struct, dependent_enum):
