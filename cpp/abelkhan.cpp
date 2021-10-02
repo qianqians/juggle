@@ -134,6 +134,9 @@ void modulemng::process_event(std::shared_ptr<Ichannel> _ch, const msgpack11::Ms
     }
 }
 
+int64_t TinyTimer::tick;
+concurrent::ringque<std::pair<uint64_t, std::function<void()> > > TinyTimer::add_timer_list;
+std::map<int64_t, std::function<void()> > TinyTimer::timer;
 
 void TinyTimer::add_timer(int64_t _tick, std::function<void()> cb){
     tick = msec_time();
