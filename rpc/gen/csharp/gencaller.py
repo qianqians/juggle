@@ -19,11 +19,11 @@ def gen_module_caller(module_name, funcs, dependent_struct, dependent_enum, enum
     code = "    public class " + module_name + "_caller : abelkhan.Icaller {\n"
     code += "        public static " + module_name + "_rsp_cb rsp_cb_" + module_name + "_handle = null;\n"
     _uuid = '_'.join(str(uuid.uuid3(uuid.NAMESPACE_DNS, module_name)).split('-'))
-    code += "        private UInt64 uuid_" + _uuid + " = RandomUUID.random();\n\n"
+    code += "        private Int64 uuid_" + _uuid + " = (Int64)RandomUUID.random();\n\n"
     code += "        public " + module_name + "_caller(abelkhan.Ichannel _ch, abelkhan.modulemng modules) : base(\"" + module_name + "\", _ch)\n"
     code += "        {\n"
     code += "            if (rsp_cb_" + module_name + "_handle == null)\n            {\n"
-    code += "                rsp_cb_" + module_name + "_handle = new rsp_cb_" + module_name + "(modules);\n"
+    code += "                rsp_cb_" + module_name + "_handle = new " + module_name + "_rsp_cb(modules);\n"
     code += "            }\n"
     code += "        }\n\n"
 
@@ -76,47 +76,63 @@ def gen_module_caller(module_name, funcs, dependent_struct, dependent_enum, enum
             cb_func += "            cb_uuid = _cb_uuid;\n"
             cb_func += "            module_rsp_cb = _module_rsp_cb;\n"
             cb_func += "        }\n\n"
-            cb_func += "        public event Action<"
+            cb_func += "        public event Action"
+            if len(i[4]) > 0:
+                cb_func += "<"
             count = 0
             for _type, _name, _parameter in i[4]:
                 cb_func += tools.convert_type(_type, dependent_struct, dependent_enum)
                 count = count + 1
                 if count < len(i[4]):
                     cb_func += ", "
-            cb_func += "> on_" + func_name + "_cb;\n"
+            if len(i[4]) > 0:
+                cb_func += ">"
+            cb_func += " on_" + func_name + "_cb;\n"
 
-            cb_func += "        public event Action<"
+            cb_func += "        public event Action"
+            if len(i[6]) > 0:
+                cb_func += "<"
             count = 0
             for _type, _name, _parameter in i[6]:
                 cb_func += tools.convert_type(_type, dependent_struct, dependent_enum)
                 count = count + 1
                 if count < len(i[6]):
                     cb_func += ", "
-            cb_func += "> on_" + func_name + "_err;\n"
+            if len(i[6]) > 0:
+                cb_func += ">"
+            cb_func += " on_" + func_name + "_err;\n"
 
             cb_func += "        public event Action on_" + func_name + "_timeout;\n\n"
 
-            cb_func += "        public " + module_name + "_" + func_name + "_cb callBack(Action<"
+            cb_func += "        public " + module_name + "_" + func_name + "_cb callBack(Action"
+            if len(i[4]) > 0:
+                cb_func += "<"
             count = 0
             for _type, _name, _parameter in i[4]:
                 cb_func += tools.convert_type(_type, dependent_struct, dependent_enum)
                 count = count + 1
                 if count < len(i[4]):
                     cb_func += ", "
-            cb_func += "> cb, Action<"
+            if len(i[4]) > 0:
+                cb_func += ">"
+            cb_func += " cb, Action"
+            if len(i[6]) > 0:
+                cb_func += "<"
             count = 0
             for _type, _name, _parameter in i[6]:
                 cb_func += tools.convert_type(_type, dependent_struct, dependent_enum)
                 count = count + 1
                 if count < len(i[6]):
                     cb_func += ", "
-            cb_func += "> err)\n        {\n"
+            if len(i[6]) > 0:
+                cb_func += ">"
+            cb_func += " err)\n        {\n"
             cb_func += "            on_" + func_name + "_cb += cb;\n"
             cb_func += "            on_" + func_name + "_err += err;\n"
             cb_func += "            return this;\n"
             cb_func += "        }\n\n"
 
-            cb_func += "        void timeout(Uint64 tick, Action timeout_cb)\n        {\n"
+            cb_func += "        void timeout(UInt64 tick, Action timeout_cb)\n        {\n"
             cb_func += "            TinyTimer.add_timer(tick, ()=>{\n"
             cb_func += "                module_rsp_cb." + func_name + "_timeout(cb_uuid);\n"
             cb_func += "            });\n"
@@ -189,18 +205,18 @@ def gen_module_caller(module_name, funcs, dependent_struct, dependent_enum, enum
                 if type_ in tools.OriginalTypeList:
                     cb_code_section += "            var _" + _name + " = (" + _type_ + ")inArray[" + str(count) + "];\n"
                 elif type_ == tools.TypeType.Custom:
-                    cb_code_section += "            var _" + _name + " = " + _type + ".protcol_to_" + _type + "(inArray[" + str(count) + "]);\n"
+                    cb_code_section += "            var _" + _name + " = " + _type + ".protcol_to_" + _type + "((Hashtable)inArray[" + str(count) + "]);\n"
                 elif type_ == tools.TypeType.Array:
                     array_type = _type[:-2]
                     array_type_ = tools.check_type(array_type, dependent_struct, dependent_enum)
                     _array_type = tools.convert_type(array_type, dependent_struct, dependent_enum)
                     cb_code_section += "            var _" + _name + " = new List<" + _array_type + ">();\n"
                     _v_uuid = '_'.join(str(uuid.uuid5(uuid.NAMESPACE_DNS, _name)).split('-'))
-                    cb_code_section += "            foreach(var v_" + _v_uuid + " in inArray[" + str(count) + "]){\n"
+                    cb_code_section += "            foreach(var v_" + _v_uuid + " in (ArrayList)inArray[" + str(count) + "]){\n"
                     if array_type_ in tools.OriginalTypeList:
                         cb_code_section += "                _" + _name + ".Add((" + _array_type + ")v_" + _v_uuid + ");\n"
                     elif array_type_ == tools.TypeType.Custom:
-                        cb_code_section += "                _" + _name + ".Add(" + array_type + ".protcol_to_" + array_type + "(v_" + _v_uuid + "));\n"
+                        cb_code_section += "                _" + _name + ".Add(" + array_type + ".protcol_to_" + array_type + "((Hashtable)v_" + _v_uuid + "));\n"
                     elif array_type_ == tools.TypeType.Array:
                         raise Exception("not support nested array:%s in func:%s" % (_type, func_name))
                     cb_code_section += "            }\n"
@@ -227,18 +243,18 @@ def gen_module_caller(module_name, funcs, dependent_struct, dependent_enum, enum
                 if type_ in tools.OriginalTypeList:
                     cb_code_section += "            var _" + _name + " = (" + _type_ + ")inArray[" + str(count) + "];\n"
                 elif type_ == tools.TypeType.Custom:
-                    cb_code_section += "            var _" + _name + " = " + _type + ".protcol_to_" + _type + "(inArray[" + str(count) + "]);\n"
+                    cb_code_section += "            var _" + _name + " = " + _type + ".protcol_to_" + _type + "((Hashtable)inArray[" + str(count) + "]);\n"
                 elif type_ == tools.TypeType.Array:
                     array_type = _type[:-2]
                     array_type_ = tools.check_type(array_type, dependent_struct, dependent_enum)
                     _array_type = tools.convert_type(array_type, dependent_struct, dependent_enum)
                     cb_code_section += "            var _" + _name + " = new List<" + _array_type + ">();\n"
                     _v_uuid = '_'.join(str(uuid.uuid5(uuid.NAMESPACE_DNS, _name)).split('-'))
-                    cb_code_section += "            foreach(var v_" + _v_uuid + " in inArray[" + str(count) + "]){\n"
+                    cb_code_section += "            foreach(var v_" + _v_uuid + " in (ArrayList)inArray[" + str(count) + "]){\n"
                     if array_type_ in tools.OriginalTypeList:
                         cb_code_section += "                _" + _name + ".Add((" + _array_type + ")v_" + _v_uuid + ");\n"
                     elif array_type_ == tools.TypeType.Custom:
-                        cb_code_section += "                _" + _name + ".Add(" + array_type + ".protcol_to_" + array_type + "(v_" + _v_uuid + "));\n"
+                        cb_code_section += "                _" + _name + ".Add(" + array_type + ".protcol_to_" + array_type + "((Hashtable)v_" + _v_uuid + "));\n"
                     elif array_type_ == tools.TypeType.Array:
                         raise Exception("not support nested array:%s in func:%s" % (_type, func_name))
                     cb_code_section += "            }\n"
@@ -285,7 +301,7 @@ def gen_module_caller(module_name, funcs, dependent_struct, dependent_enum, enum
             code += "){\n"
             _cb_uuid_uuid = '_'.join(str(uuid.uuid5(uuid.NAMESPACE_DNS, func_name)).split('-'))
             code += "            Interlocked.Increment(ref uuid_" + _uuid + ");\n"
-            code += "            var uuid_" + _cb_uuid_uuid + " = uuid;\n\n"
+            code += "            var uuid_" + _cb_uuid_uuid + " = (UInt64)uuid_" + _uuid + ";\n\n"
             _argv_uuid = '_'.join(str(uuid.uuid3(uuid.NAMESPACE_DNS, func_name)).split('-'))
             code += "            var _argv_" + _argv_uuid + " = new ArrayList();\n"
             code += "            _argv_" + _argv_uuid + ".Add(uuid_" + _cb_uuid_uuid + ");\n"
@@ -311,7 +327,7 @@ def gen_module_caller(module_name, funcs, dependent_struct, dependent_enum, enum
                     code += "            }\n"                                                     
                     code += "            _argv_" + _argv_uuid + ".Add(_array_" + _array_uuid + ");\n"
             code += "            call_module_method(\"" + func_name + "\", _argv_" + _argv_uuid + ");\n\n"
-            code += "            var cb_" + func_name + "_obj = new " + module_name + "_" + func_name + "_cb();\n"
+            code += "            var cb_" + func_name + "_obj = new " + module_name + "_" + func_name + "_cb(uuid_" + _cb_uuid_uuid + ", rsp_cb_" + module_name + "_handle);\n"
             code += "            rsp_cb_" + module_name + "_handle.map_" + func_name + ".Add(uuid_" + _cb_uuid_uuid + ", cb_" + func_name + "_obj);\n"
             code += "            return cb_" + func_name + "_obj;\n"
             code += "        }\n\n"

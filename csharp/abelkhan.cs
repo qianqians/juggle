@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Collections;
 using System.Collections.Generic;
+using MsgPack.Serialization;
 
 namespace abelkhan
 {
@@ -14,24 +15,24 @@ namespace abelkhan
 
     public class RandomUUID
     {
-        private Random ran = new Random();
+        private static Random ran = new Random();
         public static UInt64 random()
         {
-            return (UInt64)(ran.NextDouble() * UInt64.MaxValue());
+            return (UInt64)(ran.NextDouble() * UInt64.MaxValue);
         }
     }
 
     public class TinyTimer
     {
-        private static Int64 tick;
-        private static Dictionary<Int64, Action> timer;
+        private static UInt64 tick;
+        private static Dictionary<UInt64, Action> timer = new Dictionary<UInt64, Action>();
 
-        private static Int64 refresh()
+        private static UInt64 refresh()
         {
-            return (Int64)(DateTime.UtcNow - new DateTime(1970, 1, 1)).TotalMilliseconds;
+            return (UInt64)(DateTime.UtcNow - new DateTime(1970, 1, 1)).TotalMilliseconds;
         }
 
-        public static void add_timer(Int64 _tick, Action cb)
+        public static void add_timer(UInt64 _tick, Action cb)
         {
             tick = refresh();
             var tick_ = tick + _tick;
@@ -48,7 +49,7 @@ namespace abelkhan
 
             lock(timer)
             {
-                var list = new List<Int64>();
+                var list = new List<UInt64>();
                 foreach (var item in timer)
 				{
 					if (item.Key <= tick)
@@ -193,7 +194,7 @@ namespace abelkhan
                 }
                 else
                 {
-                    throw new abelkhan.AbelkhanException(string.Format("do not have a module named::{0}", module_name));
+                    throw new abelkhan.Exception(string.Format("do not have a module named::{0}", module_name));
                 }
             }
             catch (System.Exception e)

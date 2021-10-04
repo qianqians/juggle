@@ -23,14 +23,18 @@ def gen_module_module(module_name, funcs, dependent_struct, dependent_enum, enum
         if i[1] == "ntf":
             code_constructor += "            reg_method(\"" + func_name + "\", " + func_name + ");\n"
                 
-            code_func += "        public event Action<"
+            code_func += "        public event Action"
+            if len(i[2]) > 0:
+                code_func += "<"
             count = 0
             for _type, _name, _parameter in i[2]:
                 code_func += tools.convert_type(_type, dependent_struct, dependent_enum)
                 count += 1
                 if count < len(i[2]):
                     code_func += ", "
-            code_func += "> on_" + func_name + ";\n"
+            if len(i[2]) > 0:
+                code_func += ">"
+            code_func += " on_" + func_name + ";\n"
 
             code_func += "        public void " + func_name + "(ArrayList inArray){\n"
             count = 0 
@@ -71,14 +75,18 @@ def gen_module_module(module_name, funcs, dependent_struct, dependent_enum, enum
         elif i[1] == "req" and i[3] == "rsp" and i[5] == "err":
             code_constructor += "            reg_method(\"" + func_name + "\", " + func_name + ");\n"
             
-            code_func += "        public event Action<"
+            code_func += "        public event Action"
+            if len(i[2]) > 0:
+                code_func += "<"
             count = 0
             for _type, _name, _parameter in i[2]:
                 code_func += tools.convert_type(_type, dependent_struct, dependent_enum)
                 count += 1
                 if count < len(i[2]):
                     code_func += ", "
-            code_func += "> on_" + func_name + ";\n"
+            if len(i[2]) > 0:
+                code_func += ">"
+            code_func += " on_" + func_name + ";\n"
             
             code_func += "        public void " + func_name + "(ArrayList inArray){\n"
             code_func += "            var _cb_uuid = (UInt64)inArray[0];\n"
@@ -131,10 +139,11 @@ def gen_module_module(module_name, funcs, dependent_struct, dependent_enum, enum
             rsp_code += "        public void rsp("
             count = 0
             for _type, _name, _parameter in i[4]:
+                _name_uuid = '_'.join(str(uuid.uuid3(uuid.NAMESPACE_DNS, _name)).split('-'))
                 if _parameter == None:
-                    rsp_code += tools.convert_type(_type, dependent_struct, dependent_enum) + " " + _name 
+                    rsp_code += tools.convert_type(_type, dependent_struct, dependent_enum) + " " + _name + "_" + _name_uuid
                 else:
-                    rsp_code += tools.convert_type(_type, dependent_struct, dependent_enum) + " " + _name + " = " + tools.convert_parameter(_type, _parameter, dependent_enum, enum)
+                    rsp_code += tools.convert_type(_type, dependent_struct, dependent_enum) + " " + _name + "_" + _name_uuid + " = " + tools.convert_parameter(_type, _parameter, dependent_enum, enum)
                 count = count + 1
                 if count < len(i[4]):
                     rsp_code += ", "
@@ -143,16 +152,17 @@ def gen_module_module(module_name, funcs, dependent_struct, dependent_enum, enum
             rsp_code += "            var _argv_" + _argv_uuid + " = new ArrayList();\n"
             rsp_code += "            _argv_" + _argv_uuid + ".Add(uuid_" + _rsp_uuid + ");\n"
             for _type, _name, _parameter in i[4]:
+                _name_uuid = '_'.join(str(uuid.uuid3(uuid.NAMESPACE_DNS, _name)).split('-'))
                 type_ = tools.check_type(_type, dependent_struct, dependent_enum)
                 if type_ in tools.OriginalTypeList:
-                    rsp_code += "            _argv_" + _argv_uuid + ".Add(" + _name + ");\n"
+                    rsp_code += "            _argv_" + _argv_uuid + ".Add(" + _name + "_" + _name_uuid + ");\n"
                 elif type_ == tools.TypeType.Custom:
-                    rsp_code += "            _argv_" + _argv_uuid + ".Add(" + _type + "." + _type + "_to_protcol(" + _name + "));\n"
+                    rsp_code += "            _argv_" + _argv_uuid + ".Add(" + _type + "." + _type + "_to_protcol(" + _name + "_" + _name_uuid + "));\n"
                 elif type_ == tools.TypeType.Array:
                     _array_uuid = '_'.join(str(uuid.uuid3(uuid.NAMESPACE_DNS, _name)).split('-'))
-                    rsp_code += "            var _array_" + _array_uuid + " = new JArray();"
+                    rsp_code += "            var _array_" + _array_uuid + " = new ArrayList();\n"
                     _v_uuid = '_'.join(str(uuid.uuid5(uuid.NAMESPACE_DNS, _name)).split('-'))
-                    rsp_code += "            foreach(var v_" + _v_uuid + " in " + _name + "){\n"
+                    rsp_code += "            foreach(var v_" + _v_uuid + " in " + _name + "_" + _name_uuid + "){\n"
                     array_type = _type[:-2]
                     array_type_ = tools.check_type(array_type, dependent_struct, dependent_enum)
                     if array_type_ in tools.OriginalTypeList:
@@ -169,10 +179,11 @@ def gen_module_module(module_name, funcs, dependent_struct, dependent_enum, enum
             rsp_code += "        public void err("
             count = 0
             for _type, _name, _parameter in i[6]:
+                _name_uuid = '_'.join(str(uuid.uuid3(uuid.NAMESPACE_DNS, _name)).split('-'))
                 if _parameter == None:
-                    rsp_code += tools.convert_type(_type, dependent_struct, dependent_enum) + " " + _name 
+                    rsp_code += tools.convert_type(_type, dependent_struct, dependent_enum) + " " + _name + "_" + _name_uuid
                 else:
-                    rsp_code += tools.convert_type(_type, dependent_struct, dependent_enum) + " " + _name + " = " + tools.convert_parameter(_type, _parameter, dependent_enum, enum)
+                    rsp_code += tools.convert_type(_type, dependent_struct, dependent_enum) + " " + _name + "_" + _name_uuid + " = " + tools.convert_parameter(_type, _parameter, dependent_enum, enum)
                 count = count + 1
                 if count < len(i[6]):
                     rsp_code += ", "
@@ -181,16 +192,17 @@ def gen_module_module(module_name, funcs, dependent_struct, dependent_enum, enum
             rsp_code += "            var _argv_" + _argv_uuid + " = new ArrayList();\n"
             rsp_code += "            _argv_" + _argv_uuid + ".Add(uuid_" + _rsp_uuid + ");\n"
             for _type, _name, _parameter in i[6]:
+                _name_uuid = '_'.join(str(uuid.uuid3(uuid.NAMESPACE_DNS, _name)).split('-'))
                 type_ = tools.check_type(_type, dependent_struct, dependent_enum)
                 if type_ in tools.OriginalTypeList:
-                    rsp_code += "            _argv_" + _argv_uuid + ".Add(" + _name + ");\n"
+                    rsp_code += "            _argv_" + _argv_uuid + ".Add(" + _name + "_" + _name_uuid + ");\n"
                 elif type_ == tools.TypeType.Custom:
-                    rsp_code += "            _argv_" + _argv_uuid + ".Add(" + _type + "." + _type + "_to_protcol(" + _name + "));\n"
+                    rsp_code += "            _argv_" + _argv_uuid + ".Add(" + _type + "." + _type + "_to_protcol(" + _name + "_" + _name_uuid + "));\n"
                 elif type_ == tools.TypeType.Array:
                     _array_uuid = '_'.join(str(uuid.uuid3(uuid.NAMESPACE_DNS, _name)).split('-'))
-                    rsp_code += "            var _array_" + _array_uuid + " = new JArray();"
+                    rsp_code += "            var _array_" + _array_uuid + " = new ArrayList();\n"
                     _v_uuid = '_'.join(str(uuid.uuid5(uuid.NAMESPACE_DNS, _name)).split('-'))
-                    rsp_code += "            foreach(var v_" + _v_uuid + " in " + _name + "){\n"
+                    rsp_code += "            foreach(var v_" + _v_uuid + " in " + _name + "_" + _name_uuid + "){\n"
                     array_type = _type[:-2]
                     array_type_ = tools.check_type(array_type, dependent_struct, dependent_enum)
                     if array_type_ in tools.OriginalTypeList:

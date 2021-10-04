@@ -49,15 +49,15 @@ def genprotocolstruct(struct_name, elems, dependent_struct, dependent_enum):
     code = "        public static " + struct_name + " protcol_to_" + struct_name + "(Hashtable _protocol){\n"
     _struct_uuid = '_'.join(str(uuid.uuid3(uuid.NAMESPACE_DNS, struct_name)).split('-'))
     code += "            var _struct" + _struct_uuid + " = new " + struct_name + "();\n"
-    code += "            foreach(var i in _protocol){\n"
+    code += "            foreach(DictionaryEntry i in _protocol){\n"
     count = 0
     for key, value, parameter in elems:
         type_ = tools.check_type(key, dependent_struct, dependent_enum)
         _type_ = tools.convert_type(key, dependent_struct, dependent_enum)
         if count == 0:
-            code += "                if (i.Key == \"" + value + "\"){\n"
+            code += "                if ((string)i.Key == \"" + value + "\"){\n"
         else:
-            code += "                else if (i.Key == \"" + value + "\"){\n"
+            code += "                else if ((string)i.Key == \"" + value + "\"){\n"
         if type_ in tools.OriginalTypeList:
             code += "                    _struct" + _struct_uuid + "." + value + " = (" + _type_ + ")i.Value;\n"
         elif type_ == tools.TypeType.Custom:
@@ -77,7 +77,7 @@ def genprotocolstruct(struct_name, elems, dependent_struct, dependent_enum):
         code += "                }\n"
         count = count + 1
     code += "            }\n"
-    code += "            return _struct;\n"
+    code += "            return _struct" + _struct_uuid + ";\n"
     code += "        }\n"
     return code
 
