@@ -132,7 +132,7 @@ def gen_module_caller(module_name, funcs, dependent_struct, dependent_enum, enum
             cb_func += "            return this;\n"
             cb_func += "        }\n\n"
 
-            cb_func += "        void timeout(UInt64 tick, Action timeout_cb)\n        {\n"
+            cb_func += "        public void timeout(UInt64 tick, Action timeout_cb)\n        {\n"
             cb_func += "            TinyTimer.add_timer(tick, ()=>{\n"
             cb_func += "                module_rsp_cb." + func_name + "_timeout(cb_uuid);\n"
             cb_func += "            });\n"

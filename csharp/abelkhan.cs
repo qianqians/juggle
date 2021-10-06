@@ -72,6 +72,7 @@ namespace abelkhan
 
     public interface Ichannel
     {
+        ArrayList pop();
         void disconnect();
         void send(byte[] data);
     }
