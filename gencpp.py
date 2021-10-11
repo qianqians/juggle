@@ -22,7 +22,9 @@ import genmodule
 def gen_import(_import):
     code = "#include <abelkhan.h>\n"
     code += "#include <signals.h>\n\n"
-    code += "namespace abelkhan\n{\n"
+    for _i in _import:
+        code += "#include \"" + _i + ".h\"\n"
+    code += "\nnamespace abelkhan\n{\n"
     return code
     
 def gen(inputdir, outputdir):
