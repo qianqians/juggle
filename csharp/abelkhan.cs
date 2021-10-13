@@ -94,12 +94,23 @@ namespace abelkhan
 
             try
             {
-                var stream = new MemoryStream();
-                var serializer = MessagePackSerializer.Get<ArrayList>();
-                serializer.Pack( stream, _event );
-                stream.Position = 0;
+                using (MemoryStream stream = new MemoryStream(), send_st = new MemoryStream())
+                {
+                    var serializer = MessagePackSerializer.Get<ArrayList>();
+                    serializer.Pack(stream, _event);
+                    stream.Position = 0;
+                    var data = stream.ToArray();
 
-                ch.send(stream.ToArray());
+                    var _tmplenght = data.Length;
+                    send_st.WriteByte((byte)(_tmplenght & 0xff));
+                    send_st.WriteByte((byte)((_tmplenght >> 8) & 0xff));
+                    send_st.WriteByte((byte)((_tmplenght >> 16) & 0xff));
+                    send_st.WriteByte((byte)((_tmplenght >> 24) & 0xff));
+                    send_st.Write(data, 0, _tmplenght);
+                    send_st.Position = 0;
+
+                    ch.send(send_st.ToArray());
+                }
             }
             catch (System.Exception)
             {
