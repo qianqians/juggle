@@ -100,7 +100,7 @@ def genprotocolstruct(struct_name, elems, dependent_struct, dependent_enum):
             array_type = key[:-2]
             array_type_ = tools.check_type(array_type, dependent_struct, dependent_enum)
             _array_type = tools.convert_type(array_type, dependent_struct, dependent_enum)
-            code += "                    auto _protocol_array = i.second.array_items();n"
+            code += "                    auto _protocol_array = i.second.array_items();\n"
             code += "                    for(auto it_ : _protocol_array){\n"
             if array_type_ == tools.TypeType.Int8:
                 code += "                        _struct" + _struct_uuid + "." + value + ".push_back(it_.int8_value());\n"

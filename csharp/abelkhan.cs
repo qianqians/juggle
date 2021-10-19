@@ -129,16 +129,16 @@ namespace abelkhan
 
     public class Imodule
     {
-        protected Dictionary<string, Action<ArrayList> > events;
+        protected Dictionary<string, Action<IList<MsgPack.MessagePackObject> > > events;
 
         public Imodule(String _module_name){
             module_name = _module_name;
-            events = new Dictionary<string, Action<ArrayList> >();
+            events = new Dictionary<string, Action<IList<MsgPack.MessagePackObject> > >();
             current_ch = null;
             rsp = null;
         }
 
-        public void reg_method(String method_name, Action<ArrayList> method){
+        public void reg_method(String method_name, Action<IList<MsgPack.MessagePackObject> > method){
             events.Add(method_name, method);
         }
 
@@ -147,13 +147,13 @@ namespace abelkhan
 			current_ch = _ch;
             try
             {
-                String func_name = (String)_event[1];
+                String func_name = ((MsgPack.MessagePackObject)_event[1]).AsString();
 
-                if (events.TryGetValue(func_name, out Action<ArrayList> method))
+                if (events.TryGetValue(func_name, out Action<IList<MsgPack.MessagePackObject> > method))
                 {
                     try
                     {
-                        method((ArrayList)_event[2]);
+                        method(((MsgPack.MessagePackObject)_event[2]).AsList());
                     }
                     catch (System.Exception e)
                     {
@@ -199,7 +199,7 @@ namespace abelkhan
 
         public void process_event(Ichannel _ch, ArrayList _event){
             try{
-                String module_name = (String)_event[0];
+                String module_name = ((MsgPack.MessagePackObject)_event[0]).AsString();
                 if (module_set.TryGetValue(module_name, out Imodule _module))
                 {
                     _module.process_event(_ch, _event);
