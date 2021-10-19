@@ -22,7 +22,7 @@ def gen_module_module(module_name, funcs, dependent_struct, dependent_enum, enum
 
         if i[1] == "ntf":
             code_constructor += "        this.reg_method(\"" + func_name + "\", this." + func_name + ".bind(this));\n"
-            code_constructor_cb += "        this.cb_" + func_name + " = null;\n\n"
+            code_constructor_cb += "        this.cb_" + func_name + " = null;\n"
                 
             code_func += "    public cb_" + func_name + " : ("
             count = 0
@@ -70,7 +70,7 @@ def gen_module_module(module_name, funcs, dependent_struct, dependent_enum, enum
             code_func += "    }\n\n"
         elif i[1] == "req" and i[3] == "rsp" and i[5] == "err":
             code_constructor += "        this.reg_method(\"" + func_name + "\", this." + func_name + ".bind(this));\n"
-            code_constructor_cb += "        this.cb_" + func_name + " = null;\n\n"
+            code_constructor_cb += "        this.cb_" + func_name + " = null;\n"
 
             code_func += "    public cb_" + func_name + " : ("
             count = 0
@@ -221,7 +221,8 @@ def gen_module_module(module_name, funcs, dependent_struct, dependent_enum, enum
 
         else:
             raise Exception("func:%s wrong rpc type:%s must req or ntf" % (func_name, str(i[1])))
-
+    
+    code_constructor += "\n"
     code_constructor_end = "    }\n\n"
     code = "}\n"
         
