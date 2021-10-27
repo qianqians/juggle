@@ -18,9 +18,9 @@ import gencaller
 import genmodule
 
 def gen_import(_import):
-    code = "import abelkhan = require(\"abelkhan\");\n"
+    code = "import * as abelkhan from \"abelkhan\";\n"
     for _i in _import:
-        code += "import " + _i + " = require(\"./" + _i + "\");\n"
+        code += "import * as " + _i + " from(\"./" + _i + "\");\n"
     return code
 
 def gen(inputdir, outputdir):
