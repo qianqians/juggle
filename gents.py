@@ -18,7 +18,7 @@ import gencaller
 import genmodule
 
 def gen_import(_import):
-    code = "import * as abelkhan from \"abelkhan\";\n"
+    code = "import * as abelkhan from \"./abelkhan\";\n"
     for _i in _import:
         code += "import * as " + _i + " from(\"./" + _i + "\");\n"
     return code
