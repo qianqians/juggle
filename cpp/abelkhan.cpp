@@ -91,17 +91,17 @@ void Imodule::process_event(std::shared_ptr<Ichannel> _ch, const msgpack11::MsgP
             }
             catch (std::exception e)
             {
-                throw new Exception(concurrent::format("function name:%s System.Exception:%s", func_name, e.what()));
+                throw new Exception(std::format("function name:{0} System.Exception:{1}", func_name, e.what()));
             }
         }
         else
         {
-            throw new Exception(concurrent::format("do not have a function named:%s", func_name));
+            throw new Exception(std::format("do not have a function named:{0}", func_name));
         }
     }
     catch (std::exception e)
     {
-        throw new Exception(concurrent::format("System.Exception:%s", e.what()));
+        throw new Exception(std::format("System.Exception:{0}", e.what()));
     }
     current_ch = nullptr;
 }
@@ -125,12 +125,12 @@ void modulemng::process_event(std::shared_ptr<Ichannel> _ch, const msgpack11::Ms
             it_module->second->process_event(_ch, _event);
         }
         else {
-            throw new Exception(concurrent::format("do not have a module named:%s", module_name));
+            throw new Exception(std::format("do not have a module named:{0}", module_name));
         }
     }
     catch (std::exception e)
     {
-        throw Exception(concurrent::format("System.Exception:%s", e.what()));
+        throw Exception(std::format("System.Exception:{0}", e.what()));
     }
 }
 
