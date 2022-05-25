@@ -15,6 +15,7 @@
 #include <unordered_map>
 #include <functional>
 #include <vector>
+#include <tuple>
 
 #include <msgpack11.hpp>
 #include <ringque.h>
@@ -64,14 +65,8 @@ public:
 
 class Imodule
 {
-protected:
-    std::unordered_map<std::string, std::function<void(const msgpack11::MsgPack::array& doc)> > events;
-
 public:
     Imodule(std::string _module_name);
-
-    void reg_method(std::string method_name, std::function<void(const msgpack11::MsgPack::array& doc)> method);
-    void process_event(std::shared_ptr<Ichannel> _ch, const msgpack11::MsgPack::array& _event);
 
 public:
     std::shared_ptr<Ichannel> current_ch;
@@ -85,12 +80,11 @@ class modulemng
 public:
     modulemng();
 
-    void reg_module(std::shared_ptr<Imodule> _module);
-    void unreg_module(std::shared_ptr<Imodule> _module);
+    void reg_method(std::string method_name, std::tuple<std::shared_ptr<Imodule>, std::function<void(const msgpack11::MsgPack::array& doc)> > method);
     void process_event(std::shared_ptr<Ichannel> _ch, const msgpack11::MsgPack::array& _event);
 
 private:
-    std::map<std::string, std::shared_ptr<Imodule> > module_set;
+    std::map<std::string, std::tuple<std::shared_ptr<Imodule>, std::function<void(const msgpack11::MsgPack::array& doc)> > > method_set;
 
 };
 

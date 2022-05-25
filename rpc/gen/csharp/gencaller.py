@@ -13,7 +13,6 @@ def gen_module_caller(module_name, funcs, dependent_struct, dependent_enum, enum
     cb_code += "    public class " + module_name + "_rsp_cb : abelkhan.Imodule {\n"
     cb_code_constructor = "        public " + module_name + "_rsp_cb(abelkhan.modulemng modules) : base(\"" + module_name + "_rsp_cb\")\n"
     cb_code_constructor += "        {\n"
-    cb_code_constructor += "            modules.reg_module(this);\n"
     cb_code_section = ""
 
     code = "    public class " + module_name + "_caller : abelkhan.Icaller {\n"
@@ -65,7 +64,7 @@ def gen_module_caller(module_name, funcs, dependent_struct, dependent_enum, enum
                         raise Exception("not support nested array:%s in func:%s" % (_type, func_name))
                     code += "            }\n"                                                     
                     code += "            _argv_" + _argv_uuid + ".Add(_array_" + _array_uuid + ");\n"
-            code += "            call_module_method(\"" + func_name + "\", _argv_" + _argv_uuid + ");\n"
+            code += "            call_module_method(\"" + module_name + "_" + func_name + "\", _argv_" + _argv_uuid + ");\n"
             code += "        }\n\n"
         elif i[1] == "req" and i[3] == "rsp" and i[5] == "err":
             cb_func += "    public class " + module_name + "_" + func_name + "_cb\n    {\n"
@@ -193,8 +192,8 @@ def gen_module_caller(module_name, funcs, dependent_struct, dependent_enum, enum
 
             cb_code += "        public Dictionary<UInt64, " + module_name + "_" + func_name + "_cb> map_" + func_name + ";\n"
             cb_code_constructor += "            map_" + func_name + " = new Dictionary<UInt64, " + module_name + "_" + func_name + "_cb>();\n"
-            cb_code_constructor += "            reg_method(\"" + func_name + "_rsp\", " + func_name + "_rsp);\n"
-            cb_code_constructor += "            reg_method(\"" + func_name + "_err\", " + func_name + "_err);\n"
+            cb_code_constructor += "            modules.reg_method(\"" + func_name + "_rsp\", Tuple.Create<abelkhan.Imodule, Action<IList<MsgPack.MessagePackObject> > >((abelkhan.Imodule)this, " + func_name + "_rsp));\n"
+            cb_code_constructor += "            modules.reg_method(\"" + func_name + "_err\", Tuple.Create<abelkhan.Imodule, Action<IList<MsgPack.MessagePackObject> > >((abelkhan.Imodule)this, " + func_name + "_err));\n"
 
             cb_code_section += "        public void " + func_name + "_rsp(IList<MsgPack.MessagePackObject> inArray){\n"
             cb_code_section += "            var uuid = ((MsgPack.MessagePackObject)inArray[0]).AsUInt64();\n"
@@ -433,7 +432,7 @@ def gen_module_caller(module_name, funcs, dependent_struct, dependent_enum, enum
                         raise Exception("not support nested array:%s in func:%s" % (_type, func_name))
                     code += "            }\n"                                                     
                     code += "            _argv_" + _argv_uuid + ".Add(_array_" + _array_uuid + ");\n"
-            code += "            call_module_method(\"" + func_name + "\", _argv_" + _argv_uuid + ");\n\n"
+            code += "            call_module_method(\"" + module_name + "_" + func_name + "\", _argv_" + _argv_uuid + ");\n\n"
             code += "            var cb_" + func_name + "_obj = new " + module_name + "_" + func_name + "_cb(uuid_" + _cb_uuid_uuid + ", rsp_cb_" + module_name + "_handle);\n"
             code += "            lock(rsp_cb_" + module_name + "_handle.map_" + func_name + ")\n"
             code += "            {\n"

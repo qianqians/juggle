@@ -5,6 +5,7 @@
  */
 #include <chrono>
 #include <random>
+#include <format>
 
 #include <concurrent/string_tools.h>
 
@@ -41,7 +42,6 @@ Icaller::~Icaller() {
 
 void Icaller::call_module_method(std::string _method_name, msgpack11::MsgPack::array& _argv){
     msgpack11::MsgPack::array event_;
-    event_.push_back(module_name);
     event_.push_back(_method_name);
     event_.push_back(_argv);
     msgpack11::MsgPack _pack(event_);
@@ -72,60 +72,26 @@ Imodule::Imodule(std::string _module_name) {
     rsp = nullptr;
 }
 
-void Imodule::reg_method(std::string method_name, std::function<void(const msgpack11::MsgPack::array& doc)> method) {
-    events.insert(std::make_pair(method_name, method));
-}
-
-void Imodule::process_event(std::shared_ptr<Ichannel> _ch, const msgpack11::MsgPack::array& _event)
-{
-    current_ch = _ch;
-    try
-    {
-        std::string func_name = _event[1].string_value();
-        auto it_func = events.find(func_name);
-        if (it_func != events.end())
-        {
-            try
-            {
-                it_func->second(_event[2].array_items());
-            }
-            catch (std::exception e)
-            {
-                throw new Exception(std::format("function name:{0} System.Exception:{1}", func_name, e.what()));
-            }
-        }
-        else
-        {
-            throw new Exception(std::format("do not have a function named:{0}", func_name));
-        }
-    }
-    catch (std::exception e)
-    {
-        throw new Exception(std::format("System.Exception:{0}", e.what()));
-    }
-    current_ch = nullptr;
-}
-
 modulemng::modulemng(){
 }
 
-void modulemng::reg_module(std::shared_ptr<Imodule> _module){
-    module_set.insert(std::make_pair(_module->module_name, _module));
-}
-
-void modulemng::unreg_module(std::shared_ptr<Imodule> _module){
-    module_set.erase(_module->module_name);
+void modulemng::reg_method(std::string method_name, std::tuple<std::shared_ptr<Imodule>, std::function<void(const msgpack11::MsgPack::array& doc)> > method) {
+    method_set.insert(std::make_pair(method_name, method));
 }
 
 void modulemng::process_event(std::shared_ptr<Ichannel> _ch, const msgpack11::MsgPack::array& _event) {
     try {
-        std::string module_name = _event[0].string_value();
-        auto it_module = module_set.find(module_name);
-        if (it_module != module_set.end()) {
-            it_module->second->process_event(_ch, _event);
+        std::string method_name = _event[0].string_value();
+        auto it_module = method_set.find(method_name);
+        if (it_module != method_set.end()) {
+            std::shared_ptr<Imodule> _module;
+            std::function<void(const msgpack11::MsgPack::array& doc)> _method;
+            std::tie(_module, _method) = it_module->second;
+            _module->current_ch = _ch;
+            _method(_event[1].array_items());
         }
         else {
-            throw new Exception(std::format("do not have a module named:{0}", module_name));
+            throw new Exception(std::format("do not have a method named:{0}", method_name));
         }
     }
     catch (std::exception e)

@@ -12,7 +12,6 @@ def gen_module_module(module_name, funcs, dependent_struct, dependent_enum, enum
     code_constructor += "    constructor(modules:abelkhan.modulemng){\n"
     code_constructor += "        super(\"" + module_name + "\");\n"
     code_constructor += "        this.modules = modules;\n"
-    code_constructor += "        this.modules.reg_module(this);\n\n"
         
     code_constructor_cb = ""
     rsp_code = ""
@@ -21,7 +20,7 @@ def gen_module_module(module_name, funcs, dependent_struct, dependent_enum, enum
         func_name = i[0]
 
         if i[1] == "ntf":
-            code_constructor += "        this.reg_method(\"" + func_name + "\", this." + func_name + ".bind(this));\n"
+            code_constructor += "        this.modules.reg_method(\"" + func_name + "\", [this, this." + func_name + ".bind(this)]);\n"
             code_constructor_cb += "        this.cb_" + func_name + " = null;\n"
                 
             code_func += "    public cb_" + func_name + " : ("
@@ -69,7 +68,7 @@ def gen_module_module(module_name, funcs, dependent_struct, dependent_enum, enum
             code_func += "        }\n"
             code_func += "    }\n\n"
         elif i[1] == "req" and i[3] == "rsp" and i[5] == "err":
-            code_constructor += "        this.reg_method(\"" + func_name + "\", this." + func_name + ".bind(this));\n"
+            code_constructor += "        this.modules.reg_method(\"" + func_name + "\", [this, this." + func_name + ".bind(this)]);\n"
             code_constructor_cb += "        this.cb_" + func_name + " = null;\n"
 
             code_func += "    public cb_" + func_name + " : ("
@@ -170,7 +169,7 @@ def gen_module_module(module_name, funcs, dependent_struct, dependent_enum, enum
                         raise Exception("not support nested array:%s in func:%s" % (_type, func_name))
                     rsp_code += "        }\n"                                                     
                     rsp_code += "        _argv_" + _argv_uuid + ".push(_array_" + _array_uuid + ");\n"
-            rsp_code += "        this.call_module_method(\"" + func_name + "_rsp\", _argv_" + _argv_uuid + ");\n"
+            rsp_code += "        this.call_module_method(\"" + module_name + "_" + func_name + "_rsp\", _argv_" + _argv_uuid + ");\n"
             rsp_code += "    }\n\n"
 
             rsp_code += "    public err("
@@ -215,7 +214,7 @@ def gen_module_module(module_name, funcs, dependent_struct, dependent_enum, enum
                         raise Exception("not support nested array:%s in func:%s" % (_type, func_name))
                     rsp_code += "        }\n"                                                     
                     rsp_code += "        _argv_" + _argv_uuid + ".push(_array_" + _array_uuid + ");\n"
-            rsp_code += "        this.call_module_method(\"" + func_name + "_err\", _argv_" + _argv_uuid + ");\n"
+            rsp_code += "        this.call_module_method(\"" + module_name + "_" + func_name + "_err\", _argv_" + _argv_uuid + ");\n"
             rsp_code += "    }\n\n"
             rsp_code += "}\n\n"
 

@@ -4,6 +4,7 @@
 #include <abelkhan.h>
 #include <signals.h>
 
+
 namespace abelkhan
 {
 /*this enum code is codegen by abelkhan codegen for cpp*/
@@ -115,10 +116,8 @@ namespace abelkhan
         }
 
         void Init(std::shared_ptr<modulemng> modules){
-            modules->reg_module(std::static_pointer_cast<Imodule>(shared_from_this()));
-
-            reg_method("test3_rsp", std::bind(&test_rsp_cb::test3_rsp, this, std::placeholders::_1));
-            reg_method("test3_err", std::bind(&test_rsp_cb::test3_err, this, std::placeholders::_1));
+            modules->reg_method("test3_rsp", std::make_tuple(shared_from_this(), std::bind(&test_rsp_cb::test3_rsp, this, std::placeholders::_1)));
+            modules->reg_method("test3_err", std::make_tuple(shared_from_this(), std::bind(&test_rsp_cb::test3_err, this, std::placeholders::_1)));
         }
 
         void test3_rsp(const msgpack11::MsgPack::array& inArray){
@@ -150,9 +149,12 @@ namespace abelkhan
 
         std::shared_ptr<test_test3_cb> try_get_and_del_test3_cb(uint64_t uuid){
             std::lock_guard<std::mutex> l(mutex_map_test3);
-            auto rsp = map_test3[uuid];
-            map_test3.erase(uuid);
-            return rsp;
+            if (map_test3.find(uuid) != map_test3.end()) {
+                auto rsp = map_test3[uuid];
+                map_test3.erase(uuid);
+                return rsp;
+            }
+            return nullptr;
         }
 
     };
@@ -237,10 +239,8 @@ namespace abelkhan
         }
 
         void Init(std::shared_ptr<modulemng> _modules){
-            _modules->reg_module(std::static_pointer_cast<Imodule>(shared_from_this()));
-
-            reg_method("test3", std::bind(&test_module::test3, this, std::placeholders::_1));
-            reg_method("test4", std::bind(&test_module::test4, this, std::placeholders::_1));
+            _modules->reg_method("test3", std::make_tuple(shared_from_this(), std::bind(&test_module::test3, this, std::placeholders::_1)));
+            _modules->reg_method("test4", std::make_tuple(shared_from_this(), std::bind(&test_module::test4, this, std::placeholders::_1)));
         }
 
         concurrent::signals<void(test2, em_test3, std::string)> sig_test3;
