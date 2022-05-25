@@ -34,3 +34,5 @@
 /rpc/tools/cpp/*.pyc
 /rpc/gen/cpp/*.pyc
 *.pyc
+
+.vscode
