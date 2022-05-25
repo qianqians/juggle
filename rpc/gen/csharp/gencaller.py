@@ -192,8 +192,8 @@ def gen_module_caller(module_name, funcs, dependent_struct, dependent_enum, enum
 
             cb_code += "        public Dictionary<UInt64, " + module_name + "_" + func_name + "_cb> map_" + func_name + ";\n"
             cb_code_constructor += "            map_" + func_name + " = new Dictionary<UInt64, " + module_name + "_" + func_name + "_cb>();\n"
-            cb_code_constructor += "            modules.reg_method(\"" + func_name + "_rsp\", Tuple.Create<abelkhan.Imodule, Action<IList<MsgPack.MessagePackObject> > >((abelkhan.Imodule)this, " + func_name + "_rsp));\n"
-            cb_code_constructor += "            modules.reg_method(\"" + func_name + "_err\", Tuple.Create<abelkhan.Imodule, Action<IList<MsgPack.MessagePackObject> > >((abelkhan.Imodule)this, " + func_name + "_err));\n"
+            cb_code_constructor += "            modules.reg_method(\"" + module_name + "_rsp_cb_" + func_name + "_rsp\", Tuple.Create<abelkhan.Imodule, Action<IList<MsgPack.MessagePackObject> > >((abelkhan.Imodule)this, " + func_name + "_rsp));\n"
+            cb_code_constructor += "            modules.reg_method(\"" + module_name + "_rsp_cb_" + func_name + "_err\", Tuple.Create<abelkhan.Imodule, Action<IList<MsgPack.MessagePackObject> > >((abelkhan.Imodule)this, " + func_name + "_err));\n"
 
             cb_code_section += "        public void " + func_name + "_rsp(IList<MsgPack.MessagePackObject> inArray){\n"
             cb_code_section += "            var uuid = ((MsgPack.MessagePackObject)inArray[0]).AsUInt64();\n"

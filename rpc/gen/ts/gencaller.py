@@ -122,8 +122,8 @@ def gen_module_caller(module_name, funcs, dependent_struct, dependent_enum, enum
 
             cb_code += "    public map_" + func_name + ":Map<number, " + module_name + "_" + func_name + "_cb>;\n"
             cb_code_constructor += "        this.map_" + func_name + " = new Map<number, " + module_name + "_" + func_name + "_cb>();\n"
-            cb_code_constructor += "        modules.reg_method(\"" + func_name + "_rsp\", [this, this." + func_name + "_rsp.bind(this)]);\n"
-            cb_code_constructor += "        modules.reg_method(\"" + func_name + "_err\", [this, this." + func_name + "_err.bind(this)]);\n"
+            cb_code_constructor += "        modules.reg_method(\"" + module_name + "_rsp_cb_" + func_name + "_rsp\", [this, this." + func_name + "_rsp.bind(this)]);\n"
+            cb_code_constructor += "        modules.reg_method(\"" + module_name + "_rsp_cb_" + func_name + "_err\", [this, this." + func_name + "_err.bind(this)]);\n"
 
             cb_code_section += "    public " + func_name + "_rsp(inArray:any[]){\n"
             cb_code_section += "        let uuid = inArray[0];\n"

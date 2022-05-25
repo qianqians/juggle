@@ -20,7 +20,7 @@ def gen_module_module(module_name, funcs, dependent_struct, dependent_enum, enum
         func_name = i[0]
 
         if i[1] == "ntf":
-            code_constructor += "        this.modules.reg_method(\"" + func_name + "\", [this, this." + func_name + ".bind(this)]);\n"
+            code_constructor += "        this.modules.reg_method(\"" + module_name + "_" + func_name + "\", [this, this." + func_name + ".bind(this)]);\n"
             code_constructor_cb += "        this.cb_" + func_name + " = null;\n"
                 
             code_func += "    public cb_" + func_name + " : ("
@@ -68,7 +68,7 @@ def gen_module_module(module_name, funcs, dependent_struct, dependent_enum, enum
             code_func += "        }\n"
             code_func += "    }\n\n"
         elif i[1] == "req" and i[3] == "rsp" and i[5] == "err":
-            code_constructor += "        this.modules.reg_method(\"" + func_name + "\", [this, this." + func_name + ".bind(this)]);\n"
+            code_constructor += "        this.modules.reg_method(\"" + module_name + "_" + func_name + "\", [this, this." + func_name + ".bind(this)]);\n"
             code_constructor_cb += "        this.cb_" + func_name + " = null;\n"
 
             code_func += "    public cb_" + func_name + " : ("
