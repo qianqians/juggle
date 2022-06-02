@@ -120,8 +120,6 @@ void TinyTimer::poll(){
     }
 
     tick = msec_time();
-
-    std::vector<int64_t> remove;
 	for (auto it = timer.begin(); it != timer.end(); it++)
 	{
 		if (it->first <= tick)
@@ -138,6 +136,7 @@ void TinyTimer::poll(){
 	{
 		timer.erase(key);
 	}
+    remove.clear();
 }
 
 

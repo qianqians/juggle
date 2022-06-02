@@ -93,6 +93,7 @@ private:
     static int64_t tick;
     static concurrent::ringque<std::pair<uint64_t, std::function<void()> > > add_timer_list;
     static std::map<int64_t, std::function<void()> > timer;
+    static std::vector<int64_t> remove;
 
 public:
     static void add_timer(int64_t tick, std::function<void()> cb);
