@@ -36,7 +36,9 @@ public:
 class Ichannel {
 public:
     virtual void disconnect() = 0;
-    virtual void send(char* data, size_t len) = 0;
+    virtual bool is_xor_key_crypt() = 0;
+    virtual void normal_crypt(char* data, size_t len) = 0;
+    virtual void send(const char* data, size_t len) = 0;
 };
 
 class Icaller {

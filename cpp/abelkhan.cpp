@@ -60,6 +60,9 @@ void Icaller::call_module_method(std::string _method_name, msgpack11::MsgPack::a
     memcpy(&_data[4], data.c_str(), data.size());
     size_t datasize = len + 4;
 
+    if (ch->is_xor_key_crypt()) {
+        ch->normal_crypt((char*)(&(_data[4])), len);
+    }
     ch->send((char*)_data, datasize);
 }
 
@@ -103,6 +106,7 @@ void modulemng::process_event(std::shared_ptr<Ichannel> _ch, const msgpack11::Ms
 int64_t TinyTimer::tick;
 concurrent::ringque<std::pair<uint64_t, std::function<void()> > > TinyTimer::add_timer_list;
 std::map<int64_t, std::function<void()> > TinyTimer::timer;
+std::vector<int64_t> TinyTimer::remove;
 
 void TinyTimer::add_timer(int64_t _tick, std::function<void()> cb){
     tick = msec_time();
