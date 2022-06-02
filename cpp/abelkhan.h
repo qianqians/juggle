@@ -84,7 +84,7 @@ public:
     void process_event(std::shared_ptr<Ichannel> _ch, const msgpack11::MsgPack::array& _event);
 
 private:
-    std::map<std::string, std::tuple<std::shared_ptr<Imodule>, std::function<void(const msgpack11::MsgPack::array& doc)> > > method_set;
+    std::unordered_map<std::string, std::tuple<std::shared_ptr<Imodule>, std::function<void(const msgpack11::MsgPack::array& doc)> > > method_set;
 
 };
 

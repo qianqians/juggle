@@ -162,7 +162,7 @@ def gen_module_caller(module_name, funcs, dependent_struct, dependent_enum, enum
             
 
             cb_code += "        std::mutex mutex_map_" + func_name + ";\n"
-            cb_code += "        std::map<uint64_t, std::shared_ptr<" + module_name + "_"  + func_name + "_cb> > map_" + func_name + ";\n"
+            cb_code += "        std::unordered_map<uint64_t, std::shared_ptr<" + module_name + "_"  + func_name + "_cb> > map_" + func_name + ";\n"
             cb_code_constructor += "            modules->reg_method(\"" + module_name + "_rsp_cb_" + func_name + "_rsp\", std::make_tuple(shared_from_this(), std::bind(&" + module_name + "_rsp_cb::" + func_name + "_rsp, this, std::placeholders::_1)));\n"
             cb_code_constructor += "            modules->reg_method(\"" + module_name + "_rsp_cb_" + func_name + "_err\", std::make_tuple(shared_from_this(), std::bind(&" + module_name + "_rsp_cb::" + func_name + "_err, this, std::placeholders::_1)));\n"
 
