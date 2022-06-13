@@ -3,6 +3,7 @@ using System.IO;
 using System.Collections;
 using System.Collections.Generic;
 using MsgPack.Serialization;
+using System.Threading;
 
 namespace abelkhan
 {
@@ -144,7 +145,7 @@ namespace abelkhan
             rsp = null;
         }
 
-		public Ichannel current_ch;
+		public ThreadLocal<Ichannel> current_ch;
         public Response rsp;
 		public String module_name;
     }
@@ -166,10 +167,10 @@ namespace abelkhan
                 String method_name = ((MsgPack.MessagePackObject)_event[0]).AsString();
                 if (method_set.TryGetValue(method_name, out Tuple<Imodule, Action<IList<MsgPack.MessagePackObject> > > _method))
                 {
-                    _method.Item1.current_ch = _ch;
+                    _method.Item1.current_ch.Value = _ch;
                     _method.Item2.Invoke(((MsgPack.MessagePackObject)_event[1]).AsList());
                     on_msg?.Invoke(_ch);
-                    _method.Item1.current_ch = null;
+                    _method.Item1.current_ch.Value = null;
                 }
                 else
                 {
