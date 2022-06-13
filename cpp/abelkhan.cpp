@@ -90,8 +90,9 @@ void modulemng::process_event(std::shared_ptr<Ichannel> _ch, const msgpack11::Ms
             std::shared_ptr<Imodule> _module;
             std::function<void(const msgpack11::MsgPack::array& doc)> _method;
             std::tie(_module, _method) = it_module->second;
-            _module->current_ch = _ch;
+            Imodule::current_ch = _ch;
             _method(_event[1].array_items());
+            Imodule::current_ch = nullptr;
         }
         else {
             throw new Exception(std::format("do not have a method named:{0}", method_name));

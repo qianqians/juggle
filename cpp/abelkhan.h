@@ -71,8 +71,8 @@ public:
     Imodule(std::string _module_name);
 
 public:
-    std::shared_ptr<Ichannel> current_ch;
-    std::shared_ptr<Response> rsp;
+    thread_local static std::shared_ptr<Ichannel> current_ch;
+    thread_local static std::shared_ptr<Response> rsp;
     std::string module_name;
         
 };
