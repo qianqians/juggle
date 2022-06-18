@@ -141,12 +141,12 @@ namespace abelkhan
         public Imodule(String _module_name){
             module_name = _module_name;
             events = new Dictionary<string, Action<IList<MsgPack.MessagePackObject> > >();
-            current_ch = null;
-            rsp = null;
+            current_ch = new ThreadLocal<Ichannel>();
+            rsp = new ThreadLocal<Response>(); ;
         }
 
 		public ThreadLocal<Ichannel> current_ch;
-        public Response rsp;
+        public ThreadLocal<Response> rsp;
 		public String module_name;
     }
 

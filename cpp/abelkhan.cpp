@@ -69,6 +69,9 @@ void Icaller::call_module_method(std::string _method_name, msgpack11::MsgPack::a
 Response::Response(std::string _module_name, std::shared_ptr<Ichannel> _ch) : Icaller(_module_name, _ch) {
 }
 
+thread_local std::shared_ptr<Ichannel> Imodule::current_ch;
+thread_local std::shared_ptr<Response> Imodule::rsp;
+
 Imodule::Imodule(std::string _module_name) {
     module_name = _module_name;
     current_ch = nullptr;
