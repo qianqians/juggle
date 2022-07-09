@@ -98,7 +98,7 @@ void modulemng::process_event(std::shared_ptr<Ichannel> _ch, const msgpack11::Ms
             Imodule::current_ch = nullptr;
         }
         else {
-            throw new Exception(std::format("do not have a method named:{0}", method_name));
+            throw Exception(std::format("do not have a method named:{0}", method_name));
         }
     }
     catch (std::exception e)
