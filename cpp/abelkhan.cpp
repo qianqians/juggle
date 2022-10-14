@@ -19,7 +19,7 @@ inline int64_t msec_time()
 	return std::chrono::duration_cast<std::chrono::milliseconds>(duration).count();
 }
 
-static std::mt19937_64 e((int32_t)msec_time());
+static std::mt19937_64 e(msec_time());
 uint64_t random(){
     return e();
 }
