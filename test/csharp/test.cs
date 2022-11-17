@@ -9,7 +9,9 @@ namespace abelkhan
 /*this enum code is codegen by abelkhan codegen for c#*/
 
     public enum em_test3{
-        enum_test3 = 1
+        enum_test3 = 1,
+        enum_test1 = 2,
+        enum_test2 = 3
     }
 /*this struct code is codegen by abelkhan codegen for c#*/
     public class test1
@@ -18,28 +20,28 @@ namespace abelkhan
         public string argv2 = "123";
         public float argv3;
         public double argv4;
-        public static Hashtable test1_to_protcol(test1 _struct){
-            var _protocol = new Hashtable();
+        public static MsgPack.MessagePackObjectDictionary test1_to_protcol(test1 _struct){
+            var _protocol = new MsgPack.MessagePackObjectDictionary();
             _protocol.Add("argv1", _struct.argv1);
             _protocol.Add("argv2", _struct.argv2);
             _protocol.Add("argv3", _struct.argv3);
             _protocol.Add("argv4", _struct.argv4);
             return _protocol;
         }
-        public static test1 protcol_to_test1(Hashtable _protocol){
+        public static test1 protcol_to_test1(MsgPack.MessagePackObjectDictionary _protocol){
             var _structc501822b_22a8_37ff_91a9_9545f4689a3d = new test1();
-            foreach(DictionaryEntry i in _protocol){
-                if ((string)i.Key == "argv1"){
-                    _structc501822b_22a8_37ff_91a9_9545f4689a3d.argv1 = (Int32)i.Value;
+            foreach (var i in _protocol){
+                if (((MsgPack.MessagePackObject)i.Key).AsString() == "argv1"){
+                    _structc501822b_22a8_37ff_91a9_9545f4689a3d.argv1 = ((MsgPack.MessagePackObject)i.Value).AsInt32();
                 }
-                else if ((string)i.Key == "argv2"){
-                    _structc501822b_22a8_37ff_91a9_9545f4689a3d.argv2 = (string)i.Value;
+                else if (((MsgPack.MessagePackObject)i.Key).AsString() == "argv2"){
+                    _structc501822b_22a8_37ff_91a9_9545f4689a3d.argv2 = ((MsgPack.MessagePackObject)i.Value).AsString();
                 }
-                else if ((string)i.Key == "argv3"){
-                    _structc501822b_22a8_37ff_91a9_9545f4689a3d.argv3 = (float)i.Value;
+                else if (((MsgPack.MessagePackObject)i.Key).AsString() == "argv3"){
+                    _structc501822b_22a8_37ff_91a9_9545f4689a3d.argv3 = ((MsgPack.MessagePackObject)i.Value).AsSingle();
                 }
-                else if ((string)i.Key == "argv4"){
-                    _structc501822b_22a8_37ff_91a9_9545f4689a3d.argv4 = (double)i.Value;
+                else if (((MsgPack.MessagePackObject)i.Key).AsString() == "argv4"){
+                    _structc501822b_22a8_37ff_91a9_9545f4689a3d.argv4 = ((MsgPack.MessagePackObject)i.Value).AsDouble();
                 }
             }
             return _structc501822b_22a8_37ff_91a9_9545f4689a3d;
@@ -52,31 +54,62 @@ namespace abelkhan
         public test1 argv2;
         public byte[] bytel = new byte[3]{1,1,9};
         public em_test3 t = em_test3.enum_test3;
-        public static Hashtable test2_to_protcol(test2 _struct){
-            var _protocol = new Hashtable();
+        public static MsgPack.MessagePackObjectDictionary test2_to_protcol(test2 _struct){
+            var _protocol = new MsgPack.MessagePackObjectDictionary();
             _protocol.Add("argv1", _struct.argv1);
             _protocol.Add("argv2", test1.test1_to_protcol(_struct.argv2));
             _protocol.Add("bytel", _struct.bytel);
-            _protocol.Add("t", _struct.t);
+            _protocol.Add("t", (Int32)_struct.t);
             return _protocol;
         }
-        public static test2 protcol_to_test2(Hashtable _protocol){
+        public static test2 protcol_to_test2(MsgPack.MessagePackObjectDictionary _protocol){
             var _structf1917643_06b2_3e6d_ab77_0a5044067d0a = new test2();
-            foreach(DictionaryEntry i in _protocol){
-                if ((string)i.Key == "argv1"){
-                    _structf1917643_06b2_3e6d_ab77_0a5044067d0a.argv1 = (Int32)i.Value;
+            foreach (var i in _protocol){
+                if (((MsgPack.MessagePackObject)i.Key).AsString() == "argv1"){
+                    _structf1917643_06b2_3e6d_ab77_0a5044067d0a.argv1 = ((MsgPack.MessagePackObject)i.Value).AsInt32();
                 }
-                else if ((string)i.Key == "argv2"){
-                    _structf1917643_06b2_3e6d_ab77_0a5044067d0a.argv2 = test1.protcol_to_test1(i.Value);
+                else if (((MsgPack.MessagePackObject)i.Key).AsString() == "argv2"){
+                    _structf1917643_06b2_3e6d_ab77_0a5044067d0a.argv2 = test1.protcol_to_test1(((MsgPack.MessagePackObject)i.Value).AsDictionary());
                 }
-                else if ((string)i.Key == "bytel"){
-                    _structf1917643_06b2_3e6d_ab77_0a5044067d0a.bytel = (byte[])i.Value;
+                else if (((MsgPack.MessagePackObject)i.Key).AsString() == "bytel"){
+                    _structf1917643_06b2_3e6d_ab77_0a5044067d0a.bytel = ((MsgPack.MessagePackObject)i.Value).AsBinary();
                 }
-                else if ((string)i.Key == "t"){
-                    _structf1917643_06b2_3e6d_ab77_0a5044067d0a.t = (em_test3)i.Value;
+                else if (((MsgPack.MessagePackObject)i.Key).AsString() == "t"){
+                    _structf1917643_06b2_3e6d_ab77_0a5044067d0a.t = (em_test3)((MsgPack.MessagePackObject)i.Value).AsInt32();
                 }
             }
             return _structf1917643_06b2_3e6d_ab77_0a5044067d0a;
+        }
+    }
+
+    public class test3
+    {
+        public em_test3 em = em_test3.enum_test3;
+        public List<em_test3> em_list;
+        public static MsgPack.MessagePackObjectDictionary test3_to_protcol(test3 _struct){
+            var _protocol = new MsgPack.MessagePackObjectDictionary();
+            _protocol.Add("em", (Int32)_struct.em);
+            var _array_em_list = new ArrayList();            foreach(var v_ in _struct.em_list){
+                _array_em_list.Add((Int32)v_);
+            }
+            _protocol.Add("em_list", _array_em_list);
+            return _protocol;
+        }
+        public static test3 protcol_to_test3(MsgPack.MessagePackObjectDictionary _protocol){
+            var _structbf7f1e5a_6b28_310c_8f9e_f815dbd56fb7 = new test3();
+            foreach (var i in _protocol){
+                if (((MsgPack.MessagePackObject)i.Key).AsString() == "em"){
+                    _structbf7f1e5a_6b28_310c_8f9e_f815dbd56fb7.em = (em_test3)((MsgPack.MessagePackObject)i.Value).AsInt32();
+                }
+                else if (((MsgPack.MessagePackObject)i.Key).AsString() == "em_list"){
+                    _structbf7f1e5a_6b28_310c_8f9e_f815dbd56fb7.em_list = new();
+                    var _protocol_array = ((MsgPack.MessagePackObject)i.Value).AsList();
+                    foreach (var v_ in _protocol_array){
+                        _structbf7f1e5a_6b28_310c_8f9e_f815dbd56fb7.em_list.Add((em_test3)((MsgPack.MessagePackObject)v_).AsInt32());
+                    }
+                }
+            }
+            return _structbf7f1e5a_6b28_310c_8f9e_f815dbd56fb7;
         }
     }
 
@@ -142,16 +175,15 @@ namespace abelkhan
         public Dictionary<UInt64, test_test3_cb> map_test3;
         public test_rsp_cb(abelkhan.modulemng modules) : base("test_rsp_cb")
         {
-            modules.reg_module(this);
             map_test3 = new Dictionary<UInt64, test_test3_cb>();
-            reg_method("test3_rsp", test3_rsp);
-            reg_method("test3_err", test3_err);
+            modules.reg_method("test_rsp_cb_test3_rsp", Tuple.Create<abelkhan.Imodule, Action<IList<MsgPack.MessagePackObject> > >((abelkhan.Imodule)this, test3_rsp));
+            modules.reg_method("test_rsp_cb_test3_err", Tuple.Create<abelkhan.Imodule, Action<IList<MsgPack.MessagePackObject> > >((abelkhan.Imodule)this, test3_err));
         }
 
-        public void test3_rsp(ArrayList inArray){
-            var uuid = (UInt64)inArray[0];
-            var _t1 = test1.protcol_to_test1((Hashtable)inArray[1]);
-            var _i = (Int32)inArray[2];
+        public void test3_rsp(IList<MsgPack.MessagePackObject> inArray){
+            var uuid = ((MsgPack.MessagePackObject)inArray[0]).AsUInt64();
+            var _t1 = test1.protcol_to_test1(((MsgPack.MessagePackObject)inArray[1]).AsDictionary());
+            var _i = ((MsgPack.MessagePackObject)inArray[2]).AsInt32();
             var rsp = try_get_and_del_test3_cb(uuid);
             if (rsp != null)
             {
@@ -159,10 +191,10 @@ namespace abelkhan
             }
         }
 
-        public void test3_err(ArrayList inArray){
-            var uuid = (UInt64)inArray[0];
-            var _err = test1.protcol_to_test1((Hashtable)inArray[1]);
-            var _bytearray = (byte[])inArray[2];
+        public void test3_err(IList<MsgPack.MessagePackObject> inArray){
+            var uuid = ((MsgPack.MessagePackObject)inArray[0]).AsUInt64();
+            var _err = test1.protcol_to_test1(((MsgPack.MessagePackObject)inArray[1]).AsDictionary());
+            var _bytearray = ((MsgPack.MessagePackObject)inArray[2]).AsBinary();
             var rsp = try_get_and_del_test3_cb(uuid);
             if (rsp != null)
             {
@@ -180,8 +212,10 @@ namespace abelkhan
         private test_test3_cb try_get_and_del_test3_cb(UInt64 uuid){
             lock(map_test3)
             {
-                var rsp = map_test3[uuid];
-                map_test3.Remove(uuid);
+                if (map_test3.TryGetValue(uuid, out test_test3_cb rsp))
+                {
+                    map_test3.Remove(uuid);
+                }
                 return rsp;
             }
         }
@@ -201,18 +235,20 @@ namespace abelkhan
         }
 
         public test_test3_cb test3(test2 t2, em_test3 e = em_test3.enum_test3, string str = "qianqians"){
-            Interlocked.Increment(ref uuid_45a113ac_c7f2_30b0_90a5_a399ab912716);
-            var uuid_20ca53af_d04c_58a2_a8b3_d02b9e414e80 = (UInt64)uuid_45a113ac_c7f2_30b0_90a5_a399ab912716;
+            var uuid_20ca53af_d04c_58a2_a8b3_d02b9e414e80 = (UInt64)Interlocked.Increment(ref uuid_45a113ac_c7f2_30b0_90a5_a399ab912716);
 
             var _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7 = new ArrayList();
             _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7.Add(uuid_20ca53af_d04c_58a2_a8b3_d02b9e414e80);
             _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7.Add(test2.test2_to_protcol(t2));
             _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7.Add(e);
             _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7.Add(str);
-            call_module_method("test3", _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7);
+            call_module_method("test_test3", _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7);
 
             var cb_test3_obj = new test_test3_cb(uuid_20ca53af_d04c_58a2_a8b3_d02b9e414e80, rsp_cb_test_handle);
-            rsp_cb_test_handle.map_test3.Add(uuid_20ca53af_d04c_58a2_a8b3_d02b9e414e80, cb_test3_obj);
+            lock(rsp_cb_test_handle.map_test3)
+            {
+                rsp_cb_test_handle.map_test3.Add(uuid_20ca53af_d04c_58a2_a8b3_d02b9e414e80, cb_test3_obj);
+            }
             return cb_test3_obj;
         }
 
@@ -224,7 +260,7 @@ namespace abelkhan
             }
             _argv_fe584e24_96c8_3d2d_8b39_f1cc6a877f72.Add(_array_80252816_2442_30bc_bd5c_59666cae8a23);
             _argv_fe584e24_96c8_3d2d_8b39_f1cc6a877f72.Add(num);
-            call_module_method("test4", _argv_fe584e24_96c8_3d2d_8b39_f1cc6a877f72);
+            call_module_method("test_test4", _argv_fe584e24_96c8_3d2d_8b39_f1cc6a877f72);
         }
 
     }
@@ -241,7 +277,7 @@ namespace abelkhan
             _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7.Add(uuid_77eeaa2a_8150_3cce_bfa0_0b16e18637bd);
             _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7.Add(test1.test1_to_protcol(t1_ff418b5a_70ba_3756_afdf_1e2b6bdbef8c));
             _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7.Add(i_72987bfb_ad8a_309a_a6ba_f222ad17c387);
-            call_module_method("test3_rsp", _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7);
+            call_module_method("test_rsp_cb_test3_rsp", _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7);
         }
 
         public void err(test1 err_ad2710a2_3dd2_3a8f_a4c8_a7ebbe1df696, byte[] bytearray_f6580f73_3817_3337_ac7a_6f0e34690ee8 = new byte[3]{1,1,0}){
@@ -249,7 +285,7 @@ namespace abelkhan
             _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7.Add(uuid_77eeaa2a_8150_3cce_bfa0_0b16e18637bd);
             _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7.Add(test1.test1_to_protcol(err_ad2710a2_3dd2_3a8f_a4c8_a7ebbe1df696));
             _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7.Add(bytearray_f6580f73_3817_3337_ac7a_6f0e34690ee8);
-            call_module_method("test3_err", _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7);
+            call_module_method("test_rsp_cb_test3_err", _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7);
         }
 
     }
@@ -259,32 +295,31 @@ namespace abelkhan
         public test_module(abelkhan.modulemng _modules) : base("test")
         {
             modules = _modules;
-            modules.reg_module(this);
-
-            reg_method("test3", test3);
-            reg_method("test4", test4);
+            modules.reg_method("test_test3", Tuple.Create<abelkhan.Imodule, Action<IList<MsgPack.MessagePackObject> > >((abelkhan.Imodule)this, test3));
+            modules.reg_method("test_test4", Tuple.Create<abelkhan.Imodule, Action<IList<MsgPack.MessagePackObject> > >((abelkhan.Imodule)this, test4));
         }
 
         public event Action<test2, em_test3, string> on_test3;
-        public void test3(ArrayList inArray){
-            var _cb_uuid = (UInt64)inArray[0];
-            var _t2 = test2.protcol_to_test2((Hashtable)inArray[1]);
-            var _e = (em_test3)inArray[2];
-            var _str = (string)inArray[3];
-            rsp = new test_test3_rsp(current_ch, _cb_uuid);
+        public void test3(IList<MsgPack.MessagePackObject> inArray){
+            var _cb_uuid = ((MsgPack.MessagePackObject)inArray[0]).AsUInt64();
+            var _t2 = test2.protcol_to_test2(((MsgPack.MessagePackObject)inArray[1]).AsDictionary());
+            var _e = (em_test3)((MsgPack.MessagePackObject)inArray[2]).AsInt32();
+            var _str = ((MsgPack.MessagePackObject)inArray[3]).AsString();
+            rsp.Value = new test_test3_rsp(current_ch.Value, _cb_uuid);
             if (on_test3 != null){
                 on_test3(_t2, _e, _str);
             }
-            rsp = null;
+            rsp.Value = null;
         }
 
         public event Action<List<test2>, float> on_test4;
-        public void test4(ArrayList inArray){
+        public void test4(IList<MsgPack.MessagePackObject> inArray){
             var _argv = new List<test2>();
-            foreach(var v_51e4d59a_5357_5634_9bc1_e9c2e0aa9ab0 in (ArrayList)inArray[0]){
-                _argv.Add(test2.protcol_to_test2((Hashtable)v_51e4d59a_5357_5634_9bc1_e9c2e0aa9ab0));
+            var _protocol_arrayargv = ((MsgPack.MessagePackObject)inArray[0]).AsList();
+            foreach (var v_51e4d59a_5357_5634_9bc1_e9c2e0aa9ab0 in _protocol_arrayargv){
+                _argv.Add(test2.protcol_to_test2(((MsgPack.MessagePackObject)v_51e4d59a_5357_5634_9bc1_e9c2e0aa9ab0).AsDictionary()));
             }
-            var _num = (float)inArray[1];
+            var _num = ((MsgPack.MessagePackObject)inArray[1]).AsSingle();
             if (on_test4 != null){
                 on_test4(_argv, _num);
             }

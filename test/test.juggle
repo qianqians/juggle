@@ -14,6 +14,13 @@ struct test2{
 
 enum em_test3{
     enum_test3 = 1;
+	enum_test1 = 2;
+	enum_test2 = 3;
+}
+
+struct test3{
+	em_test3 em = enum_test3;
+	em_test3[] em_list;
 }
 
 module test{
