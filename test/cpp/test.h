@@ -10,7 +10,9 @@ namespace abelkhan
 /*this enum code is codegen by abelkhan codegen for cpp*/
 
     enum class em_test3{
-        enum_test3 = 1
+        enum_test3 = 1,
+        enum_test1 = 2,
+        enum_test2 = 3
     };
 
 /*this struct code is codegen by abelkhan codegen for cpp*/
@@ -88,6 +90,40 @@ namespace abelkhan
         }
     };
 
+    class test3 {
+    public:
+        em_test3 em = em_test3::enum_test3;
+        std::vector<em_test3> em_list;
+
+    public:
+        static msgpack11::MsgPack::object test3_to_protcol(test3 _struct){
+            msgpack11::MsgPack::object _protocol;
+            _protocol.insert(std::make_pair("em", (int)_struct.em));
+            msgpack11::MsgPack::array _array_em_list;
+            for(var v_ : _struct.em_list){
+                _array_em_list.push_back((int)v_);
+            }
+            _protocol.insert(std::make_pair("em_list", _array_em_list));
+            return _protocol;
+        }
+
+        static test3 protcol_to_test3(const msgpack11::MsgPack::object& _protocol){
+            test3 _structbf7f1e5a_6b28_310c_8f9e_f815dbd56fb7;
+            for(auto i : _protocol){
+                if (i.first == "em"){
+                    _structbf7f1e5a_6b28_310c_8f9e_f815dbd56fb7.em = (em_test3)i.second.int32_value();
+                }
+                else if (i.first == "em_list"){
+                    auto _protocol_array = i.second.array_items();
+                    for(auto it_ : _protocol_array){
+                        _structbf7f1e5a_6b28_310c_8f9e_f815dbd56fb7.em_list.push_back((std::vector<em_test3>)it_.int32_value());
+            }
+                }
+            }
+            return _structbf7f1e5a_6b28_310c_8f9e_f815dbd56fb7;
+        }
+    };
+
 /*this caller code is codegen by abelkhan codegen for cpp*/
     class test_rsp_cb;
     class test_test3_cb : public std::enable_shared_from_this<test_test3_cb>{
@@ -110,14 +146,14 @@ namespace abelkhan
     class test_rsp_cb : public Imodule, public std::enable_shared_from_this<test_rsp_cb>{
     public:
         std::mutex mutex_map_test3;
-        std::map<uint64_t, std::shared_ptr<test_test3_cb> > map_test3;
+        std::unordered_map<uint64_t, std::shared_ptr<test_test3_cb> > map_test3;
         test_rsp_cb() : Imodule("test_rsp_cb")
         {
         }
 
         void Init(std::shared_ptr<modulemng> modules){
-            modules->reg_method("test3_rsp", std::make_tuple(shared_from_this(), std::bind(&test_rsp_cb::test3_rsp, this, std::placeholders::_1)));
-            modules->reg_method("test3_err", std::make_tuple(shared_from_this(), std::bind(&test_rsp_cb::test3_err, this, std::placeholders::_1)));
+            modules->reg_method("test_rsp_cb_test3_rsp", std::make_tuple(shared_from_this(), std::bind(&test_rsp_cb::test3_rsp, this, std::placeholders::_1)));
+            modules->reg_method("test_rsp_cb_test3_err", std::make_tuple(shared_from_this(), std::bind(&test_rsp_cb::test3_err, this, std::placeholders::_1)));
         }
 
         void test3_rsp(const msgpack11::MsgPack::array& inArray){
@@ -183,7 +219,7 @@ namespace abelkhan
             _argv_77eeaa2a_8150_3cce_bfa0_0b16e18637bd.push_back(test2::test2_to_protcol(t2));
             _argv_77eeaa2a_8150_3cce_bfa0_0b16e18637bd.push_back((int)e);
             _argv_77eeaa2a_8150_3cce_bfa0_0b16e18637bd.push_back(str);
-            call_module_method("test3", _argv_77eeaa2a_8150_3cce_bfa0_0b16e18637bd);
+            call_module_method("test_test3", _argv_77eeaa2a_8150_3cce_bfa0_0b16e18637bd);
 
             auto cb_test3_obj = std::make_shared<test_test3_cb>(uuid_20ca53af_d04c_58a2_a8b3_d02b9e414e80, rsp_cb_test_handle);
             std::lock_guard<std::mutex> l(rsp_cb_test_handle->mutex_map_test3);
@@ -199,7 +235,7 @@ namespace abelkhan
             }
             _argv_fe584e24_96c8_3d2d_8b39_f1cc6a877f72.push_back(_array_80252816_2442_30bc_bd5c_59666cae8a23);
             _argv_fe584e24_96c8_3d2d_8b39_f1cc6a877f72.push_back(num);
-            call_module_method("test4", _argv_fe584e24_96c8_3d2d_8b39_f1cc6a877f72);
+            call_module_method("test_test4", _argv_fe584e24_96c8_3d2d_8b39_f1cc6a877f72);
         }
 
     };
@@ -219,7 +255,7 @@ namespace abelkhan
             _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7.push_back(uuid_77eeaa2a_8150_3cce_bfa0_0b16e18637bd);
             _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7.push_back(test1::test1_to_protcol(t1));
             _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7.push_back(i);
-            call_module_method("test3_rsp", _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7);
+            call_module_method("test_rsp_cb_test3_rsp", _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7);
         }
 
         void err(test1 err, std::vector<uint8_t> bytearray = {1,1,0}){
@@ -227,7 +263,7 @@ namespace abelkhan
             _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7.push_back(uuid_77eeaa2a_8150_3cce_bfa0_0b16e18637bd);
             _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7.push_back(test1::test1_to_protcol(err));
             _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7.push_back(bytearray);
-            call_module_method("test3_err", _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7);
+            call_module_method("test_rsp_cb_test3_err", _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7);
         }
 
     };
@@ -239,8 +275,8 @@ namespace abelkhan
         }
 
         void Init(std::shared_ptr<modulemng> _modules){
-            _modules->reg_method("test3", std::make_tuple(shared_from_this(), std::bind(&test_module::test3, this, std::placeholders::_1)));
-            _modules->reg_method("test4", std::make_tuple(shared_from_this(), std::bind(&test_module::test4, this, std::placeholders::_1)));
+            _modules->reg_method("test_test3", std::make_tuple(shared_from_this(), std::bind(&test_module::test3, this, std::placeholders::_1)));
+            _modules->reg_method("test_test4", std::make_tuple(shared_from_this(), std::bind(&test_module::test4, this, std::placeholders::_1)));
         }
 
         concurrent::signals<void(test2, em_test3, std::string)> sig_test3;
@@ -257,8 +293,8 @@ namespace abelkhan
         concurrent::signals<void(std::vector<test2>, float)> sig_test4;
         void test4(const msgpack11::MsgPack::array& inArray){
             std::vector<test2> _argv;
-            auto _protocol_array = inArray[0].array_items();
-            for(auto it_51e4d59a_5357_5634_9bc1_e9c2e0aa9ab0 : _protocol_array){
+            auto _protocol_arrayargv = inArray[0].array_items();
+            for(auto it_51e4d59a_5357_5634_9bc1_e9c2e0aa9ab0 : _protocol_arrayargv){
                 _argv.push_back(test2::protcol_to_test2(it_51e4d59a_5357_5634_9bc1_e9c2e0aa9ab0.object_items()));
             }
             auto _num = inArray[1].float32_value();

@@ -240,7 +240,7 @@ namespace abelkhan
             var _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7 = new ArrayList();
             _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7.Add(uuid_20ca53af_d04c_58a2_a8b3_d02b9e414e80);
             _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7.Add(test2.test2_to_protcol(t2));
-            _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7.Add(e);
+            _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7.Add((int)e);
             _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7.Add(str);
             call_module_method("test_test3", _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7);
 

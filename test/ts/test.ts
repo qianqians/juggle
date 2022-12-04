@@ -1,8 +1,10 @@
-import abelkhan = require("abelkhan");
+import * as abelkhan from "./abelkhan";
 /*this enum code is codegen by abelkhan codegen for ts*/
 
 export enum em_test3{
-    enum_test3 = 1
+    enum_test3 = 1,
+    enum_test1 = 2,
+    enum_test2 = 3
 }
 
 /*this struct code is codegen by abelkhan codegen for typescript*/
@@ -18,20 +20,23 @@ export class test1
 }
 
 export function test1_to_protcol(_struct:test1){
-    let _protocol:any[] = [];
-    _protocol.push(_struct.argv1);
-    _protocol.push(_struct.argv2);
-    _protocol.push(_struct.argv3);
-    _protocol.push(_struct.argv4);
-    return _protocol;
+    return _struct;
 }
 
-export function protcol_to_test1(_protocol:any[]){
+export function protcol_to_test1(_protocol:any){
     let _struct = new test1();
-    _struct.argv1 = _protocol[0] as number;
-    _struct.argv2 = _protocol[1] as string;
-    _struct.argv3 = _protocol[2] as number;
-    _struct.argv4 = _protocol[3] as number;
+    for (const [key, val] of Object.entries(_protocol))        if (key === "argv1"){
+            _struct.argv1 = val as number;
+        }
+        else if (key === "argv2"){
+            _struct.argv2 = val as string;
+        }
+        else if (key === "argv3"){
+            _struct.argv3 = val as number;
+        }
+        else if (key === "argv4"){
+            _struct.argv4 = val as number;
+        }
     return _struct;
 }
 
@@ -47,20 +52,50 @@ export class test2
 }
 
 export function test2_to_protcol(_struct:test2){
-    let _protocol:any[] = [];
-    _protocol.push(_struct.argv1);
-    _protocol.push(test1_to_protcol(_struct.argv2));
-    _protocol.push(_struct.bytel);
-    _protocol.push(_struct.t);
-    return _protocol;
+    return _struct;
 }
 
-export function protcol_to_test2(_protocol:any[]){
+export function protcol_to_test2(_protocol:any){
     let _struct = new test2();
-    _struct.argv1 = _protocol[0] as number;
-    _struct.argv2 = protcol_to_test1(_protocol[1]);
-    _struct.bytel = _protocol[2] as Uint8Array;
-    _struct.t = _protocol[3] as em_test3;
+    for (const [key, val] of Object.entries(_protocol))        if (key === "argv1"){
+            _struct.argv1 = val as number;
+        }
+        else if (key === "argv2"){
+            _struct.argv2 = protcol_to_test1(val);
+        }
+        else if (key === "bytel"){
+            _struct.bytel = val as Uint8Array;
+        }
+        else if (key === "t"){
+            _struct.t = val as em_test3;
+        }
+    return _struct;
+}
+
+export class test3
+{
+    public em : em_test3 = em_test3.enum_test3;
+    public em_list : em_test3[];
+
+    constructor(){
+    }
+}
+
+export function test3_to_protcol(_struct:test3){
+    return _struct;
+}
+
+export function protcol_to_test3(_protocol:any){
+    let _struct = new test3();
+    for (const [key, val] of Object.entries(_protocol))        if (key === "em"){
+            _struct.em = val as em_test3;
+        }
+        else if (key === "em_list"){
+            _struct.em_list = [];
+            for(let v_ of val){
+                _struct.em_list.push(v_);
+    }
+        }
     return _struct;
 }
 
@@ -100,11 +135,9 @@ export class test_rsp_cb extends abelkhan.Imodule {
     public map_test3:Map<number, test_test3_cb>;
     constructor(modules:abelkhan.modulemng){
         super("test_rsp_cb");
-        modules.reg_module(this);
-
         this.map_test3 = new Map<number, test_test3_cb>();
-        this.reg_method("test3_rsp", this.test3_rsp.bind(this));
-        this.reg_method("test3_err", this.test3_err.bind(this));
+        modules.reg_method("test_rsp_cb_test3_rsp", [this, this.test3_rsp.bind(this)]);
+        modules.reg_method("test_rsp_cb_test3_err", [this, this.test3_err.bind(this)]);
     }
     public test3_rsp(inArray:any[]){
         let uuid = inArray[0];
@@ -147,7 +180,7 @@ export class test_rsp_cb extends abelkhan.Imodule {
 
 export let rsp_cb_test_handle : test_rsp_cb | null = null;
 export class test_caller extends abelkhan.Icaller {
-    private uuid_45a113ac_c7f2_30b0_90a5_a399ab912716 : number = Math.round(Math.random() * Number.MAX_VALUE);
+    private uuid_45a113ac_c7f2_30b0_90a5_a399ab912716 : number = Math.round(Math.random() * 1000);
 
     constructor(_ch:any, modules:abelkhan.modulemng){
         super("test", _ch);
@@ -157,13 +190,13 @@ export class test_caller extends abelkhan.Icaller {
     }
 
     public test3(t2:test2, e:em_test3 = em_test3.enum_test3, str:string = "qianqians"){
-        let uuid_20ca53af_d04c_58a2_a8b3_d02b9e414e80 = this.uuid_45a113ac_c7f2_30b0_90a5_a399ab912716++;
+        let uuid_20ca53af_d04c_58a2_a8b3_d02b9e414e80 = Math.round(this.uuid_45a113ac_c7f2_30b0_90a5_a399ab912716++);
 
         let _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7:any[] = [uuid_20ca53af_d04c_58a2_a8b3_d02b9e414e80];
         _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7.push(test2_to_protcol(t2));
         _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7.push(e);
         _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7.push(str);
-        this.call_module_method("test3", _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7);
+        this.call_module_method("test_test3", _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7);
 
         let cb_test3_obj = new test_test3_cb(uuid_20ca53af_d04c_58a2_a8b3_d02b9e414e80, rsp_cb_test_handle);
         if (rsp_cb_test_handle){
@@ -180,7 +213,7 @@ export class test_caller extends abelkhan.Icaller {
         }
         _argv_fe584e24_96c8_3d2d_8b39_f1cc6a877f72.push(_array_80252816_2442_30bc_bd5c_59666cae8a23);
         _argv_fe584e24_96c8_3d2d_8b39_f1cc6a877f72.push(num);
-        this.call_module_method("test4", _argv_fe584e24_96c8_3d2d_8b39_f1cc6a877f72);
+        this.call_module_method("test_test4", _argv_fe584e24_96c8_3d2d_8b39_f1cc6a877f72);
     }
 
 }
@@ -196,14 +229,14 @@ export class test_test3_rsp extends abelkhan.Icaller {
         let _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7:any[] = [this.uuid_77eeaa2a_8150_3cce_bfa0_0b16e18637bd];
         _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7.push(test1_to_protcol(t1));
         _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7.push(i);
-        this.call_module_method("test3_rsp", _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7);
+        this.call_module_method("test_rsp_cb_test3_rsp", _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7);
     }
 
     public err(err:test1, bytearray:Uint8Array = Uint8Array.from([1,1,0])){
         let _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7:any[] = [this.uuid_77eeaa2a_8150_3cce_bfa0_0b16e18637bd];
         _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7.push(test1_to_protcol(err));
         _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7.push(bytearray);
-        this.call_module_method("test3_err", _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7);
+        this.call_module_method("test_rsp_cb_test3_err", _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7);
     }
 
 }
@@ -213,14 +246,11 @@ export class test_module extends abelkhan.Imodule {
     constructor(modules:abelkhan.modulemng){
         super("test");
         this.modules = modules;
-        this.modules.reg_module(this);
+        this.modules.reg_method("test_test3", [this, this.test3.bind(this)]);
+        this.modules.reg_method("test_test4", [this, this.test4.bind(this)]);
 
-        this.reg_method("test3", this.test3.bind(this));
-        this.reg_method("test4", this.test4.bind(this));
         this.cb_test3 = null;
-
         this.cb_test4 = null;
-
     }
 
     public cb_test3 : (t2:test2, e:em_test3, str:string)=>void | null;
