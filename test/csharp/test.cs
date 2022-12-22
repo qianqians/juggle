@@ -89,10 +89,13 @@ namespace abelkhan
         public static MsgPack.MessagePackObjectDictionary test3_to_protcol(test3 _struct){
             var _protocol = new MsgPack.MessagePackObjectDictionary();
             _protocol.Add("em", (Int32)_struct.em);
-            var _array_em_list = new ArrayList();            foreach(var v_ in _struct.em_list){
-                _array_em_list.Add((Int32)v_);
+            if (_struct.em_list != null) { 
+                var _array_em_list = new ArrayList();
+                foreach(var v_ in _struct.em_list){
+                    _array_em_list.Add((Int32)v_);
+                }
+                _protocol.Add("em_list", _array_em_list);
             }
-            _protocol.Add("em_list", _array_em_list);
             return _protocol;
         }
         public static test3 protcol_to_test3(MsgPack.MessagePackObjectDictionary _protocol){
