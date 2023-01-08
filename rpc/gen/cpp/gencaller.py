@@ -23,7 +23,7 @@ def gen_module_caller(module_name, funcs, dependent_struct, dependent_enum, enum
     code += "        static std::shared_ptr<" + module_name + "_rsp_cb> rsp_cb_" + module_name + "_handle;\n\n"
     code += "    private:\n"
     _uuid = '_'.join(str(uuid.uuid3(uuid.NAMESPACE_DNS, module_name)).split('-'))
-    code += "        std::atomic<uint64_t> uuid_" + _uuid + ";\n\n"
+    code += "        std::atomic<uint32_t> uuid_" + _uuid + ";\n\n"
     code += "    public:\n"
     code += "        " + module_name + "_caller(std::shared_ptr<Ichannel> _ch, std::shared_ptr<modulemng> modules) : Icaller(\"" + module_name + "\", _ch)\n"
     code += "        {\n"

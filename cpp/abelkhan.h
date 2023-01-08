@@ -22,7 +22,7 @@
 
 namespace abelkhan{
 
-uint64_t random();
+uint32_t random();
 
 class Exception : public std::exception {
 public:

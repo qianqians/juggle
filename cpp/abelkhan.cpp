@@ -20,8 +20,8 @@ inline int64_t msec_time()
 }
 
 static std::mt19937_64 e(msec_time());
-uint64_t random(){
-    return e();
+uint32_t random(){
+    return (uint32_t)e();
 }
 
 Exception::Exception(std::string _err) : std::exception() {

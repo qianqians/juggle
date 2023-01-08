@@ -17,9 +17,9 @@ namespace abelkhan
     public class RandomUUID
     {
         private static Random ran = new Random();
-        public static UInt64 random()
+        public static UInt32 random()
         {
-            return (UInt64)(ran.NextDouble() * UInt64.MaxValue);
+            return (UInt32)(ran.NextDouble() * Int32.MaxValue);
         }
     }
 
