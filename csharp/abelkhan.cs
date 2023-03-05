@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using MsgPack.Serialization;
 using System.Threading;
+using Microsoft.IO;
 
 namespace abelkhan
 {
@@ -71,6 +72,11 @@ namespace abelkhan
         }
     }
 
+    public class MemoryStreamPool
+    {
+        public static RecyclableMemoryStreamManager mstMgr = new RecyclableMemoryStreamManager();
+    }
+
     public interface Ichannel
     {
         void disconnect();
@@ -95,7 +101,7 @@ namespace abelkhan
 
             try
             {
-                using (MemoryStream stream = new MemoryStream(), send_st = new MemoryStream())
+                using (MemoryStream stream = MemoryStreamPool.mstMgr.GetStream(), send_st = MemoryStreamPool.mstMgr.GetStream())
                 {
                     var serializer = MessagePackSerializer.Get<ArrayList>();
                     serializer.Pack(stream, _event);
