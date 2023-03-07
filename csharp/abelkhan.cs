@@ -91,6 +91,8 @@ namespace abelkhan
         {
             module_name = _module_name;
             ch = _ch;
+
+            serializer = MessagePackSerializer.Get<ArrayList>();
         }
 
         public void call_module_method(String methodname, ArrayList argvs)
@@ -103,7 +105,6 @@ namespace abelkhan
             {
                 using (MemoryStream stream = MemoryStreamPool.mstMgr.GetStream(), send_st = MemoryStreamPool.mstMgr.GetStream())
                 {
-                    var serializer = MessagePackSerializer.Get<ArrayList>();
                     serializer.Pack(stream, _event);
                     stream.Position = 0;
                     var data = stream.ToArray();
@@ -131,8 +132,9 @@ namespace abelkhan
             }
         }
 
-        protected String module_name;
-        private Ichannel ch;
+        protected readonly String module_name;
+        private readonly Ichannel ch;
+        private readonly MessagePackSerializer<ArrayList> serializer;
     }
 
     public class Response : Icaller{
