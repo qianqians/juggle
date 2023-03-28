@@ -48,6 +48,8 @@ public:
 
     void call_module_method(std::string _method_name, msgpack11::MsgPack::array& _argv);
 
+    void reset_channel(std::shared_ptr<Ichannel> _ch);
+
 protected:
     std::string module_name;
 

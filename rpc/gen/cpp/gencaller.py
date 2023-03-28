@@ -18,7 +18,7 @@ def gen_module_caller(module_name, funcs, dependent_struct, dependent_enum, enum
     cb_code_constructor += "        void Init(std::shared_ptr<modulemng> modules){\n"
     cb_code_section = ""
 
-    code = "    class " + module_name + "_caller : Icaller {\n"
+    code = "    class " + module_name + "_caller : public Icaller {\n"
     code += "    private:\n"
     code += "        static std::shared_ptr<" + module_name + "_rsp_cb> rsp_cb_" + module_name + "_handle;\n\n"
     code += "    private:\n"

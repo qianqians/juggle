@@ -66,6 +66,10 @@ void Icaller::call_module_method(std::string _method_name, msgpack11::MsgPack::a
     ch->send((char*)_data, datasize);
 }
 
+void Icaller::reset_channel(std::shared_ptr<Ichannel> _ch) {
+    ch = _ch;
+}
+
 Response::Response(std::string _module_name, std::shared_ptr<Ichannel> _ch) : Icaller(_module_name, _ch) {
 }
 
