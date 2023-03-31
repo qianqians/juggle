@@ -59,7 +59,7 @@ def convert_parameter(typestr, parameter, dependent_enum, enum):
     elif typestr == 'bin':
         str_parameter = "Uint8Array.from(%s)"%parameter
         return str_parameter
-
+    
 def check_in_dependent(typestr, dependent):
     for _type, _import in dependent:
         if _type == typestr:
@@ -102,7 +102,7 @@ def check_type(typestr, dependent_struct, dependent_enum):
     elif check_in_dependent(typestr, dependent_struct):
         return TypeType.Custom
     elif check_in_dependent(typestr, dependent_enum):
-    	return TypeType.Enum
+        return TypeType.Enum
     elif typestr[len(typestr)-2] == '[' and typestr[len(typestr)-1] == ']':
         return TypeType.Array
 

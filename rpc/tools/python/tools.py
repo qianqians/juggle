@@ -57,6 +57,36 @@ def convert_parameter(typestr, parameter, dependent_enum, enum):
         str_parameter = "bytes([%s])"%value
         return str_parameter
 
+def get_type_default(typestr, dependent_enum):
+    if typestr == 'int8':
+        return "0"
+    elif typestr == 'int16':
+        return "0"
+    elif typestr == 'int32':
+        return "0"
+    elif typestr == 'int64':
+        return "0"
+    elif typestr == 'uint8':
+        return "0"
+    elif typestr == 'uint16':
+        return "0"
+    elif typestr == 'uint32':
+        return "0"
+    elif typestr == 'uint64':
+        return "0"
+    elif typestr == 'string':
+        return ""
+    elif typestr == 'float':
+        return "0.0"
+    elif typestr == 'double':
+        return "0.0"
+    elif typestr == 'bool':
+        return "false"
+    elif check_in_dependent(typestr, dependent_enum):
+        return "0"
+    elif typestr == 'bin':
+        return "None"
+
 def check_in_dependent(typestr, dependent):
     for _type, _import in dependent:
         if _type == typestr:
@@ -97,9 +127,9 @@ def check_type(typestr, dependent_struct, dependent_enum):
     elif typestr == 'bin':
         return TypeType.Bin
     elif check_in_dependent(typestr, dependent_struct):
-	    return TypeType.Custom
+        return TypeType.Custom
     elif check_in_dependent(typestr, dependent_enum):
-    	return TypeType.Enum
+        return TypeType.Enum
     elif typestr[len(typestr)-2] == '[' and typestr[len(typestr)-1] == ']':
         return TypeType.Array
 
