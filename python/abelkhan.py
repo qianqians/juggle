@@ -10,7 +10,7 @@ from collections.abc import Callable
 
 class AbelkhanError(RuntimeError):
     def __init__(self, err:str) -> None:
-        super().__init__(err)
+        super(AbelkhanError, self).__init__(err)
         self.err = err   
 
 def RandomUUID():
@@ -46,7 +46,7 @@ class Icaller(object):
     
 class Response(Icaller):
     def __init__(self, _ch:Ichannel) -> None:
-        super().__init__(_ch)
+        super(Response, self).__init__(_ch)
         
 class Imodule(object):
     def __init__(self) -> None:

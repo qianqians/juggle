@@ -6,9 +6,7 @@
 def genenum(pretreatment):
     enum = pretreatment.enum
     
-    code = "#coding:utf-8\n"
-    code += "# this enum code is codegen by abelkhan codegen for python\n\n"
-    code += "from enum import Enum\n\n"
+    code = "# this enum code is codegen by abelkhan codegen for python\n\n"
     for enum_name, enums in enum.items():
         code += "class " + enum_name + "(Enum):\n"
         names = []
