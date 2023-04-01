@@ -7,11 +7,10 @@ import uuid
 import tools
 
 def gen_module_module(module_name, funcs, dependent_struct, dependent_enum, enum):
-    code_constructor = "export class " + module_name + "_module extends abelkhan.Imodule {\n"
-    code_constructor += "    private modules:abelkhan.modulemng;\n"
-    code_constructor += "    constructor(modules:abelkhan.modulemng){\n"
-    code_constructor += "        super(\"" + module_name + "\");\n"
-    code_constructor += "        this.modules = modules;\n"
+    code_constructor = "class " + module_name + "_module(Imodule):\n"
+    code_constructor += "    def __init__(self, modules:modulemng):\n"
+    code_constructor += "        super(" + module_name + "_module, self)\n"
+    code_constructor += "        self.modules = modules\n"
         
     code_constructor_cb = ""
     rsp_code = ""
@@ -19,115 +18,89 @@ def gen_module_module(module_name, funcs, dependent_struct, dependent_enum, enum
     for i in funcs:
         func_name = i[0]
 
-        if i[1] == "ntf":
-            code_constructor += "        this.modules.reg_method(\"" + module_name + "_" + func_name + "\", [this, this." + func_name + ".bind(this)]);\n"
-            code_constructor_cb += "        this.cb_" + func_name + " = null;\n"
-                
-            code_func += "    public cb_" + func_name + " : ("
-            count = 0
-            for _type, _name, _parameter in i[2]:
-                code_func += _name + ":" + tools.convert_type(_type, dependent_struct, dependent_enum)
-                count += 1
-                if count < len(i[2]):
-                    code_func += ", "
-            code_func += ")=>void | null;\n"
+        func_type = "Callable[["
+        count = 0
+        for _type, _name, _parameter in i[2]:
+            func_type += tools.convert_type(_type, dependent_struct, dependent_enum)
+            count += 1
+            if count < len(i[2]):
+                func_type += ", "
+        func_type += "]]"
 
-            code_func += "    " + func_name + "(inArray:any[]){\n"
-            code_func += "        let _argv_:any[] = [];\n"
+        code_constructor += "        self.modules.reg_method(\"" + module_name + "_" + func_name + "\", [self, self." + func_name + "])\n"
+        code_constructor_cb += "        self.cb_" + func_name + " : " + func_type + " = None\n"
+                
+        if i[1] == "ntf":
+            code_func += "    def " + func_name + "(self, inArray:list):\n"
             count = 0 
             for _type, _name, _parameter in i[2]:
                 type_ = tools.check_type(_type, dependent_struct, dependent_enum)
                 if type_ in tools.OriginalTypeList:
-                    code_func += "        _argv_.push(inArray[" + str(count) + "]);\n"
+                    code_func += "        _" + _name + " = inArray[" + str(count) + "]\n"
                 elif type_ == tools.TypeType.Custom:
-                    _import = tools.get_import(_type, dependent_struct)
-                    if _import == "":
-                        code_func += "        _argv_.push(protcol_to_" + _type + "(inArray[" + str(count) + "]));\n"
-                    else:
-                        code_func += "        _argv_.push(" + _import + ".protcol_to_" + _type + "(inArray[" + str(count) + "]));\n"
+                    code_func += "        _" + _name + " = protcol_to_" + _type + "(inArray[" + str(count) + "])\n"
                 elif type_ == tools.TypeType.Array:
-                    code_func += "        let _array_:any[] = [];\n"
-                    code_func += "        for(let v_ of inArray[" + str(count) + "]){\n"
+                    code_func += "        _" + _name + " = []\n"
+                    code_func += "        for v_ in inArray[" + str(count) + "]:\n"
                     array_type = _type[:-2]
                     array_type_ = tools.check_type(array_type, dependent_struct, dependent_enum)
                     if array_type_ in tools.OriginalTypeList:
-                        code_func += "            _array_.push(v_);\n"
+                        code_func += "            _" + _name + ".append(v_)\n"
                     elif array_type_ == tools.TypeType.Custom:
-                        _import = tools.get_import(array_type, dependent_struct)
-                        if _import == "":
-                            code_func += "            _array_.push(protcol_to_" + array_type + "(v_));\n"
-                        else:
-                            code_func += "            _array_.push(" + _import + ".protcol_to_" + array_type + "(v_));\n"
+                        code_func += "            _" + _name + ".append(protcol_to_" + array_type + "(v_))\n"
                     elif array_type_ == tools.TypeType.Array:
                         raise Exception("not support nested array:%s in func:%s" % (_type, func_name))
-                    code_func += "        }\n"                                                     
-                    code_func += "        _argv_.push(_array_);\n"
                 count += 1
-            code_func += "        if (this.cb_" + func_name + "){\n"
-            code_func += "            this.cb_" + func_name + ".apply(null, _argv_);\n"
-            code_func += "        }\n"
-            code_func += "    }\n\n"
-        elif i[1] == "req" and i[3] == "rsp" and i[5] == "err":
-            code_constructor += "        this.modules.reg_method(\"" + module_name + "_" + func_name + "\", [this, this." + func_name + ".bind(this)]);\n"
-            code_constructor_cb += "        this.cb_" + func_name + " = null;\n"
-
-            code_func += "    public cb_" + func_name + " : ("
+            code_func += "        if self.cb_" + func_name + ":\n"
+            code_func += "            self.cb_" + func_name + "("
             count = 0
             for _type, _name, _parameter in i[2]:
-                code_func += _name + ":" + tools.convert_type(_type, dependent_struct, dependent_enum)
-                count += 1
+                code_func += "_" + _name
+                count = count + 1
                 if count < len(i[2]):
                     code_func += ", "
-            code_func += ")=>void | null;\n"
-
-            code_func += "    " + func_name + "(inArray:any[]){\n"
-            code_func += "        let _cb_uuid = inArray[0];\n"
-            code_func += "        let _argv_:any[] = [];\n"
+            code_func += ")\n\n"
+        elif i[1] == "req" and i[3] == "rsp" and i[5] == "err":
+            code_func += "    def " + func_name + "(self, inArray:list):\n"
+            code_func += "        _cb_uuid = inArray[0]\n"
             count = 1 
             for _type, _name, _parameter in i[2]:
                 type_ = tools.check_type(_type, dependent_struct, dependent_enum)
                 if type_ in tools.OriginalTypeList:
-                    code_func += "        _argv_.push(inArray[" + str(count) + "]);\n"
+                    code_func += "        _" + _name + " = inArray[" + str(count) + "]\n"
                 elif type_ == tools.TypeType.Custom:
-                    _import = tools.get_import(_type, dependent_struct)
-                    if _import == "":
-                        code_func += "        _argv_.push(protcol_to_" + _type + "(inArray[" + str(count) + "]));\n"
-                    else:
-                        code_func += "        _argv_.push(" + _import + ".protcol_to_" + _type + "(inArray[" + str(count) + "]));\n"
+                    code_func += "        _" + _name + " = protcol_to_" + _type + "(inArray[" + str(count) + "])\n"
                 elif type_ == tools.TypeType.Array:
-                    code_func += "        let _array_:any[] = [];"
-                    code_func += "        for(let v_ of inArray[" + str(count) + "]){\n"
+                    code_func += "        _" + _name + " = []"
+                    code_func += "        for v_ in inArray[" + str(count) + "]:\n"
                     array_type = _type[:-2]
                     array_type_ = tools.check_type(array_type, dependent_struct, dependent_enum)
                     if array_type_ in tools.OriginalTypeList:
-                        code_func += "            _array_.push(v_);\n"
+                        code_func += "            _" + _name + ".append(v_)\n"
                     elif array_type_ == tools.TypeType.Custom:
-                        _import = tools.get_import(array_type, dependent_struct)
-                        if _import == "":
-                            code_func += "            _array_.push(protcol_to_" + array_type + "(v_));\n"
-                        else:
-                            code_func += "            _array_.push(" + _import + ".protcol_to_" + array_type + "(v_));\n"
+                        code_func += "            _" + _name + ".append(protcol_to_" + array_type + "(v_))\n"
                     elif array_type_ == tools.TypeType.Array:
                         raise Exception("not support nested array:%s in func:%s" % (_type, func_name))
-                    code_func += "        }\n"                                                     
-                    code_func += "        _argv_.push(_array_);\n"
                 count += 1
-            code_func += "        this.rsp = new " + module_name + "_" + func_name + "_rsp(this.current_ch, _cb_uuid);\n"
-            code_func += "        if (this.cb_" + func_name + "){\n"
-            code_func += "            this.cb_" + func_name + ".apply(null, _argv_);\n"
-            code_func += "        }\n"
-            code_func += "        this.rsp = null;\n"
-            code_func += "    }\n\n"
+            code_func += "        self.rsp = " + module_name + "_" + func_name + "_rsp(self.current_ch, _cb_uuid)\n"
+            code_func += "        if self.cb_" + func_name + ":\n"
+            code_func += "            self.cb_" + func_name + "("
+            count = 0
+            for _type, _name, _parameter in i[2]:
+                code_func += "_" + _name
+                count = count + 1
+                if count < len(i[2]):
+                    code_func += ", "
+            code_func += ")\n"
+            code_func += "        self.rsp = None\n\n"
 
-            rsp_code += "export class " + module_name + "_" + func_name + "_rsp extends abelkhan.Icaller {\n"
+            rsp_code += "class " + module_name + "_" + func_name + "_rsp(Response):\n"
             _rsp_uuid = '_'.join(str(uuid.uuid3(uuid.NAMESPACE_X500, func_name)).split('-'))
-            rsp_code += "    private uuid_" + _rsp_uuid + " : number;\n"
-            rsp_code += "    constructor(_ch:abelkhan.Ichannel, _uuid:number){\n"
-            rsp_code += "        super(\"" + module_name + "_rsp_cb\", _ch);\n"
-            rsp_code += "        this.uuid_" + _rsp_uuid + " = _uuid;\n"
-            rsp_code += "    }\n\n"
+            rsp_code += "    def __init__(self, _ch:Ichannel, _uuid:int):\n"
+            rsp_code += "        super(" + module_name + "_" + func_name + "_rsp, self).__init(_ch, _uuid)\n"
+            rsp_code += "        self.uuid_" + _rsp_uuid + " = _uuid\n\n"
 
-            rsp_code += "    public rsp("
+            rsp_code += "    def rsp(self, "
             count = 0
             for _type, _name, _parameter in i[4]:
                 if _parameter == None:
@@ -137,42 +110,32 @@ def gen_module_module(module_name, funcs, dependent_struct, dependent_enum, enum
                 count = count + 1
                 if count < len(i[4]):
                     rsp_code += ", "
-            rsp_code += "){\n"
+            rsp_code += "):\n"
             _argv_uuid = '_'.join(str(uuid.uuid3(uuid.NAMESPACE_DNS, func_name)).split('-'))
-            rsp_code += "        let _argv_" + _argv_uuid + ":any[] = [this.uuid_" + _rsp_uuid + "];\n"
+            rsp_code += "        _argv_" + _argv_uuid + " = [self.uuid_" + _rsp_uuid + "]\n"
             for _type, _name, _parameter in i[4]:
                 type_ = tools.check_type(_type, dependent_struct, dependent_enum)
                 if type_ in tools.OriginalTypeList:
-                    rsp_code += "        _argv_" + _argv_uuid + ".push(" + _name + ");\n"
+                    rsp_code += "        _argv_" + _argv_uuid + ".append(" + _name + ")\n"
                 elif type_ == tools.TypeType.Custom:
-                    _import = tools.get_import(_type, dependent_struct)
-                    if _import == "":
-                        rsp_code += "        _argv_" + _argv_uuid + ".push(" + _type + "_to_protcol(" + _name + "));\n"
-                    else:
-                        rsp_code += "        _argv_" + _argv_uuid + ".push(" + _import + "." + _type + "_to_protcol(" + _name + "));\n"
+                    rsp_code += "        _argv_" + _argv_uuid + ".append(" + _type + "_to_protcol(" + _name + "))\n"
                 elif type_ == tools.TypeType.Array:
                     _array_uuid = '_'.join(str(uuid.uuid3(uuid.NAMESPACE_DNS, _name)).split('-'))
-                    rsp_code += "        let _array_" + _array_uuid + ":any[] = [];"
+                    rsp_code += "        _array_" + _array_uuid + " = []"
                     _v_uuid = '_'.join(str(uuid.uuid3(uuid.NAMESPACE_X500, _name)).split('-'))
-                    rsp_code += "        for(let v_" + _v_uuid + " of " + _name + "){\n"
+                    rsp_code += "        for v_" + _v_uuid + " in " + _name + ":\n"
                     array_type = _type[:-2]
                     array_type_ = tools.check_type(array_type, dependent_struct, dependent_enum)
                     if array_type_ in tools.OriginalTypeList:
-                        rsp_code += "            _array_" + _array_uuid + ".push(v_" + _v_uuid + ");\n"
+                        rsp_code += "            _array_" + _array_uuid + ".append(v_" + _v_uuid + ")\n"
                     elif array_type_ == tools.TypeType.Custom:
-                        _import = tools.get_import(array_type, dependent_struct)
-                        if _import == "":
-                            rsp_code += "            _array_" + _array_uuid + ".push(" + array_type + "_to_protcol(v_" + _v_uuid + "));\n"
-                        else:
-                            rsp_code += "            _array_" + _array_uuid + ".push(" + _import + "." + array_type + "_to_protcol(v_" + _v_uuid + "));\n"
+                        rsp_code += "            _array_" + _array_uuid + ".append(" + array_type + "_to_protcol(v_" + _v_uuid + "))\n"
                     elif array_type_ == tools.TypeType.Array:
                         raise Exception("not support nested array:%s in func:%s" % (_type, func_name))
-                    rsp_code += "        }\n"                                                     
-                    rsp_code += "        _argv_" + _argv_uuid + ".push(_array_" + _array_uuid + ");\n"
-            rsp_code += "        this.call_module_method(\"" + module_name + "_rsp_cb_" + func_name + "_rsp\", _argv_" + _argv_uuid + ");\n"
-            rsp_code += "    }\n\n"
+                    rsp_code += "        _argv_" + _argv_uuid + ".append(_array_" + _array_uuid + ")\n"
+            rsp_code += "        self.call_module_method(\"" + module_name + "_rsp_cb_" + func_name + "_rsp\", _argv_" + _argv_uuid + ")\n\n"
 
-            rsp_code += "    public err("
+            rsp_code += "    def err(self, "
             count = 0
             for _type, _name, _parameter in i[6]:
                 if _parameter == None:
@@ -182,50 +145,38 @@ def gen_module_module(module_name, funcs, dependent_struct, dependent_enum, enum
                 count = count + 1
                 if count < len(i[6]):
                     rsp_code += ", "
-            rsp_code += "){\n"
+            rsp_code += "):\n"
             _argv_uuid = '_'.join(str(uuid.uuid3(uuid.NAMESPACE_DNS, func_name)).split('-'))
-            rsp_code += "        let _argv_" + _argv_uuid + ":any[] = [this.uuid_" + _rsp_uuid + "];\n"
+            rsp_code += "        _argv_" + _argv_uuid + " = [self.uuid_" + _rsp_uuid + "]\n"
             for _type, _name, _parameter in i[6]:
                 type_ = tools.check_type(_type, dependent_struct, dependent_enum)
                 if type_ in tools.OriginalTypeList:
-                    rsp_code += "        _argv_" + _argv_uuid + ".push(" + _name + ");\n"
+                    rsp_code += "        _argv_" + _argv_uuid + ".append(" + _name + ")\n"
                 elif type_ == tools.TypeType.Custom:
-                    _import = tools.get_import(_type, dependent_struct)
-                    if _import == "":
-                        rsp_code += "        _argv_" + _argv_uuid + ".push(" + _type + "_to_protcol(" + _name + "));\n"
-                    else:
-                        rsp_code += "        _argv_" + _argv_uuid + ".push(" + _import + "." + _type + "_to_protcol(" + _name + "));\n"
+                    rsp_code += "        _argv_" + _argv_uuid + ".append(" + _type + "_to_protcol(" + _name + "))\n"
                 elif type_ == tools.TypeType.Array:
                     _array_uuid = '_'.join(str(uuid.uuid3(uuid.NAMESPACE_DNS, _name)).split('-'))
-                    rsp_code += "        let _array_" + _array_uuid + ":any[] = [];"
+                    rsp_code += "        _array_" + _array_uuid + " = []"
                     _v_uuid = '_'.join(str(uuid.uuid3(uuid.NAMESPACE_X500, _name)).split('-'))
-                    rsp_code += "        for(let v_" + _v_uuid + " of " + _name + "){\n"
+                    rsp_code += "        for v_" + _v_uuid + " in " + _name + ":\n"
                     array_type = _type[:-2]
                     array_type_ = tools.check_type(array_type, dependent_struct, dependent_enum)
                     if array_type_ in tools.OriginalTypeList:
-                        rsp_code += "            _array_" + _array_uuid + ".push(v_" + _v_uuid + ");\n"
+                        rsp_code += "            _array_" + _array_uuid + ".append(v_" + _v_uuid + ")\n"
                     elif array_type_ == tools.TypeType.Custom:
-                        _import = tools.get_import(array_type, dependent_struct)
-                        if _import == "":
-                            rsp_code += "            _array_" + _array_uuid + ".push(" + array_type + "_to_protcol(v_" + _v_uuid + "));\n"
-                        else:
-                            rsp_code += "            _array_" + _array_uuid + ".push(" + _import + "." + array_type + "_to_protcol(v_" + _v_uuid + "));\n"
+                        rsp_code += "            _array_" + _array_uuid + ".append(" + array_type + "_to_protcol(v_" + _v_uuid + "))\n"
                     elif array_type_ == tools.TypeType.Array:
                         raise Exception("not support nested array:%s in func:%s" % (_type, func_name))
-                    rsp_code += "        }\n"                                                     
-                    rsp_code += "        _argv_" + _argv_uuid + ".push(_array_" + _array_uuid + ");\n"
-            rsp_code += "        this.call_module_method(\"" + module_name + "_rsp_cb_" + func_name + "_err\", _argv_" + _argv_uuid + ");\n"
-            rsp_code += "    }\n\n"
-            rsp_code += "}\n\n"
+                    rsp_code += "        _argv_" + _argv_uuid + ".append(_array_" + _array_uuid + ")\n"
+            rsp_code += "        self.call_module_method(\"" + module_name + "_rsp_cb_" + func_name + "_err\", _argv_" + _argv_uuid + ")\n\n"
 
         else:
             raise Exception("func:%s wrong rpc type:%s must req or ntf" % (func_name, str(i[1])))
     
     code_constructor += "\n"
-    code_constructor_end = "    }\n\n"
-    code = "}\n"
+    code_constructor_cb += "\n"
         
-    return rsp_code + code_constructor + code_constructor_cb + code_constructor_end + code_func + code
+    return rsp_code + code_constructor + code_constructor_cb + code_func
         
 
 def genmodule(pretreatment):
@@ -234,7 +185,7 @@ def genmodule(pretreatment):
     
     modules = pretreatment.module
         
-    code = "/*this module code is codegen by abelkhan codegen for typescript*/\n"
+    code = "#this module code is codegen by abelkhan codegen for python\n"
     for module_name, funcs in modules.items():
         code += gen_module_module(module_name, funcs, dependent_struct, dependent_enum, pretreatment.enum)
                 
