@@ -102,7 +102,7 @@ def gen_module_caller(module_name, funcs, dependent_struct, dependent_enum, enum
             cb_func += "        return self\n\n"
 
             cb_func += "    def timeout(self, tick:int, timeout_cb:Callable[...]):\n"
-            cb_func += "        t = Timer(tick, lambda self : self.module_rsp_cb." + func_name + "_timeout(self.cb_uuid))\n"
+            cb_func += "        t = Timer(tick, lambda : self.module_rsp_cb." + func_name + "_timeout(self.cb_uuid))\n"
             cb_func += "        t.start()\n"
             cb_func += "        self.event_" + func_name + "_handle_timeout = timeout_cb\n\n"
 

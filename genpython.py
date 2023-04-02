@@ -23,7 +23,7 @@ def gen_import(_import):
     code += "from collections.abc import Callable\n"
     code += "from enum import Enum\n\n"
     for _i in _import:
-        code += "from" + _i + " import *\n"
+        code += "from " + _i + " import *\n"
     return code
 
 def gen(inputdir, outputdir):

@@ -81,7 +81,7 @@ def get_type_default(typestr, dependent_enum):
     elif typestr == 'double':
         return "0.0"
     elif typestr == 'bool':
-        return "false"
+        return "False"
     elif check_in_dependent(typestr, dependent_enum):
         return "0"
     elif typestr == 'bin':
@@ -145,15 +145,15 @@ def convert_type(typestr, dependent_struct, dependent_enum):
     elif typestr == 'int32':
         return 'int'
     elif typestr == 'int64':
-        return 'long'
+        return 'int'
     elif typestr == 'uint8':
         return 'int'
     elif typestr == 'uint16':
         return 'int'
     elif typestr == 'uint32':
-        return 'long'
+        return 'int'
     elif typestr == 'uint64':
-        return 'long'
+        return 'int'
     elif typestr == 'string':
         return 'str'
     elif typestr == 'float':
