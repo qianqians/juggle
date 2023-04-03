@@ -48,11 +48,7 @@ def gen_module_caller(module_name, funcs, dependent_struct, dependent_enum, enum
                 if type_ in tools.OriginalTypeList:
                     code += "        _argv_" + _argv_uuid + ".append(" + _name + ")\n"
                 elif type_ == tools.TypeType.Custom:
-                    _import = tools.get_import(_type, dependent_struct)
-                    if _import == "":
-                        code += "        _argv_" + _argv_uuid + ".append(" + _type + "_to_protcol(" + _name + "))\n"
-                    else:
-                        code += "        _argv_" + _argv_uuid + ".append(" + _import + "." + _type + "_to_protcol(" + _name + "))\n"
+                    code += "        _argv_" + _argv_uuid + ".append(" + _type + "_to_protcol(" + _name + "))\n"
                 elif type_ == tools.TypeType.Array:
                     _array_uuid = '_'.join(str(uuid.uuid3(uuid.NAMESPACE_DNS, _name)).split('-'))
                     code += "        _array_" + _array_uuid + " = []\n"
@@ -199,7 +195,7 @@ def gen_module_caller(module_name, funcs, dependent_struct, dependent_enum, enum
                     code += ", "
             code += "):\n"
             _cb_uuid_uuid = '_'.join(str(uuid.uuid5(uuid.NAMESPACE_DNS, func_name)).split('-'))
-            code += "        self.uuid_" + _uuid + " = (self.uuid_" + _uuid + "1) & 0x7fffffff\n"
+            code += "        self.uuid_" + _uuid + " = (self.uuid_" + _uuid + " + 1) & 0x7fffffff\n"
             code += "        uuid_" + _cb_uuid_uuid + " = self.uuid_" + _uuid + "\n\n"
             _argv_uuid = '_'.join(str(uuid.uuid3(uuid.NAMESPACE_DNS, func_name)).split('-'))
             code += "        _argv_" + _argv_uuid + " = [uuid_" + _cb_uuid_uuid + "]\n"
