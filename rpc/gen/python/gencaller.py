@@ -75,6 +75,7 @@ def gen_module_caller(module_name, funcs, dependent_struct, dependent_enum, enum
                 if count < len(i[4]):
                     rsp_fn += ", "
             rsp_fn += "]]"
+
             err_fn = "Callable[["
             count = 0
             for _type, _name, _parameter in i[6]:
@@ -88,9 +89,9 @@ def gen_module_caller(module_name, funcs, dependent_struct, dependent_enum, enum
             cb_func += "    def __init__(self, _cb_uuid : int, _module_rsp_cb : " + module_name + "_rsp_cb):\n"
             cb_func += "        self.cb_uuid = _cb_uuid\n"
             cb_func += "        self.module_rsp_cb = _module_rsp_cb\n"
-            cb_func += "        self.event_" + func_name + "_handle_cb = None\n"
-            cb_func += "        self.event_" + func_name + "_handle_err = None\n"
-            cb_func += "        self.event_" + func_name + "_handle_timeout = None\n\n"
+            cb_func += "        self.event_" + func_name + "_handle_cb:" + rsp_fn + " = None\n"
+            cb_func += "        self.event_" + func_name + "_handle_err:" + err_fn + " = None\n"
+            cb_func += "        self.event_" + func_name + "_handle_timeout:Callable[...] = None\n\n"
 
             cb_func += "    def callBack(self, _cb:" + rsp_fn + ", _err:" + err_fn + "):\n"
             cb_func += "        self.event_" + func_name + "_handle_cb = _cb\n"
