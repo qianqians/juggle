@@ -184,6 +184,9 @@ def gen_module_caller(module_name, funcs, dependent_struct, dependent_enum, enum
             cb_code_section += "        del self.map_" + func_name + "[uuid]\n"
             cb_code_section += "        return rsp\n\n"
 
+            _cb_uuid_uuid = '_'.join(str(uuid.uuid5(uuid.NAMESPACE_DNS, func_name)).split('-'))
+            _argv_uuid = '_'.join(str(uuid.uuid3(uuid.NAMESPACE_DNS, func_name)).split('-'))
+
             code += "    def " + func_name + "(self, "
             count = 0
             for _type, _name, _parameter in i[2]:
@@ -195,10 +198,8 @@ def gen_module_caller(module_name, funcs, dependent_struct, dependent_enum, enum
                 if count < len(i[2]):
                     code += ", "
             code += "):\n"
-            _cb_uuid_uuid = '_'.join(str(uuid.uuid5(uuid.NAMESPACE_DNS, func_name)).split('-'))
             code += "        self.uuid_" + _uuid + " = (self.uuid_" + _uuid + " + 1) & 0x7fffffff\n"
             code += "        uuid_" + _cb_uuid_uuid + " = self.uuid_" + _uuid + "\n\n"
-            _argv_uuid = '_'.join(str(uuid.uuid3(uuid.NAMESPACE_DNS, func_name)).split('-'))
             code += "        _argv_" + _argv_uuid + " = [uuid_" + _cb_uuid_uuid + "]\n"
             for _type, _name, _parameter in i[2]:
                 type_ = tools.check_type(_type, dependent_struct, dependent_enum)
@@ -222,8 +223,8 @@ def gen_module_caller(module_name, funcs, dependent_struct, dependent_enum, enum
                     code += "        }\n"                                                     
                     code += "        _argv_" + _argv_uuid + ".append(_array_" + _array_uuid + ")\n"
             code += "        self.call_module_method(\"" + module_name + "_" + func_name + "\", _argv_" + _argv_uuid + ")\n\n"
-            code += "        cb_" + func_name + "_obj = " + module_name + "_" + func_name + "_cb(uuid_" + _cb_uuid_uuid + ", rsp_cb_" + module_name + "_handle)\n"
             code += "        global rsp_cb_" + module_name + "_handle\n"
+            code += "        cb_" + func_name + "_obj = " + module_name + "_" + func_name + "_cb(uuid_" + _cb_uuid_uuid + ", rsp_cb_" + module_name + "_handle)\n"
             code += "        if rsp_cb_" + module_name + "_handle:\n"
             code += "            rsp_cb_" + module_name + "_handle.map_" + func_name + "[uuid_" + _cb_uuid_uuid + "] = cb_" + func_name + "_obj\n"
             code += "        return cb_" + func_name + "_obj\n\n"
