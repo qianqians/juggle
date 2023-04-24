@@ -9,17 +9,17 @@ import tools
 def gen_module_caller(module_name, funcs, dependent_struct, dependent_enum, enum):
     cb_func = ""
 
-    cb_code = "/*this cb code is codegen by abelkhan for c#*/\n"
-    cb_code += "    public class " + module_name + "_rsp_cb : abelkhan.Imodule {\n"
-    cb_code_constructor = "        public " + module_name + "_rsp_cb(abelkhan.modulemng modules) : base(\"" + module_name + "_rsp_cb\")\n"
+    cb_code = "/*this cb code is codegen by Abelkhan for c#*/\n"
+    cb_code += "    public class " + module_name + "_rsp_cb : Abelkhan.Imodule {\n"
+    cb_code_constructor = "        public " + module_name + "_rsp_cb(Abelkhan.modulemng modules) : base(\"" + module_name + "_rsp_cb\")\n"
     cb_code_constructor += "        {\n"
     cb_code_section = ""
 
-    code = "    public class " + module_name + "_caller : abelkhan.Icaller {\n"
+    code = "    public class " + module_name + "_caller : Abelkhan.Icaller {\n"
     code += "        public static " + module_name + "_rsp_cb rsp_cb_" + module_name + "_handle = null;\n"
     _uuid = '_'.join(str(uuid.uuid3(uuid.NAMESPACE_DNS, module_name)).split('-'))
     code += "        private Int32 uuid_" + _uuid + " = (Int32)RandomUUID.random();\n\n"
-    code += "        public " + module_name + "_caller(abelkhan.Ichannel _ch, abelkhan.modulemng modules) : base(\"" + module_name + "\", _ch)\n"
+    code += "        public " + module_name + "_caller(Abelkhan.Ichannel _ch, Abelkhan.modulemng modules) : base(\"" + module_name + "\", _ch)\n"
     code += "        {\n"
     code += "            if (rsp_cb_" + module_name + "_handle == null)\n            {\n"
     code += "                rsp_cb_" + module_name + "_handle = new " + module_name + "_rsp_cb(modules);\n"
@@ -196,8 +196,8 @@ def gen_module_caller(module_name, funcs, dependent_struct, dependent_enum, enum
 
             cb_code += "        public Dictionary<UInt64, " + module_name + "_" + func_name + "_cb> map_" + func_name + ";\n"
             cb_code_constructor += "            map_" + func_name + " = new Dictionary<UInt64, " + module_name + "_" + func_name + "_cb>();\n"
-            cb_code_constructor += "            modules.reg_method(\"" + module_name + "_rsp_cb_" + func_name + "_rsp\", Tuple.Create<abelkhan.Imodule, Action<IList<MsgPack.MessagePackObject> > >((abelkhan.Imodule)this, " + func_name + "_rsp));\n"
-            cb_code_constructor += "            modules.reg_method(\"" + module_name + "_rsp_cb_" + func_name + "_err\", Tuple.Create<abelkhan.Imodule, Action<IList<MsgPack.MessagePackObject> > >((abelkhan.Imodule)this, " + func_name + "_err));\n"
+            cb_code_constructor += "            modules.reg_method(\"" + module_name + "_rsp_cb_" + func_name + "_rsp\", Tuple.Create<Abelkhan.Imodule, Action<IList<MsgPack.MessagePackObject> > >((Abelkhan.Imodule)this, " + func_name + "_rsp));\n"
+            cb_code_constructor += "            modules.reg_method(\"" + module_name + "_rsp_cb_" + func_name + "_err\", Tuple.Create<Abelkhan.Imodule, Action<IList<MsgPack.MessagePackObject> > >((Abelkhan.Imodule)this, " + func_name + "_err));\n"
 
             cb_code_section += "        public void " + func_name + "_rsp(IList<MsgPack.MessagePackObject> inArray){\n"
             cb_code_section += "            var uuid = ((MsgPack.MessagePackObject)inArray[0]).AsUInt64();\n"
@@ -464,7 +464,7 @@ def gencaller(pretreatment):
     
     modules = pretreatment.module
     
-    code = "/*this caller code is codegen by abelkhan codegen for c#*/\n"
+    code = "/*this caller code is codegen by Abelkhan codegen for c#*/\n"
     for module_name, funcs in modules.items():
         code += gen_module_caller(module_name, funcs, dependent_struct, dependent_enum, pretreatment.enum)
         

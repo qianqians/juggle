@@ -7,9 +7,9 @@ import uuid
 import tools
 
 def gen_module_module(module_name, funcs, dependent_struct, dependent_enum, enum):
-    code_constructor = "    public class " + module_name + "_module : abelkhan.Imodule {\n"
-    code_constructor += "        private abelkhan.modulemng modules;\n"
-    code_constructor += "        public " + module_name + "_module(abelkhan.modulemng _modules) : base(\"" + module_name + "\")\n"
+    code_constructor = "    public class " + module_name + "_module : Abelkhan.Imodule {\n"
+    code_constructor += "        private Abelkhan.modulemng modules;\n"
+    code_constructor += "        public " + module_name + "_module(Abelkhan.modulemng _modules) : base(\"" + module_name + "\")\n"
     code_constructor += "        {\n"
     code_constructor += "            modules = _modules;\n"
         
@@ -20,7 +20,7 @@ def gen_module_module(module_name, funcs, dependent_struct, dependent_enum, enum
         func_name = i[0]
 
         if i[1] == "ntf":
-            code_constructor += "            modules.reg_method(\"" + module_name + "_" + func_name + "\", Tuple.Create<abelkhan.Imodule, Action<IList<MsgPack.MessagePackObject> > >((abelkhan.Imodule)this, " + func_name + "));\n"
+            code_constructor += "            modules.reg_method(\"" + module_name + "_" + func_name + "\", Tuple.Create<Abelkhan.Imodule, Action<IList<MsgPack.MessagePackObject> > >((Abelkhan.Imodule)this, " + func_name + "));\n"
                 
             code_func += "        public event Action"
             if len(i[2]) > 0:
@@ -125,7 +125,7 @@ def gen_module_module(module_name, funcs, dependent_struct, dependent_enum, enum
             code_func += "            }\n"
             code_func += "        }\n\n"
         elif i[1] == "req" and i[3] == "rsp" and i[5] == "err":
-            code_constructor += "            modules.reg_method(\"" + module_name + "_" + func_name + "\", Tuple.Create<abelkhan.Imodule, Action<IList<MsgPack.MessagePackObject> > >((abelkhan.Imodule)this, " + func_name + "));\n"
+            code_constructor += "            modules.reg_method(\"" + module_name + "_" + func_name + "\", Tuple.Create<Abelkhan.Imodule, Action<IList<MsgPack.MessagePackObject> > >((Abelkhan.Imodule)this, " + func_name + "));\n"
             
             code_func += "        public event Action"
             if len(i[2]) > 0:
@@ -233,10 +233,10 @@ def gen_module_module(module_name, funcs, dependent_struct, dependent_enum, enum
             code_func += "            rsp.Value = null;\n"
             code_func += "        }\n\n"
 
-            rsp_code += "    public class " + module_name + "_" + func_name + "_rsp : abelkhan.Response {\n"
+            rsp_code += "    public class " + module_name + "_" + func_name + "_rsp : Abelkhan.Response {\n"
             _rsp_uuid = '_'.join(str(uuid.uuid3(uuid.NAMESPACE_X500, func_name)).split('-'))
             rsp_code += "        private UInt64 uuid_" + _rsp_uuid + ";\n"
-            rsp_code += "        public " + module_name + "_" + func_name + "_rsp(abelkhan.Ichannel _ch, UInt64 _uuid) : base(\"" + module_name + "_rsp_cb\", _ch)\n"
+            rsp_code += "        public " + module_name + "_" + func_name + "_rsp(Abelkhan.Ichannel _ch, UInt64 _uuid) : base(\"" + module_name + "_rsp_cb\", _ch)\n"
             rsp_code += "        {\n"
             rsp_code += "            uuid_" + _rsp_uuid + " = _uuid;\n"
             rsp_code += "        }\n\n"
@@ -345,7 +345,7 @@ def genmodule(pretreatment):
     
     modules = pretreatment.module
         
-    code = "/*this module code is codegen by abelkhan codegen for c#*/\n"
+    code = "/*this module code is codegen by Abelkhan codegen for c#*/\n"
     for module_name, funcs in modules.items():
         code += gen_module_module(module_name, funcs, dependent_struct, dependent_enum, pretreatment.enum)
                 
