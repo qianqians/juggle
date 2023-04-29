@@ -4,16 +4,16 @@ using System.Collections.Generic;
 using System.Threading;
 using MsgPack.Serialization;
 
-namespace abelkhan
+namespace Abelkhan
 {
-/*this enum code is codegen by abelkhan codegen for c#*/
+/*this enum code is codegen by Abelkhan codegen for c#*/
 
     public enum em_test3{
         enum_test3 = 1,
         enum_test1 = 2,
         enum_test2 = 3
     }
-/*this struct code is codegen by abelkhan codegen for c#*/
+/*this struct code is codegen by Abelkhan codegen for c#*/
     public class test1
     {
         public Int32 argv1;
@@ -116,7 +116,7 @@ namespace abelkhan
         }
     }
 
-/*this caller code is codegen by abelkhan codegen for c#*/
+/*this caller code is codegen by Abelkhan codegen for c#*/
     public class test_test3_cb
     {
         private UInt64 cb_uuid;
@@ -173,14 +173,14 @@ namespace abelkhan
 
     }
 
-/*this cb code is codegen by abelkhan for c#*/
-    public class test_rsp_cb : abelkhan.Imodule {
+/*this cb code is codegen by Abelkhan for c#*/
+    public class test_rsp_cb : Abelkhan.Imodule {
         public Dictionary<UInt64, test_test3_cb> map_test3;
-        public test_rsp_cb(abelkhan.modulemng modules) : base("test_rsp_cb")
+        public test_rsp_cb(Abelkhan.modulemng modules) : base("test_rsp_cb")
         {
             map_test3 = new Dictionary<UInt64, test_test3_cb>();
-            modules.reg_method("test_rsp_cb_test3_rsp", Tuple.Create<abelkhan.Imodule, Action<IList<MsgPack.MessagePackObject> > >((abelkhan.Imodule)this, test3_rsp));
-            modules.reg_method("test_rsp_cb_test3_err", Tuple.Create<abelkhan.Imodule, Action<IList<MsgPack.MessagePackObject> > >((abelkhan.Imodule)this, test3_err));
+            modules.reg_method("test_rsp_cb_test3_rsp", Tuple.Create<Abelkhan.Imodule, Action<IList<MsgPack.MessagePackObject> > >((Abelkhan.Imodule)this, test3_rsp));
+            modules.reg_method("test_rsp_cb_test3_err", Tuple.Create<Abelkhan.Imodule, Action<IList<MsgPack.MessagePackObject> > >((Abelkhan.Imodule)this, test3_err));
         }
 
         public void test3_rsp(IList<MsgPack.MessagePackObject> inArray){
@@ -225,11 +225,11 @@ namespace abelkhan
 
     }
 
-    public class test_caller : abelkhan.Icaller {
+    public class test_caller : Abelkhan.Icaller {
         public static test_rsp_cb rsp_cb_test_handle = null;
-        private Int64 uuid_45a113ac_c7f2_30b0_90a5_a399ab912716 = (Int64)RandomUUID.random();
+        private Int32 uuid_45a113ac_c7f2_30b0_90a5_a399ab912716 = (Int32)RandomUUID.random();
 
-        public test_caller(abelkhan.Ichannel _ch, abelkhan.modulemng modules) : base("test", _ch)
+        public test_caller(Abelkhan.Ichannel _ch, Abelkhan.modulemng modules) : base("test", _ch)
         {
             if (rsp_cb_test_handle == null)
             {
@@ -238,7 +238,7 @@ namespace abelkhan
         }
 
         public test_test3_cb test3(test2 t2, em_test3 e = em_test3.enum_test3, string str = "qianqians"){
-            var uuid_20ca53af_d04c_58a2_a8b3_d02b9e414e80 = (UInt64)Interlocked.Increment(ref uuid_45a113ac_c7f2_30b0_90a5_a399ab912716);
+            var uuid_20ca53af_d04c_58a2_a8b3_d02b9e414e80 = (UInt32)Interlocked.Increment(ref uuid_45a113ac_c7f2_30b0_90a5_a399ab912716);
 
             var _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7 = new ArrayList();
             _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7.Add(uuid_20ca53af_d04c_58a2_a8b3_d02b9e414e80);
@@ -267,10 +267,10 @@ namespace abelkhan
         }
 
     }
-/*this module code is codegen by abelkhan codegen for c#*/
-    public class test_test3_rsp : abelkhan.Response {
+/*this module code is codegen by Abelkhan codegen for c#*/
+    public class test_test3_rsp : Abelkhan.Response {
         private UInt64 uuid_77eeaa2a_8150_3cce_bfa0_0b16e18637bd;
-        public test_test3_rsp(abelkhan.Ichannel _ch, UInt64 _uuid) : base("test_rsp_cb", _ch)
+        public test_test3_rsp(Abelkhan.Ichannel _ch, UInt64 _uuid) : base("test_rsp_cb", _ch)
         {
             uuid_77eeaa2a_8150_3cce_bfa0_0b16e18637bd = _uuid;
         }
@@ -293,13 +293,13 @@ namespace abelkhan
 
     }
 
-    public class test_module : abelkhan.Imodule {
-        private abelkhan.modulemng modules;
-        public test_module(abelkhan.modulemng _modules) : base("test")
+    public class test_module : Abelkhan.Imodule {
+        private Abelkhan.modulemng modules;
+        public test_module(Abelkhan.modulemng _modules) : base("test")
         {
             modules = _modules;
-            modules.reg_method("test_test3", Tuple.Create<abelkhan.Imodule, Action<IList<MsgPack.MessagePackObject> > >((abelkhan.Imodule)this, test3));
-            modules.reg_method("test_test4", Tuple.Create<abelkhan.Imodule, Action<IList<MsgPack.MessagePackObject> > >((abelkhan.Imodule)this, test4));
+            modules.reg_method("test_test3", Tuple.Create<Abelkhan.Imodule, Action<IList<MsgPack.MessagePackObject> > >((Abelkhan.Imodule)this, test3));
+            modules.reg_method("test_test4", Tuple.Create<Abelkhan.Imodule, Action<IList<MsgPack.MessagePackObject> > >((Abelkhan.Imodule)this, test4));
         }
 
         public event Action<test2, em_test3, string> on_test3;

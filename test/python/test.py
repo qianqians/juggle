@@ -136,9 +136,9 @@ class test_test3_cb:
     def __init__(self, _cb_uuid : int, _module_rsp_cb : test_rsp_cb):
         self.cb_uuid = _cb_uuid
         self.module_rsp_cb = _module_rsp_cb
-        self.event_test3_handle_cb = None
-        self.event_test3_handle_err = None
-        self.event_test3_handle_timeout = None
+        self.event_test3_handle_cb:Callable[[test1, int]] = None
+        self.event_test3_handle_err:Callable[[test1, bytes]] = None
+        self.event_test3_handle_timeout:Callable[...] = None
 
     def callBack(self, _cb:Callable[[test1, int]], _err:Callable[[test1, bytes]]):
         self.event_test3_handle_cb = _cb
@@ -146,7 +146,7 @@ class test_test3_cb:
         return self
 
     def timeout(self, tick:int, timeout_cb:Callable[...]):
-        t = Timer(tick, lambda self : self.module_rsp_cb.test3_timeout(self.cb_uuid))
+        t = Timer(tick, lambda : self.module_rsp_cb.test3_timeout(self.cb_uuid))
         t.start()
         self.event_test3_handle_timeout = timeout_cb
 
@@ -162,7 +162,7 @@ class test_caller(Icaller):
             rsp_cb_test_handle = test_rsp_cb(modules)
 
     def test3(self, t2:test2, e:em_test3 = em_test3.enum_test3, str:str = "qianqians"):
-        self.uuid_45a113ac_c7f2_30b0_90a5_a399ab912716 = (self.uuid_45a113ac_c7f2_30b0_90a5_a399ab9127161) & 0x7fffffff
+        self.uuid_45a113ac_c7f2_30b0_90a5_a399ab912716 = (self.uuid_45a113ac_c7f2_30b0_90a5_a399ab912716 + 1) & 0x7fffffff
         uuid_20ca53af_d04c_58a2_a8b3_d02b9e414e80 = self.uuid_45a113ac_c7f2_30b0_90a5_a399ab912716
 
         _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7 = [uuid_20ca53af_d04c_58a2_a8b3_d02b9e414e80]
@@ -171,8 +171,8 @@ class test_caller(Icaller):
         _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7.append(str)
         self.call_module_method("test_test3", _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7)
 
-        cb_test3_obj = test_test3_cb(uuid_20ca53af_d04c_58a2_a8b3_d02b9e414e80, rsp_cb_test_handle)
         global rsp_cb_test_handle
+        cb_test3_obj = test_test3_cb(uuid_20ca53af_d04c_58a2_a8b3_d02b9e414e80, rsp_cb_test_handle)
         if rsp_cb_test_handle:
             rsp_cb_test_handle.map_test3[uuid_20ca53af_d04c_58a2_a8b3_d02b9e414e80] = cb_test3_obj
         return cb_test3_obj

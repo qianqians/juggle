@@ -10,13 +10,11 @@ export enum em_test3{
 /*this struct code is codegen by abelkhan codegen for typescript*/
 export class test1
 {
-    public argv1 : number;
+    public argv1 : number = 0;
     public argv2 : string = "123";
-    public argv3 : number;
-    public argv4 : number;
+    public argv3 : number = 0.0;
+    public argv4 : number = 0.0;
 
-    constructor(){
-    }
 }
 
 export function test1_to_protcol(_struct:test1){
@@ -25,7 +23,8 @@ export function test1_to_protcol(_struct:test1){
 
 export function protcol_to_test1(_protocol:any){
     let _struct = new test1();
-    for (const [key, val] of Object.entries(_protocol))        if (key === "argv1"){
+    for (const [key, val] of Object.entries(_protocol)) {
+        if (key === "argv1"){
             _struct.argv1 = val as number;
         }
         else if (key === "argv2"){
@@ -37,18 +36,17 @@ export function protcol_to_test1(_protocol:any){
         else if (key === "argv4"){
             _struct.argv4 = val as number;
         }
+    }
     return _struct;
 }
 
 export class test2
 {
     public argv1 : number = 0;
-    public argv2 : test1;
+    public argv2 : test1 | null = null;
     public bytel : Uint8Array = Uint8Array.from([1,1,9]);
     public t : em_test3 = em_test3.enum_test3;
 
-    constructor(){
-    }
 }
 
 export function test2_to_protcol(_struct:test2){
@@ -57,7 +55,8 @@ export function test2_to_protcol(_struct:test2){
 
 export function protcol_to_test2(_protocol:any){
     let _struct = new test2();
-    for (const [key, val] of Object.entries(_protocol))        if (key === "argv1"){
+    for (const [key, val] of Object.entries(_protocol)) {
+        if (key === "argv1"){
             _struct.argv1 = val as number;
         }
         else if (key === "argv2"){
@@ -69,16 +68,15 @@ export function protcol_to_test2(_protocol:any){
         else if (key === "t"){
             _struct.t = val as em_test3;
         }
+    }
     return _struct;
 }
 
 export class test3
 {
     public em : em_test3 = em_test3.enum_test3;
-    public em_list : em_test3[];
+    public em_list : em_test3[] = [];
 
-    constructor(){
-    }
 }
 
 export function test3_to_protcol(_struct:test3){
@@ -87,15 +85,17 @@ export function test3_to_protcol(_struct:test3){
 
 export function protcol_to_test3(_protocol:any){
     let _struct = new test3();
-    for (const [key, val] of Object.entries(_protocol))        if (key === "em"){
+    for (const [key, val] of Object.entries(_protocol)) {
+        if (key === "em"){
             _struct.em = val as em_test3;
         }
         else if (key === "em_list"){
             _struct.em_list = [];
-            for(let v_ of val){
+            for(let v_ of val as any){
                 _struct.em_list.push(v_);
-    }
+            }
         }
+    }
     return _struct;
 }
 

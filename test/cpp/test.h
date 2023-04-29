@@ -36,16 +36,16 @@ namespace abelkhan
         static test1 protcol_to_test1(const msgpack11::MsgPack::object& _protocol){
             test1 _structc501822b_22a8_37ff_91a9_9545f4689a3d;
             for(auto i : _protocol){
-                if (i.first == "argv1"){
+                if (i.first == "argv1") {
                     _structc501822b_22a8_37ff_91a9_9545f4689a3d.argv1 = i.second.int32_value();
                 }
-                else if (i.first == "argv2"){
+                else if (i.first == "argv2") {
                     _structc501822b_22a8_37ff_91a9_9545f4689a3d.argv2 = i.second.string_value();
                 }
-                else if (i.first == "argv3"){
+                else if (i.first == "argv3") {
                     _structc501822b_22a8_37ff_91a9_9545f4689a3d.argv3 = i.second.float32_value();
                 }
-                else if (i.first == "argv4"){
+                else if (i.first == "argv4") {
                     _structc501822b_22a8_37ff_91a9_9545f4689a3d.argv4 = i.second.float64_value();
                 }
             }
@@ -73,16 +73,16 @@ namespace abelkhan
         static test2 protcol_to_test2(const msgpack11::MsgPack::object& _protocol){
             test2 _structf1917643_06b2_3e6d_ab77_0a5044067d0a;
             for(auto i : _protocol){
-                if (i.first == "argv1"){
+                if (i.first == "argv1") {
                     _structf1917643_06b2_3e6d_ab77_0a5044067d0a.argv1 = i.second.int32_value();
                 }
-                else if (i.first == "argv2"){
+                else if (i.first == "argv2") {
                     _structf1917643_06b2_3e6d_ab77_0a5044067d0a.argv2 = test1::protcol_to_test1(i.second.object_items());
                 }
-                else if (i.first == "bytel"){
+                else if (i.first == "bytel") {
                     _structf1917643_06b2_3e6d_ab77_0a5044067d0a.bytel = i.second.binary_items();
                 }
-                else if (i.first == "t"){
+                else if (i.first == "t") {
                     _structf1917643_06b2_3e6d_ab77_0a5044067d0a.t = (em_test3)i.second.int32_value();
                 }
             }
@@ -100,7 +100,7 @@ namespace abelkhan
             msgpack11::MsgPack::object _protocol;
             _protocol.insert(std::make_pair("em", (int)_struct.em));
             msgpack11::MsgPack::array _array_em_list;
-            for(var v_ : _struct.em_list){
+            for(auto v_ : _struct.em_list) {
                 _array_em_list.push_back((int)v_);
             }
             _protocol.insert(std::make_pair("em_list", _array_em_list));
@@ -110,14 +110,14 @@ namespace abelkhan
         static test3 protcol_to_test3(const msgpack11::MsgPack::object& _protocol){
             test3 _structbf7f1e5a_6b28_310c_8f9e_f815dbd56fb7;
             for(auto i : _protocol){
-                if (i.first == "em"){
+                if (i.first == "em") {
                     _structbf7f1e5a_6b28_310c_8f9e_f815dbd56fb7.em = (em_test3)i.second.int32_value();
                 }
-                else if (i.first == "em_list"){
+                else if (i.first == "em_list") {
                     auto _protocol_array = i.second.array_items();
-                    for(auto it_ : _protocol_array){
-                        _structbf7f1e5a_6b28_310c_8f9e_f815dbd56fb7.em_list.push_back((std::vector<em_test3>)it_.int32_value());
-            }
+                    for(auto it_ : _protocol_array) {
+                        _structbf7f1e5a_6b28_310c_8f9e_f815dbd56fb7.em_list.push_back((em_test3)it_.int32_value());
+                    }
                 }
             }
             return _structbf7f1e5a_6b28_310c_8f9e_f815dbd56fb7;
@@ -195,12 +195,12 @@ namespace abelkhan
 
     };
 
-    class test_caller : Icaller {
+    class test_caller : public Icaller {
     private:
         static std::shared_ptr<test_rsp_cb> rsp_cb_test_handle;
 
     private:
-        std::atomic<uint64_t> uuid_45a113ac_c7f2_30b0_90a5_a399ab912716;
+        std::atomic<uint32_t> uuid_45a113ac_c7f2_30b0_90a5_a399ab912716;
 
     public:
         test_caller(std::shared_ptr<Ichannel> _ch, std::shared_ptr<modulemng> modules) : Icaller("test", _ch)
