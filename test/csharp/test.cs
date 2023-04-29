@@ -6,14 +6,14 @@ using MsgPack.Serialization;
 
 namespace Abelkhan
 {
-/*this enum code is codegen by Abelkhan codegen for c#*/
+/*this enum code is codegen by abelkhan codegen for c#*/
 
     public enum em_test3{
         enum_test3 = 1,
         enum_test1 = 2,
         enum_test2 = 3
     }
-/*this struct code is codegen by Abelkhan codegen for c#*/
+/*this struct code is codegen by abelkhan codegen for c#*/
     public class test1
     {
         public Int32 argv1;
@@ -57,7 +57,7 @@ namespace Abelkhan
         public static MsgPack.MessagePackObjectDictionary test2_to_protcol(test2 _struct){
             var _protocol = new MsgPack.MessagePackObjectDictionary();
             _protocol.Add("argv1", _struct.argv1);
-            _protocol.Add("argv2", test1.test1_to_protcol(_struct.argv2));
+            _protocol.Add("argv2", new MsgPack.MessagePackObject(test1.test1_to_protcol(_struct.argv2)));
             _protocol.Add("bytel", _struct.bytel);
             _protocol.Add("t", (Int32)_struct.t);
             return _protocol;
@@ -89,12 +89,12 @@ namespace Abelkhan
         public static MsgPack.MessagePackObjectDictionary test3_to_protcol(test3 _struct){
             var _protocol = new MsgPack.MessagePackObjectDictionary();
             _protocol.Add("em", (Int32)_struct.em);
-            if (_struct.em_list != null) { 
-                var _array_em_list = new ArrayList();
+            if (_struct.em_list != null) {
+                var _array_em_list = new List<MsgPack.MessagePackObject>();
                 foreach(var v_ in _struct.em_list){
                     _array_em_list.Add((Int32)v_);
                 }
-                _protocol.Add("em_list", _array_em_list);
+                _protocol.Add("em_list", new MsgPack.MessagePackObject(_array_em_list));
             }
             return _protocol;
         }
