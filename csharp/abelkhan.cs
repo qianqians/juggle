@@ -27,6 +27,7 @@ namespace Abelkhan
     public class TinyTimer
     {
         private static UInt64 tick;
+        private static List<KeyValuePair<UInt64, Action> > add_timer_list = new List<KeyValuePair<UInt64, Action>>();
         private static Dictionary<UInt64, Action> timer = new Dictionary<UInt64, Action>();
 
         private static UInt64 refresh()
@@ -38,12 +39,7 @@ namespace Abelkhan
         {
             tick = refresh();
             var tick_ = tick + _tick;
-            while(timer.ContainsKey(tick_)){ tick_++; }
-
-            lock(timer)
-            {
-                timer.Add(tick_, cb);
-            }
+            add_timer_list.Add(KeyValuePair.Create(tick_, cb));
         }
         public static void poll()
         {
@@ -51,6 +47,13 @@ namespace Abelkhan
 
             lock(timer)
             {
+                foreach (var (tick_, cb) in add_timer_list)
+                {
+                    var _tick = tick_;
+                    while (timer.ContainsKey(_tick)) { _tick++; }
+                    timer.Add(_tick, cb);
+                }
+
                 var list = new List<UInt64>();
                 foreach (var item in timer)
 				{
