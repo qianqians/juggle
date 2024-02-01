@@ -105,6 +105,11 @@ namespace Abelkhan
             serializer = MessagePackSerializer.Get<ArrayList>();
         }
 
+        public void reset_ch(Ichannel _ch)
+        {
+            ch = _ch;
+        }
+
         public void call_module_method(String methodname, ArrayList argvs)
         {
 			ArrayList _event = new ArrayList();
@@ -142,8 +147,8 @@ namespace Abelkhan
             }
         }
 
+        private Ichannel ch;
         protected readonly String module_name;
-        private readonly Ichannel ch;
         private readonly MessagePackSerializer<ArrayList> serializer;
     }
 
