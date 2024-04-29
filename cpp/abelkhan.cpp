@@ -95,7 +95,7 @@ void modulemng::enque_event(std::shared_ptr<Ichannel> _ch, const msgpack11::MsgP
     }
     catch (std::exception e)
     {
-        throw Exception(std::format("System.Exception:{0}", e.what()));
+        throw Exception(std::format("modulemng enque_event:{0}", e.what()));
     }
 }
 
