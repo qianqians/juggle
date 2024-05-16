@@ -17,25 +17,25 @@ namespace Abelkhan
 
     public class RandomUUID
     {
-        private static Random ran = new Random();
-        public static UInt32 random()
+        private static readonly Random ran = new Random();
+        public static uint random()
         {
-            return (UInt32)(ran.NextDouble() * Int32.MaxValue);
+            return (uint)(ran.NextDouble() * Int32.MaxValue);
         }
     }
 
     public class TinyTimer
     {
-        private static UInt64 tick;
-        private static List<KeyValuePair<UInt64, Action> > add_timer_list = new List<KeyValuePair<UInt64, Action>>();
-        private static Dictionary<UInt64, Action> timer = new Dictionary<UInt64, Action>();
+        private static ulong tick;
+        private static readonly List<KeyValuePair<ulong, Action> > add_timer_list = new List<KeyValuePair<ulong, Action>>();
+        private static readonly Dictionary<ulong, Action> timer = new Dictionary<ulong, Action>();
 
-        private static UInt64 refresh()
+        private static ulong refresh()
         {
-            return (UInt64)(DateTime.UtcNow - new DateTime(1970, 1, 1)).TotalMilliseconds;
+            return (ulong)(DateTime.UtcNow - new DateTime(1970, 1, 1)).TotalMilliseconds;
         }
 
-        public static void add_timer(UInt64 _tick, Action cb)
+        public static void add_timer(ulong _tick, Action cb)
         {
             lock (add_timer_list)
             {
@@ -61,7 +61,7 @@ namespace Abelkhan
                     add_timer_list.Clear();
                 }
 
-                var list = new List<UInt64>();
+                var list = new List<ulong>();
                 foreach (var item in timer)
 				{
 					if (item.Key <= tick)
@@ -97,7 +97,7 @@ namespace Abelkhan
 
     public class Icaller
     {
-        public Icaller(String _module_name, Ichannel _ch)
+        public Icaller(string _module_name, Ichannel _ch)
         {
             module_name = _module_name;
             ch = _ch;
@@ -110,36 +110,36 @@ namespace Abelkhan
             ch = _ch;
         }
 
-        public void call_module_method(String methodname, ArrayList argvs)
+        public void call_module_method(string methodname, ArrayList argvs)
         {
-			ArrayList _event = new ArrayList();
-            _event.Add(methodname);
-            _event.Add(argvs);
+			ArrayList _event = new ArrayList
+            {
+                methodname,
+                argvs
+            };
 
             try
             {
-                using (MemoryStream stream = MemoryStreamPool.mstMgr.GetStream(), send_st = MemoryStreamPool.mstMgr.GetStream())
+                using MemoryStream stream = MemoryStreamPool.mstMgr.GetStream(), send_st = MemoryStreamPool.mstMgr.GetStream();
+                serializer.Pack(stream, _event);
+                stream.Position = 0;
+                var data = stream.ToArray();
+
+                var _tmplenght = data.Length;
+                send_st.WriteByte((byte)(_tmplenght & 0xff));
+                send_st.WriteByte((byte)((_tmplenght >> 8) & 0xff));
+                send_st.WriteByte((byte)((_tmplenght >> 16) & 0xff));
+                send_st.WriteByte((byte)((_tmplenght >> 24) & 0xff));
+                send_st.Write(data, 0, _tmplenght);
+                send_st.Position = 0;
+                var buf = send_st.ToArray();
+
+                if (ch.is_xor_key_crypt())
                 {
-                    serializer.Pack(stream, _event);
-                    stream.Position = 0;
-                    var data = stream.ToArray();
-
-                    var _tmplenght = data.Length;
-                    send_st.WriteByte((byte)(_tmplenght & 0xff));
-                    send_st.WriteByte((byte)((_tmplenght >> 8) & 0xff));
-                    send_st.WriteByte((byte)((_tmplenght >> 16) & 0xff));
-                    send_st.WriteByte((byte)((_tmplenght >> 24) & 0xff));
-                    send_st.Write(data, 0, _tmplenght);
-                    send_st.Position = 0;
-                    var buf = send_st.ToArray();
-
-                    if (ch.is_xor_key_crypt())
-                    {
-                        ch.normal_send_crypt(buf);
-                    }
-
-                    ch.send(buf);
+                    ch.normal_send_crypt(buf);
                 }
+
+                ch.send(buf);
             }
             catch (System.Exception)
             {
@@ -161,7 +161,7 @@ namespace Abelkhan
     {
         protected Dictionary<string, Action<IList<MsgPack.MessagePackObject> > > events;
 
-        public Imodule(String _module_name){
+        public Imodule(string _module_name){
             module_name = _module_name;
             events = new Dictionary<string, Action<IList<MsgPack.MessagePackObject> > >();
             current_ch = new ThreadLocal<Ichannel>();
@@ -170,7 +170,7 @@ namespace Abelkhan
 
 		public ThreadLocal<Ichannel> current_ch;
         public ThreadLocal<Response> rsp;
-		public String module_name;
+		public string module_name;
     }
 
     public class modulemng
@@ -206,6 +206,6 @@ namespace Abelkhan
             }
         }
 
-        private Dictionary<string, Tuple<Imodule, Action<IList<MsgPack.MessagePackObject> > > > method_set;
+        private readonly Dictionary<string, Tuple<Imodule, Action<IList<MsgPack.MessagePackObject> > > > method_set;
     }
 }
