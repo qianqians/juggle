@@ -240,7 +240,7 @@ namespace Abelkhan
         public test_test3_cb test3(test2 t2, em_test3 e = em_test3.enum_test3, string str = "qianqians"){
             var uuid_20ca53af_d04c_58a2_a8b3_d02b9e414e80 = (UInt32)Interlocked.Increment(ref uuid_45a113ac_c7f2_30b0_90a5_a399ab912716);
 
-            var _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7 = new ArrayList();
+            var _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7 = new List<MsgPack.MessagePackObject>();
             _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7.Add(uuid_20ca53af_d04c_58a2_a8b3_d02b9e414e80);
             _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7.Add(test2.test2_to_protcol(t2));
             _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7.Add((int)e);
@@ -256,8 +256,8 @@ namespace Abelkhan
         }
 
         public void test4(List<test2> argv, float num = (float)0.110){
-            var _argv_fe584e24_96c8_3d2d_8b39_f1cc6a877f72 = new ArrayList();
-            var _array_80252816_2442_30bc_bd5c_59666cae8a23 = new ArrayList();
+            var _argv_fe584e24_96c8_3d2d_8b39_f1cc6a877f72 = new List<MsgPack.MessagePackObject>();
+            var _array_80252816_2442_30bc_bd5c_59666cae8a23 = new List<MsgPack.MessagePackObject>();
             foreach(var v_264317e3_c4ab_53c4_a9a0_63d0058d8148 in argv){
                 _array_80252816_2442_30bc_bd5c_59666cae8a23.Add(test2.test2_to_protcol(v_264317e3_c4ab_53c4_a9a0_63d0058d8148));
             }
@@ -276,7 +276,7 @@ namespace Abelkhan
         }
 
         public void rsp(test1 t1_ff418b5a_70ba_3756_afdf_1e2b6bdbef8c, Int32 i_72987bfb_ad8a_309a_a6ba_f222ad17c387 = 110){
-            var _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7 = new ArrayList();
+            var _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7 = new List<MsgPack.MessagePackObject>();
             _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7.Add(uuid_77eeaa2a_8150_3cce_bfa0_0b16e18637bd);
             _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7.Add(test1.test1_to_protcol(t1_ff418b5a_70ba_3756_afdf_1e2b6bdbef8c));
             _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7.Add(i_72987bfb_ad8a_309a_a6ba_f222ad17c387);
@@ -284,7 +284,7 @@ namespace Abelkhan
         }
 
         public void err(test1 err_ad2710a2_3dd2_3a8f_a4c8_a7ebbe1df696, byte[] bytearray_f6580f73_3817_3337_ac7a_6f0e34690ee8 = new byte[3]{1,1,0}){
-            var _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7 = new ArrayList();
+            var _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7 = new List<MsgPack.MessagePackObject>();
             _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7.Add(uuid_77eeaa2a_8150_3cce_bfa0_0b16e18637bd);
             _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7.Add(test1.test1_to_protcol(err_ad2710a2_3dd2_3a8f_a4c8_a7ebbe1df696));
             _argv_bf7f1e5a_6b28_310c_8f9e_f815dbd56fb7.Add(bytearray_f6580f73_3817_3337_ac7a_6f0e34690ee8);
