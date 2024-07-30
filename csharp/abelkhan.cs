@@ -148,12 +148,12 @@ namespace Abelkhan
         }
 
         private Ichannel ch;
-        protected readonly String module_name;
+        protected readonly string module_name;
         private readonly MessagePackSerializer<List<MsgPack.MessagePackObject>> serializer;
     }
 
     public class Response : Icaller{
-        public Response(String _module_name, Ichannel _ch) : base(_module_name, _ch){ 
+        public Response(string _module_name, Ichannel _ch) : base(_module_name, _ch){ 
         }
     }
 
@@ -180,14 +180,14 @@ namespace Abelkhan
 			method_set = new Dictionary<string, Tuple<Imodule, Action<IList<MsgPack.MessagePackObject> > > >();
 		}
 
-        public void reg_method(String method_name, Tuple<Imodule, Action<IList<MsgPack.MessagePackObject> > > method){
+        public void reg_method(string method_name, Tuple<Imodule, Action<IList<MsgPack.MessagePackObject> > > method){
             method_set.Add(method_name, method);
         }
 
         public Action<Abelkhan.Ichannel> on_msg;
         public void process_event(Ichannel _ch, ArrayList _event){
             try{
-                String method_name = ((MsgPack.MessagePackObject)_event[0]).AsString();
+                string method_name = ((MsgPack.MessagePackObject)_event[0]).AsString();
                 if (method_set.TryGetValue(method_name, out Tuple<Imodule, Action<IList<MsgPack.MessagePackObject> > > _method))
                 {
                     _method.Item1.current_ch.Value = _ch;
