@@ -28,7 +28,7 @@ namespace Abelkhan
     {
         private static ulong tick;
         private static readonly List<KeyValuePair<ulong, Action> > add_timer_list = new List<KeyValuePair<ulong, Action>>();
-        private static readonly Dictionary<ulong, Action> timer = new Dictionary<ulong, Action>();
+        private static readonly SortedDictionary<ulong, Action> timer = new SortedDictionary<ulong, Action>();
 
         private static ulong refresh()
         {
